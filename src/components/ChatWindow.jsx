@@ -24,11 +24,14 @@ import {
   Layers,
   Copy,
   ThumbsUp,
-  ThumbsDown
+  ThumbsDown,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { getResponseForQuery, detectLanguage } from "../data/mockData";
 
 export default function ChatWindow({ 
+  user,
   activeChat, 
   onSendMessage, 
   onAttachDocument, 
@@ -38,10 +41,73 @@ export default function ChatWindow({
   isCollapsedSidebar
 }) {
   const [input, setInput] = useState("");
+  const getFirstName = (fullName) => {
+    if (!fullName) return "Guest";
+    const parts = fullName.trim().split(/\s+/);
+    if ((parts[0].length === 1 || (parts[0].length === 2 && parts[0].endsWith("."))) && parts.length > 1) {
+      return parts[1];
+    }
+    return parts[0];
+  };
+  const renderMarkdown = (text) => {
+    if (!text) return "";
+    let html = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    const lines = html.split("\n");
+    let inList = false;
+    const formattedLines = [];
+    lines.forEach((line) => {
+      const trimmed = line.trim();
+      const headerMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+      const listMatch = trimmed.match(/^[\*\-]\s+(.*)$/);
+      if (headerMatch) {
+        if (inList) {
+          formattedLines.push("</ul>");
+          inList = false;
+        }
+        formattedLines.push(`<strong>${headerMatch[2]}</strong>`);
+      } else if (listMatch) {
+        if (!inList) {
+          formattedLines.push("<ul style='padding-left: 1.25rem; margin: 0.25rem 0; list-style-type: disc;'>");
+          inList = true;
+        }
+        formattedLines.push(`<li style='margin-bottom: 0.15rem;'>${listMatch[1]}</li>`);
+      } else {
+        if (inList) {
+          formattedLines.push("</ul>");
+          inList = false;
+        }
+        formattedLines.push(line);
+      }
+    });
+    if (inList) {
+      formattedLines.push("</ul>");
+    }
+    
+    let finalHtml = "";
+    for (let i = 0; i < formattedLines.length; i++) {
+      const line = formattedLines[i];
+      if (line.startsWith("<ul") || line.startsWith("<li") || line.startsWith("</ul>")) {
+        finalHtml += line;
+      } else {
+        const nextLine = formattedLines[i + 1];
+        const needsBr = i < formattedLines.length - 1 && 
+                        !line.startsWith("<ul") && !line.startsWith("<li") && !line.startsWith("</ul>") &&
+                        nextLine !== undefined &&
+                        !nextLine.startsWith("<ul") && !nextLine.startsWith("<li") && !nextLine.startsWith("</ul>");
+        finalHtml += line + (needsBr ? "<br />" : "");
+      }
+    }
+    return finalHtml;
+  };
   const [activeWorkflow, setActiveWorkflow] = useState(null);
   const [workflowStep, setWorkflowStep] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isReasoningExpanded, setIsReasoningExpanded] = useState(false);
   
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -130,7 +196,10 @@ export default function ChatWindow({
           tool: "Document Reading Pipeline"
         };
       } else {
-        const responseData = getResponseForQuery(activeWorkflow);
+        const userMessages = activeChat.messages
+          .filter(m => m.sender === "user" && m.text !== activeWorkflow)
+          .map(m => m.text);
+        const responseData = getResponseForQuery(activeWorkflow, userMessages);
         aiMsg = {
           sender: "ai",
           text: responseData.ans,
@@ -276,7 +345,7 @@ export default function ChatWindow({
               <img src="/logo.png" alt="Kai Logo" className="logo-pulse" style={{ width: "56px", height: "56px", borderRadius: "14px", objectFit: "cover" }} />
               <div>
                 <h1 className="h-main" style={{ color: "#FFFFFF", marginBottom: "0.5rem" }}>
-                  How can I help you today?
+                  Hi <span style={{ fontFamily: "var(--font-cursive)", color: "var(--accent-light)", fontSize: "1.25em", fontWeight: "600", textTransform: "capitalize" }}>{getFirstName(user?.name)}</span>, How can I help you today?
                 </h1>
                 <p style={{ color: "var(--text-secondary)", fontSize: "15px", fontWeight: "400" }}>
                   Ask me anything — I'm here to guide and inspire.
@@ -349,106 +418,44 @@ export default function ChatWindow({
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", width: "100%" }}>
                   {msg.sender === "user" ? (
                     // User Message (gradient & shadow)
-                    <div style={{ alignSelf: "flex-end", maxWidth: "80%" }}>
-                      <div className="chat-bubble chat-bubble-user" style={{ wordBreak: "break-word" }}>
+                    <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+                      <div className="chat-bubble chat-bubble-user" style={{ wordBreak: "break-word", maxWidth: "80%" }}>
                         {msg.text}
                       </div>
                     </div>
                   ) : (
-                    // AI Message with separate structured sub-cards (Outfit headers)
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%" }}>
+                    // AI Message - simple and clean response bubble like ChatGPT / Gemini
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%" }}>
                       
-                      {/* Sub-header meta */}
-                      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", fontSize: "11px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontWeight: "700", color: "var(--accent-light)", textTransform: "uppercase" }}>
-                          <Workflow size={13} /> {msg.tool ? msg.tool : "COGNITIVE PIPELINE"}
-                        </div>
-                        {getLanguageTag(msg.text)}
-                      </div>
-
                       {/* Section 1: Main Answer Text */}
                       <div className="chat-bubble chat-bubble-ai" style={{ width: "100%", maxWidth: "100%" }}>
-                        <div style={{ whiteSpace: "pre-line", fontSize: "15px" }}>{msg.text}</div>
+                        <div 
+                          style={{ fontSize: "15px", lineHeight: "1.6" }}
+                          dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.text) }}
+                        />
                       </div>
 
                       {/* Per-Message Action Overlay */}
-                      <div className="message-action-overlay">
-                        <span style={{ color: "var(--text-muted)", marginRight: "0.25rem" }}>12:19 AM</span>
+                      <div className="message-action-overlay" style={{ marginTop: "0.25rem" }}>
+                        <span style={{ color: "var(--text-muted)", marginRight: "0.25rem" }}>
+                          {msg.time || new Date(activeChat.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
                         <button className="message-action-btn" title="Copy response" onClick={() => navigator.clipboard.writeText(msg.text)}>
-                          <Copy size={13} style={{ marginRight: '3px' }} /> Copy
+                          <Copy size={13} />
                         </button>
                         <button className="message-action-btn" title="Like">
-                          <ThumbsUp size={13} style={{ marginRight: '3px' }} /> Like
+                          <ThumbsUp size={13} />
                         </button>
                         <button className="message-action-btn" title="Dislike">
-                          <ThumbsDown size={13} style={{ marginRight: '3px' }} /> Dislike
+                          <ThumbsDown size={13} />
                         </button>
                       </div>
-
-                      {/* Section 2: Source Reference Card */}
-                      {msg.source && (
-                        <div className="response-section-card" style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                          <div style={{ width: "24px", height: "24px", borderRadius: "6px", background: "rgba(59,130,246,0.1)", display: "flex", alignItems: "center", justifyCenter: "center", color: "var(--accent-light)" }}><FileText size={14} style={{ margin: "auto" }} /></div>
-                          <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)" }}>Source Reference:</span>
-                          <span className="badge-doc" style={{ fontSize: "12px", fontWeight: "600" }}>{msg.source}</span>
-                        </div>
-                      )}
-
-                      {/* Section 3: Recommended Paths Card */}
-                      {msg.learning && msg.learning.length > 0 && (
-                        <div className="response-section-card" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                          <h4 style={{ fontSize: "13px", fontWeight: "700", color: "var(--accent-light)", display: "flex", alignItems: "center", gap: "0.35rem", letterSpacing: "-0.01em" }}>
-                            <GraduationCap size={15} /> RECOMMENDED SYLLABUS PATHWAYS
-                          </h4>
-                          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                            {msg.learning.map((module, idx) => (
-                              <span key={idx} className="badge-learning" style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", padding: "0.3rem 0.65rem", fontSize: "12px" }}>
-                                <BookOpen size={12} /> {module}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Section 4: Related Topics Card */}
-                      {msg.topics && msg.topics.length > 0 && (
-                        <div className="response-section-card" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.5rem" }}>
-                          <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)", marginRight: "0.25rem" }}>Related Inquiries:</span>
-                          {msg.topics.map((t, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => handleSend(t)}
-                              className="prompt-chip"
-                              style={{ padding: "0.35rem 0.85rem", fontSize: "13px" }}
-                            >
-                              {t}
-                            </button>
-                          ))}
-                        </div>
-                      )}
 
                     </div>
                   )}
                 </div>
 
-                {/* User Avatar */}
-                {msg.sender === "user" && (
-                  <div style={{
-                    width: "36px",
-                    height: "36px",
-                    borderRadius: "50%",
-                    backgroundColor: "#312E81",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#FFFFFF",
-                    fontWeight: "600",
-                    fontSize: "14px",
-                    flexShrink: 0
-                  }}>
-                    U
-                  </div>
-                )}
+
 
               </div>
             ))}
@@ -461,28 +468,75 @@ export default function ChatWindow({
             <div style={{ display: "flex", gap: "1.25rem" }}>
               <div style={{ width: "36px" }} />
               
-              <div className="reasoning-box slide-up" style={{ width: "100%" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "13px", fontWeight: "700", color: "var(--accent-light)", marginBottom: "0.75rem" }}>
-                  <Cpu className="spinner-accent" /> KAI AGENTIC REASONING PROCESS
-                </div>
+              <div className="reasoning-box slide-up" style={{ 
+                width: "100%", 
+                background: "transparent", 
+                border: "none", 
+                padding: "0.25rem 0",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem"
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setIsReasoningExpanded(!isReasoningExpanded)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    color: "var(--text-secondary)",
+                    cursor: "pointer",
+                    fontSize: "13px",
+                    fontWeight: "500",
+                    outline: "none",
+                    padding: 0,
+                    width: "fit-content"
+                  }}
+                >
+                  <Brain className="agent-spinner" size={16} style={{ color: "var(--accent-light)" }} />
+                  <span>
+                    {workflowStep < workflowSteps.length - 1 
+                      ? `${workflowSteps[workflowStep]?.label || "Thinking..."}`
+                      : "Thinking..."}
+                  </span>
+                  {isReasoningExpanded ? <ChevronUp size={14} style={{ opacity: 0.6 }} /> : <ChevronDown size={14} style={{ opacity: 0.6 }} />}
+                </button>
 
-                {workflowSteps.map((step, idx) => {
-                  const StepIcon = step.icon;
-                  const isActive = workflowStep === idx;
-                  const isCompleted = workflowStep > idx;
-                  return (
-                    <div key={idx} className={`reasoning-step ${isActive ? "active" : isCompleted ? "completed" : ""}`} style={{ margin: "0.15rem 0" }}>
-                      {isCompleted ? (
-                        <ShieldCheck size={15} style={{ color: "var(--success)" }} />
-                      ) : isActive ? (
-                        <div className="spinner-accent" />
-                      ) : (
-                        <StepIcon size={14} style={{ color: "var(--border)", opacity: 0.4 }} />
-                      )}
-                      <span style={{ fontSize: "13px", fontWeight: isActive ? "600" : "400" }}>{step.label}</span>
-                    </div>
-                  );
-                })}
+                {isReasoningExpanded && (
+                  <div style={{
+                    marginTop: "0.25rem",
+                    padding: "0.75rem 1rem",
+                    borderRadius: "12px",
+                    background: "rgba(255, 255, 255, 0.02)",
+                    border: "1px solid var(--border)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.5rem",
+                    width: "fit-content",
+                    minWidth: "240px",
+                    animation: "fadeIn 0.2s ease-out"
+                  }}>
+                    {workflowSteps.map((step, idx) => {
+                      const StepIcon = step.icon;
+                      const isActive = workflowStep === idx;
+                      const isCompleted = workflowStep > idx;
+                      return (
+                        <div key={idx} style={{ display: "flex", alignItems: "center", gap: "0.5rem", opacity: isCompleted || isActive ? 1 : 0.4 }}>
+                          {isCompleted ? (
+                            <ShieldCheck size={14} style={{ color: "var(--success)" }} />
+                          ) : isActive ? (
+                            <div className="agent-spinner" style={{ border: "1.5px solid var(--accent-light)", borderTopColor: "transparent", borderRadius: "50%", width: "10px", height: "10px" }} />
+                          ) : (
+                            <StepIcon size={13} style={{ color: "var(--border)" }} />
+                          )}
+                          <span style={{ fontSize: "12px", fontWeight: isActive ? "600" : "400", color: isActive ? "white" : "var(--text-secondary)" }}>{step.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
             
@@ -534,31 +588,33 @@ export default function ChatWindow({
       <div style={{ padding: "1.5rem", backgroundColor: "var(--bg-app)", zIndex: 10, position: "relative" }}>
         <div style={{ maxWidth: "800px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
           
-          {/* Quick chips above floating inputs */}
-          <div style={{ display: "flex", gap: "0.5rem", overflowX: "auto", paddingBottom: "0.25rem" }} className="no-scrollbar">
-            {activeChat.document ? (
-              activeChat.document.questions.map((q, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSend(q)}
-                  className="prompt-chip"
-                  style={{ background: "rgba(59, 130, 246, 0.08)", borderColor: "rgba(59, 130, 246, 0.2)", color: "var(--accent-light)" }}
-                >
-                  {q}
-                </button>
-              ))
-            ) : (
-              suggestedChips.map((chip, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSend(chip)}
-                  className="prompt-chip"
-                >
-                  {chip}
-                </button>
-              ))
-            )}
-          </div>
+          {/* Quick chips above floating inputs - only show when typing */}
+          {input.trim() !== "" && (
+            <div style={{ display: "flex", gap: "0.5rem", overflowX: "auto", paddingBottom: "0.25rem" }} className="no-scrollbar">
+              {activeChat.document ? (
+                activeChat.document.questions.map((q, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSend(q)}
+                    className="prompt-chip"
+                    style={{ background: "rgba(59, 130, 246, 0.08)", borderColor: "rgba(59, 130, 246, 0.2)", color: "var(--accent-light)" }}
+                  >
+                    {q}
+                  </button>
+                ))
+              ) : (
+                suggestedChips.map((chip, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSend(chip)}
+                    className="prompt-chip"
+                  >
+                    {chip}
+                  </button>
+                ))
+              )}
+            </div>
+          )}
 
             {/* Floating glassmorphic input bar */}
             <form 

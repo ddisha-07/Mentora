@@ -76,7 +76,8 @@ export default function KBModal({ isOpen, onClose, onSelectDocForChat }) {
                   border: "1px solid var(--border)",
                   background: "var(--bg-app)",
                   fontSize: "13px",
-                  outline: "none"
+                  outline: "none",
+                  color: "var(--text-primary)"
                 }}
               />
             </div>

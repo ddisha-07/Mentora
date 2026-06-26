@@ -13,6 +13,60 @@ import {
 import { getResponseForQuery } from "../data/mockData";
 
 export default function AIAssistant({ setCurrentTab, setSelectedPathId }) {
+  const renderMarkdown = (text) => {
+    if (!text) return "";
+    let html = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    const lines = html.split("\n");
+    let inList = false;
+    const formattedLines = [];
+    lines.forEach((line) => {
+      const trimmed = line.trim();
+      const headerMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+      const listMatch = trimmed.match(/^[\*\-]\s+(.*)$/);
+      if (headerMatch) {
+        if (inList) {
+          formattedLines.push("</ul>");
+          inList = false;
+        }
+        formattedLines.push(`<strong>${headerMatch[2]}</strong>`);
+      } else if (listMatch) {
+        if (!inList) {
+          formattedLines.push("<ul style='padding-left: 1.25rem; margin: 0.25rem 0; list-style-type: disc;'>");
+          inList = true;
+        }
+        formattedLines.push(`<li style='margin-bottom: 0.15rem;'>${listMatch[1]}</li>`);
+      } else {
+        if (inList) {
+          formattedLines.push("</ul>");
+          inList = false;
+        }
+        formattedLines.push(line);
+      }
+    });
+    if (inList) {
+      formattedLines.push("</ul>");
+    }
+    
+    let finalHtml = "";
+    for (let i = 0; i < formattedLines.length; i++) {
+      const line = formattedLines[i];
+      if (line.startsWith("<ul") || line.startsWith("<li") || line.startsWith("</ul>")) {
+        finalHtml += line;
+      } else {
+        const nextLine = formattedLines[i + 1];
+        const needsBr = i < formattedLines.length - 1 && 
+                        !line.startsWith("<ul") && !line.startsWith("<li") && !line.startsWith("</ul>") &&
+                        nextLine !== undefined &&
+                        !nextLine.startsWith("<ul") && !nextLine.startsWith("<li") && !nextLine.startsWith("</ul>");
+        finalHtml += line + (needsBr ? "<br />" : "");
+      }
+    }
+    return finalHtml;
+  };
   const [messages, setMessages] = useState([
     {
       id: "m-init",
@@ -166,97 +220,14 @@ export default function AIAssistant({ setCurrentTab, setSelectedPathId }) {
           <div key={msg.id} style={{ display: "flex", flexDirection: "column", width: "100%" }}>
             
             <div className={`chat-bubble ${msg.sender === "user" ? "chat-bubble-user" : "chat-bubble-ai"}`}>
-              {/* If AI, display the reasoning tool badge */}
-              {msg.sender === "ai" && msg.tool && (
-                <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", marginBottom: "0.5rem", fontSize: "0.7rem", fontWeight: "700", color: "var(--primary)" }}>
-                  <Cpu size={12} /> {msg.tool.toUpperCase()} TOOL USED
-                </div>
-              )}
-
               {/* Message text */}
-              <div style={{ whiteSpace: "pre-line", fontSize: "0.95rem" }}>{msg.text}</div>
-
-              {/* Structured Elements (AI Only) */}
-              {msg.sender === "ai" && (msg.source || msg.learning || (msg.topics && msg.topics.length > 0)) && (
-                <div style={{ marginTop: "1rem", borderTop: "1px solid var(--border)", paddingTop: "0.75rem", display: "flex", flexDirection: "column", gap: "0.75rem", fontSize: "0.85rem" }}>
-                  
-                  {/* Source citation */}
-                  {msg.source && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                      <span style={{ fontWeight: "600", color: "var(--text-secondary)" }}>Source:</span>
-                      <button 
-                        onClick={() => setCurrentTab("kb")}
-                        style={{ 
-                          background: "var(--primary-light)", 
-                          color: "var(--primary)", 
-                          border: "none", 
-                          padding: "0.15rem 0.5rem", 
-                          borderRadius: "4px", 
-                          fontSize: "0.75rem", 
-                          fontWeight: "600",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.25rem",
-                          cursor: "pointer"
-                        }}
-                      >
-                        <FileText size={12} /> {msg.source}
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Recommended learning path */}
-                  {msg.learning && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                      <span style={{ fontWeight: "600", color: "var(--text-secondary)" }}>Recommended Learning:</span>
-                      <button 
-                        onClick={() => handleLearningLink(msg.learning)}
-                        style={{ 
-                          background: "hsl(142, 70%, 93%)", 
-                          color: "hsl(142, 70%, 25%)", 
-                          border: "none", 
-                          padding: "0.15rem 0.5rem", 
-                          borderRadius: "4px", 
-                          fontSize: "0.75rem", 
-                          fontWeight: "600",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.25rem",
-                          cursor: "pointer"
-                        }}
-                      >
-                        <BookOpen size={12} /> {msg.learning} <ArrowRight size={12} />
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Related Topics */}
-                  {msg.topics && msg.topics.length > 0 && (
-                    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.35rem", marginTop: "0.25rem" }}>
-                      <span style={{ fontWeight: "600", color: "var(--text-secondary)", marginRight: "0.25rem" }}>Related Topics:</span>
-                      {msg.topics.map((t, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => handleSend(t)}
-                          style={{
-                            background: "white",
-                            border: "1px solid var(--border)",
-                            color: "var(--text-primary)",
-                            padding: "0.15rem 0.5rem",
-                            borderRadius: "4px",
-                            fontSize: "0.75rem",
-                            cursor: "pointer",
-                            transition: "all 0.2s"
-                          }}
-                          className="scale-up-hover"
-                        >
-                          {t}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                </div>
+              {msg.sender === "user" ? (
+                <div style={{ whiteSpace: "pre-line", fontSize: "0.95rem" }}>{msg.text}</div>
+              ) : (
+                <div 
+                  style={{ fontSize: "0.95rem", lineHeight: "1.6" }}
+                  dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.text) }}
+                />
               )}
             </div>
           </div>

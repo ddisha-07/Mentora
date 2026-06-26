@@ -129,7 +129,9 @@ export const multilingualResponses = {
       furnace: "Knowledge Search / General Learning",
       startup: "Troubleshooting / FAQ",
       electrical: "Learning Recommendation",
-      onboarding: "General Learning / FAQ"
+      onboarding: "General Learning / FAQ",
+      ml: "Machine Learning Explanation",
+      loto: "Safety Protocol / SOP"
     },
     tools: {
       welding: "Learning Recommendation Tool & Vector Search",
@@ -137,7 +139,9 @@ export const multilingualResponses = {
       furnace: "Company Document Repository Search",
       startup: "FAQ Database & Expert Insights",
       electrical: "LMS Syllabus Mapping Tool",
-      onboarding: "HRMS Onboarding Path Planner"
+      onboarding: "HRMS Onboarding Path Planner",
+      ml: "AI & Cognitive Core Educator",
+      loto: "EHS Isolation SOP Parser"
     },
     answers: {
       welding: {
@@ -196,6 +200,35 @@ export const multilingualResponses = {
         source: "HR Onboarding and Training Policy Guidelines",
         learning: ["General Workplace Safety", "Industrial LOTO Basics", "IT Security Awareness"],
         topics: ["Company Policies", "Onboarding Checklist", "Safety Training Refresher"]
+      },
+      ml: {
+        ans: `**Machine Learning (ML)** is a subfield of artificial intelligence where computers learn from data rather than being explicitly programmed.
+
+### How it works in simple terms:
+1. **Gathering Data:** You feed the computer examples (e.g., thousands of pictures of cats and dogs).
+2. **Finding Patterns:** The ML algorithm analyzes the data to find patterns (e.g., cats have pointy ears, dogs have different snouts).
+3. **Making Predictions:** When shown a new picture, the computer uses these patterns to predict whether it is a cat or a dog.
+4. **Learning and Improving:** The more data it processes, the more accurate its predictions become over time.
+
+Think of it like learning to play a video game: you start by making mistakes, but by observing what works and what doesn't, you get better with practice.`,
+        source: "Introduction to Artificial Intelligence & Machine Learning",
+        learning: ["Introduction to Artificial Intelligence", "Supervised Learning Basics"],
+        topics: ["Supervised Learning", "Neural Networks", "Data Training"]
+      },
+      loto: {
+        ans: `Lockout-Tagout (LOTO) is a critical safety protocol used to ensure that machines are properly shut off and not started up again prior to the completion of maintenance or servicing work.
+
+**Core Steps of the LOTO Procedure:**
+1. **Preparation:** Identify all energy sources (electrical, mechanical, hydraulic, pneumatic, thermal, chemical).
+2. **Notification:** Inform all affected employees that a LOTO procedure is about to begin.
+3. **Shutdown:** Turn off the machinery or equipment using standard operating controls.
+4. **Isolation:** Disconnect or isolate the equipment from all energy sources (e.g., flip breakers, close valves).
+5. **Lockout/Tagout:** Apply individual padlocks and tags to each energy isolation point.
+6. **Zero State Verification (Dissipation):** Ensure all stored or residual energy is fully dissipated or bled off (e.g., ground capacitors, bleed hydraulic lines).
+7. **Verification of Isolation:** Attempt to restart the equipment using normal controls to confirm isolation is successful. Ensure controls are returned to the 'off' position before starting work.`,
+        source: "Lockout-Tagout (LOTO) Safety Protocol",
+        learning: ["Industrial Safety Fundamentals", "Zero Energy State Verification", "Group Lockout Procedures"],
+        topics: ["Energy Isolation", "Safety Padlocks", "Zero State Check"]
       }
     }
   },
@@ -206,7 +239,8 @@ export const multilingualResponses = {
       furnace: "Knowledge Search / General Learning",
       startup: "Troubleshooting / FAQ",
       electrical: "Learning Recommendation",
-      onboarding: "General Learning / FAQ"
+      onboarding: "General Learning / FAQ",
+      loto: "सुरक्षा प्रोटोकॉल / SOP"
     },
     tools: {
       welding: "लर्निंग रिकमेंडेशन टूल और वेक्टर सर्च",
@@ -214,7 +248,8 @@ export const multilingualResponses = {
       furnace: "कंपनी दस्तावेज़ रिपॉजिटरी खोज",
       startup: "FAQ डेटाबेस और विशेषज्ञ अंतर्दृष्टि",
       electrical: "LMS सिलेबस मैपिंग टूल",
-      onboarding: "HRMS ऑनबोर्डिंग पाथ प्लानर"
+      onboarding: "HRMS ऑनबोर्डिंग पाथ प्लानर",
+      loto: "EHS अलगाव SOP पार्सर"
     },
     answers: {
       welding: {
@@ -273,6 +308,21 @@ export const multilingualResponses = {
         source: "HR ऑनबोर्डिंग और प्रशिक्षण नीति दिशानिर्देश",
         learning: ["सामान्य कार्यस्थल सुरक्षा", "औद्योगिक लोतो मूल बातें", "आईटी सुरक्षा जागरूकता"],
         topics: ["कंपनी नीतियां", "ऑनबोर्डिंग चेकलिस्ट", "सुरक्षा प्रशिक्षण"]
+      },
+      loto: {
+        ans: `लॉकआउट-टैगआउट (LOTO) एक महत्वपूर्ण सुरक्षा प्रोटोकॉल है जो यह सुनिश्चित करता है कि रखरखाव या सर्विसिंग कार्य पूरा होने से पहले मशीनें ठीक से बंद हो जाएं और दोबारा चालू न हों।
+
+**लोतो (LOTO) प्रक्रिया के मुख्य चरण:**
+1. **तैयारी (Preparation):** सभी ऊर्जा स्रोतों (बिजली, यांत्रिक, हाइड्रोलिक, वायवीय, थर्मल) की पहचान करें।
+2. **अधिसूचना (Notification):** सभी प्रभावित कर्मचारियों को सूचित करें कि LOTO प्रक्रिया शुरू होने वाली है।
+3. **शटडाउन (Shutdown):** मानक नियंत्रणों का उपयोग करके उपकरण बंद करें।
+4. **अलगाव (Isolation):** सभी ऊर्जा पृथक करने वाले उपकरणों (ब्रेकर, वाल्व, गेट) को बंद करें ताकि उपकरण पूरी तरह से अलग हो जाए।
+5. **लॉकआउट/टैगआउट (Lockout/Tagout):** प्रत्येक अलगाव बिंदु पर व्यक्तिगत पैडलॉक और टैग लगाएं।
+6. **शून्य स्थिति जांच (Zero State Check):** सत्यापित करें कि संचित ऊर्जा पूरी तरह से समाप्त हो गई है (लाइनों को खाली करें, कैपेसिटर को डिस्चार्ज करें)।
+7. **सत्यापन (Verification):** अलगाव की पुष्टि करने के लिए उपकरण को फिर से चालू करने का प्रयास करें। काम शुरू करने से पहले नियंत्रण को 'ऑफ' स्थिति में वापस लाएं।`,
+        source: "लॉकआउट-टैगआउट (LOTO) सुरक्षा प्रोटोकॉल",
+        learning: ["औद्योगिक सुरक्षा मूल बातें", "शून्य ऊर्जा स्थिति सत्यापन", "समूह लॉकआउट प्रक्रियाएं"],
+        topics: ["ऊर्जा अलगाव", "सुरक्षा ताले", "शून्य स्थिति जांच"]
       }
     }
   },
@@ -283,7 +333,8 @@ export const multilingualResponses = {
       furnace: "Knowledge Search / General Learning",
       startup: "Troubleshooting / FAQ",
       electrical: "Learning Recommendation",
-      onboarding: "General Learning / FAQ"
+      onboarding: "General Learning / FAQ",
+      loto: "सुरक्षा प्रोटोकॉल / SOP"
     },
     tools: {
       welding: "लर्निंग रिकमेंडेशन आणि वेक्टर सर्च टूल",
@@ -291,7 +342,8 @@ export const multilingualResponses = {
       furnace: "कंपनी दस्तऐवज भांडार शोध",
       startup: "FAQ डेटाबेस आणि तज्ञ अंतर्दृष्टी",
       electrical: "LMS अभ्यासक्रम मॅपिंग टूल",
-      onboarding: "HRMS ऑनबोर्डिंग मार्ग नियोजक"
+      onboarding: "HRMS ऑनबोर्डिंग मार्ग नियोजक",
+      loto: "EHS अलगाव SOP पार्सर"
     },
     answers: {
       welding: {
@@ -349,7 +401,22 @@ export const multilingualResponses = {
 3. **आठवडा २ (प्रात्यक्षिक):** ज्येष्ठ तंत्रज्ञांच्या मार्गदर्शनाखाली प्रात्यक्षिक चाचणी उत्तीर्ण व्हा.`,
         source: "HR ऑनबोर्डिंग आणि प्रशिक्षण धोरण मार्गदर्शक",
         learning: ["सामान्य कामाची जागा सुरक्षितता", "औद्योगिक लोटो मूलभूत नियम", "आयटी सुरक्षा जागरूकता"],
-        topics: ["कंपनीची धोरणे", "ऑनबोर्डिंग चेकलिस्ट", "सुरक्षा प्रशिक्षण"]
+        topics: ["companyची धोरणे", "ऑनबोर्डिंग चेकलिस्ट", "सुरक्षा प्रशिक्षण"]
+      },
+      loto: {
+        ans: `लॉकआऊट-टॅगआऊट (LOTO) हा एक अत्यंत महत्त्वाचा सुरक्षा प्रोटोकॉल आहे ज्याचा वापर देखभाल किंवा दुरुस्तीचे काम पूर्ण होण्यापूर्वी मशीन व्यवस्थित बंद केल्या आहेत आणि पुन्हा सुरू होणार नाहीत याची खात्री करण्यासाठी केला जातो.
+
+**LOTO प्रक्रियेचे मुख्य टप्पे:**
+1. **तयारी (Preparation):** सर्व ऊर्जा स्त्रोत (विद्युत, यांत्रिक, हायड्रॉलिक, वायवीय, थर्मल) ओळखा.
+2. **सूचना (Notification):** सर्व संबंधित कर्मचाऱ्यांना सूचित करा की LOTO प्रक्रिया सुरू होणार आहे.
+3. **शटडाऊन (Shutdown):** मानक नियंत्रण वापरून उपकरण बंद करा.
+4. **अलगाव (Isolation):** उपकरणाला सर्व ऊर्जा स्त्रोतांपासून विलग करा (उदा. ब्रेकर्स बंद करा, वाल्व्ह बंद करा).
+5. **लॉकआऊट/टॅगआऊट (Lockout/Tagout):** प्रत्येक आयसोलेशन पॉईंटवर वैयक्तिक कुलूप आणि टॅग लावा.
+6. **शून्य ऊर्जा तपासणी (Zero State Check):** सर्व साठवलेली किंवा अवशिष्ट ऊर्जा पूर्णपणे निघून गेली असल्याची खात्री करा.
+7. **सत्यापन (Verification):** आयसोलेशन यशस्वी झाल्याची खात्री करण्यासाठी उपकरण सुरू करण्याचा प्रयत्न करा. काम सुरू करण्यापूर्वी नियंत्रणे 'ऑफ' स्थितीत परत करा.`,
+        source: "लॉकआऊट-टॅगआऊट (LOTO) सुरक्षा प्रोटोकॉल",
+        learning: ["औद्योगिक सुरक्षा मूलभूत तत्त्वे", "शून्य ऊर्जा स्थिती पडताळणी", "गट लॉकआऊट प्रक्रिया"],
+        topics: ["ऊर्जा विलग करणे", "सुरक्षा कुलूप", "शून्य ऊर्जा तपासणी"]
       }
     }
   },
@@ -360,7 +427,8 @@ export const multilingualResponses = {
       furnace: "Knowledge Search / General Learning",
       startup: "Troubleshooting / FAQ",
       electrical: "Learning Recommendation",
-      onboarding: "General Learning / FAQ"
+      onboarding: "General Learning / FAQ",
+      loto: "নিরাপত্তা প্রোটোকল / SOP"
     },
     tools: {
       welding: "লার্নিং রিকমেন্ডেশন ও ভেক্টর সার্চ টুল",
@@ -368,7 +436,8 @@ export const multilingualResponses = {
       furnace: "কোম্পানি ডকুমেন্টেশন ডাটাবেস অনুসন্ধান",
       startup: "এফএকিউ ও বিশেষজ্ঞ জ্ঞান ভাণ্ডার",
       electrical: "এলএমএস সিলেবাস ম্যাপিং টুল",
-      onboarding: "এইচআরএমএস অনবোর্ডিং পথ পরিকল্পনাকারী"
+      onboarding: "এইচআরএমএস অনবোর্ডিং পথ পরিকল্পনাকারী",
+      loto: "EHS আইসোলেশন SOP পার্সার"
     },
     answers: {
       welding: {
@@ -427,6 +496,21 @@ export const multilingualResponses = {
         source: "এইচআর অনবোর্ডিং এবং প্রশিক্ষণ নীতি নির্দেশিকা",
         learning: ["সাধারণ কর্মক্ষেত্র নিরাপত্তা", "শিল্প লোতো প্রাথমিক ধারণা", "আইটি নিরাপত্তা সচেতনতা"],
         topics: ["কোম্পানির নীতিমালা", "অনবোর্ডিং তালিকা", "নিরাপত্তা প্রশিক্ষণ"]
+      },
+      loto: {
+        ans: `লকআউট-ট্যাগআউট (LOTO) একটি অত্যন্ত গুরুত্বপূর্ণ নিরাপত্তা প্রোটোকল যা নিশ্চিত করে যে রক্ষণাবেক্ষণ বা সার্ভিসিং কাজ সম্পন্ন হওয়ার আগে মেশিনগুলি সঠিকভাবে বন্ধ আছে এবং পুনরায় चालू হবে না।
+
+**LOTO প্রক্রিয়ার মূল ধাপসমূহ:**
+1. **প্রস্তুতি (Preparation):** সমস্ত শক্তির উৎস (বৈদ্যুতিক, যান্ত্রিক, জলবাহী, বায়বীয়, তাপীয়) চিহ্নিত করুন।
+2. **বিজ্ঞপ্তি (Notification):** সমস্ত প্রভাবিত কর্মচারীদের অবহিত করুন যে একটি LOTO প্রক্রিয়া শুরু হতে চলেছে।
+3. **শাটডাউন (Shutdown):** মানক নিয়ন্ত্রণ ব্যবহার করে সরঞ্জাম বন্ধ করুন।
+4. **আইসোলেশন (Isolation):** সরঞ্জামটিকে সমস্ত শক্তির উৎস থেকে বিচ্ছিন্ন করুন (যেমন ব্রেকার বন্ধ করা, ভালভ বন্ধ করা)।
+5. **লকআউট/ট্যাগআউট (Lockout/Tagout):** প্রতিটি বিচ্ছিন্নকরণ পয়েন্টে পৃথক প্যাডলক এবং ট্যাগ প্রয়োগ করুন।
+6. **শূন্য শক্তি পরীক্ষা (Zero State Check):** সমস্ত সঞ্চিত বা অবশিষ্ট শক্তি সম্পূর্ণরূপে নিষ্কাশित হয়েছে তা নিশ্চিত করুন।
+7. **যাচাইকরণ (Verification):** বিচ্ছিন্নকরণ সফল হয়েছে তা নিশ্চিত করতে সরঞ্জামটি পুনরায় চালু করার চেষ্টা করুন। কাজ শুরু করার আগে নিয়ন্ত্রণগুলি 'অফ' অবস্থানে ফিরিয়ে আনুন।`,
+        source: "লকআউট-ট্যাগআউট (LOTO) নিরাপত্তা প্রোটোকল",
+        learning: ["শিল্প নিরাপত্তা মূল নীতি", "শূন্য শক্তি অবস্থা যাচাইকরণ", "গ্রুপ লকআউট পদ্ধতি"],
+        topics: ["শক্তি বিচ্ছিন্নকরণ", "নিরাপত্তা প্যাডলক", "শূন্য শক্তি পরীক্ষা"]
       }
     }
   },
@@ -437,7 +521,8 @@ export const multilingualResponses = {
       furnace: "Knowledge Search / General Learning",
       startup: "Troubleshooting / FAQ",
       electrical: "Learning Recommendation",
-      onboarding: "General Learning / FAQ"
+      onboarding: "General Learning / FAQ",
+      loto: "ਸੁਰੱਖਿਆ ਪ੍ਰੋਟੋਕੋਲ / SOP"
     },
     tools: {
       welding: "ਸਿਖਲਾਈ ਸਿਫਾਰਸ਼ ਟੂਲ ਅਤੇ ਵੈਕਟਰ ਖੋਜ",
@@ -445,7 +530,8 @@ export const multilingualResponses = {
       furnace: "ਕੰਪਨੀ ਦਸਤਾਵੇਜ਼ ਰਿਪੋਜ਼ਟਰੀ ਖੋਜ",
       startup: "FAQ ਡਾਟਾਬੇਸ ਅਤੇ ਮਾਹਰ ਜਾਣਕਾਰੀ",
       electrical: "LMS ਸਿਲੇਬਸ ਮੈਪਿੰਗ ਟੂਲ",
-      onboarding: "HRMS ਆਨਬੋਰਡਿੰਗ ਮਾਰਗ ਯੋਜਨਾਕਾਰ"
+      onboarding: "HRMS ਆਨਬੋਰਡਿੰਗ ਮਾਰਗ ਯੋਜਨਾਕਾਰ",
+      loto: "EHS ਆਈਸੋਲੇਸ਼ਨ SOP ਪਾਰਸਰ"
     },
     answers: {
       welding: {
@@ -504,6 +590,21 @@ export const multilingualResponses = {
         source: "HR ਆਨਬੋਰਡਿੰਗ ਅਤੇ ਸਿਖਲਾਈ ਨੀਤੀ ਦਿਸ਼ਾ-ਨਿਰਦੇਸ਼",
         learning: ["ਆਮ ਕੰਮ ਵਾਲੀ ਥਾਂ ਸੁਰੱਖਿਆ", "ਉਦਯੋਗਿਕ ਲੋਟੋ ਮੂਲ ਨਿਯਮ", "ਆਈਟੀ ਸੁਰੱਖਿਆ ਜਾਗਰੂਕਤਾ"],
         topics: ["ਕੰਪਨੀ ਦੀਆਂ ਨੀਤੀਆਂ", "ਆਨਬੋਰਡਿੰਗ ਚੈੱਕਲਿਸਟ", "ਸੁਰੱਖਿਆ ਸਿਖਲਾਈ"]
+      },
+      loto: {
+        ans: `ਲਾਕਆਊਟ-ਟੈਗਆਊਟ (LOTO) ਇੱਕ ਮਹੱਤਵਪੂਰਨ ਸੁਰੱਖਿਆ ਪ੍ਰੋਟੋਕੋਲ ਹੈ ਜੋ ਇਹ ਯਕੀਨੀ ਬਣਾਉਂਦਾ ਹੈ ਕਿ ਰੱਖ-ਰਖਾਅ ਜਾਂ ਸਰਵਿਸਿੰਗ ਦਾ ਕੰਮ ਪੂਰਾ ਹੋਣ ਤੋਂ ਪਹਿਲਾਂ ਮਸ਼ੀਨਾਂ ਸਹੀ ਤਰ੍ਹਾਂ ਬੰਦ ਹੋ ਜਾਣ ਅਤੇ ਦੁਬਾਰਾ ਚਾਲੂ ਨਾ ਹੋਣ।
+
+**LOTO ਪ੍ਰਕਿਰਿਆ ਦੇ ਮੁੱਖ ਪੜਾਅ:**
+1. **ਤਿਆਰੀ (Preparation):** ਸਾਰੇ ਊਰਜਾ ਸਰੋਤਾਂ (ਬਿਜਲੀ, ਮਕੈਨੀਕਲ, ਹਾਈਡ੍ਰੌਲਿਕ, ਨਿਊਮੈਟਿਕ, ਥਰਮਲ) ਦੀ ਪਛਾਣ ਕਰੋ।
+2. **ਸੂਚਨਾ (Notification):** ਸਾਰੇ ਪ੍ਰਭਾਵਿਤ ਕਰਮਚਾਰੀਆਂ ਨੂੰ ਸੂਚਿਤ ਕਰੋ ਕਿ LOTO ਪ੍ਰਕਿਰਿਆ ਸ਼ੁਰੂ ਹੋਣ ਵਾਲੀ ਹੈ।
+3. **ਸ਼ੱਟਡਾਊਨ (Shutdown):** ਮਿਆਰੀ ਨਿਯੰਤਰਣਾਂ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਉਪਕਰਨ ਬੰਦ ਕਰੋ।
+4. **ਆਈਸੋਲੇਸ਼ਨ (Isolation):** ਉਪਕਰਨ ਨੂੰ ਸਾਰੇ ਊਰਜਾ ਸਰੋਤਾਂ ਤੋਂ ਵੱਖ ਕਰੋ (ਜਿਵੇਂ ਬ੍ਰੇਕਰ ਬੰਦ ਕਰਨਾ, ਵਾਲਵ ਬੰਦ ਕਰਨਾ)।
+5. **ਲਾਕਆਊਟ/ਟੈਗਆਊਟ (Lockout/Tagout):** ਹਰੇਕ ਆਈਸੋਲੇਸ਼ਨ ਪੁਆਇੰਟ 'ਤੇ ਨਿੱਜੀ ਤਾਲੇ ਅਤੇ ਟੈਗ ਲਗਾਓ।
+6. **ਜ਼ੀਰੋ ਊਰਜਾ ਜਾਂਚ (Zero State Check):** ਯਕੀਨੀ ਬਣਾਓ ਕਿ ਸਾਰੀ ਸਟੋਰ ਕੀਤੀ ਜਾਂ ਬਾਕੀ ਬਚੀ ਊਰਜਾ ਪੂਰੀ ਤਰ੍ਹਾਂ ਖ਼ਤਮ ਹੋ ਗਈ ਹੈ।
+7. **ਪੁਸ਼ਟੀਕਰਨ (Verification):** ਆਈਸੋਲੇਸ਼ਨ ਦੀ ਪੁਸ਼ਟੀ ਕਰਨ ਲਈ ਉਪਕਰਨ ਨੂੰ ਦੁਬਾਰਾ ਚਾਲੂ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ। ਕੰਮ ਸ਼ੁਰੂ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਨਿਯੰਤਰਣ ਨੂੰ 'ਆਫ' ਸਥਿਤੀ 'ਤੇ ਵਾਪਸ ਲਿਆਓ।`,
+        source: "ਲਾਕਆਊਟ-ਟੈਗਆਊਟ (LOTO) ਸੁਰੱਖਿਆ ਪ੍ਰੋਟੋਕੋਲ",
+        learning: ["ਉਦਯੋਗਿਕ ਸੁਰੱਖਿਆ ਦੇ ਮੂਲ ਨਿਯਮ", "ਜ਼ੀਰੋ ਊਰਜਾ ਸਥਿਤੀ ਪੁਸ਼ਟੀਕਰਨ", "ਗਰੁੱਪ ਲਾਕਆਊਟ ਪ੍ਰਕਿਰਿਆਵਾਂ"],
+        topics: ["ਊਰਜਾ ਆਈਸੋਲੇਸ਼ਨ", "ਸੁਰੱਖਿਆ ਤਾਲੇ", "ਜ਼ੀਰੋ ਊਰਜਾ ਜਾਂਚ"]
       }
     }
   },
@@ -514,7 +615,8 @@ export const multilingualResponses = {
       furnace: "Knowledge Search / General Learning",
       startup: "Troubleshooting / FAQ",
       electrical: "Learning Recommendation",
-      onboarding: "General Learning / FAQ"
+      onboarding: "General Learning / FAQ",
+      loto: "భద్రతా ప్రోటోకాల్ / SOP"
     },
     tools: {
       welding: "లర్నింగ్ రికమండేషన్ మరియు వెక్టర్ శోధన సాధనం",
@@ -581,6 +683,21 @@ export const multilingualResponses = {
         source: "HR ఆన్‌బోర్డింగ్ మరియు శిక్షణ విధాన మార్గదర్శకాలు",
         learning: ["సాధారణ కార్యాలయ భద్రత", "పారిశ్రామిక లోతో బేసిక్స్", "ఐటీ సెక్యూరిటీ అవగాహన"],
         topics: ["కంపెనీ విధానాలు", "ఆన్‌బోర్డింగ్ చెక్‌లిస్ట్", "భద్రతా శిక్షణ"]
+      },
+      loto: {
+        ans: `లాకౌట్-ట్యాగౌట్ (LOTO) అనేది ఒక ముఖ్యమైన భద్రతా ప్రోటోకాల్, ఇది నిర్వహణ లేదా సర్వీసింగ్ పనులు పూర్తి కావడానికి ముందే యంత్రాలు సరిగ్గా ఆపివేయబడ్డాయని మరియు మళ్లీ ప్రారంభం కాకుండా చూసుకోవడానికి ఉపయోగించబడుతుంది.
+
+**LOTO ప్రక్రియ యొక్క ప్రధాన దశలు:**
+1. **సన్నాహం (Preparation):** అన్ని శక్తి వనరులను (విద్యుత్, యాంత్రిక, హైడ్రాలిక్, న్యూమాటిక్, థర్మల్) గుర్తించండి.
+2. **సమాచారం (Notification):** LOTO ప్రక్రియ ప్రారంభం కాబోతోందని ప్రభావిత ఉద్యోగులందరికీ తెలియజేయండి.
+3. **షట్డౌన్ (Shutdown):** ప్రామాణిక నియంత్రణలను ఉపయోగించి పరికరాలను ఆపివేయండి.
+4. **ఐసోలేషన్ (Isolation):** పరికరాన్ని అన్ని శక్తి వనరుల నుండి వేరు చేయండి (ఉదా. బ్రేకర్లు ఆఫ్ చేయడం, వాల్వ్‌లు మూసివేయడం).
+5. **లాకౌట్/ట్యాగౌట్ (Lockout/Tagout):** ప్రతి ఐసోలేషన్ పాయింట్ వద్ద వ్యక్తిగత ప్యాడ్‌లాక్‌లు మరియు ట్యాగ్‌లను అమర్చండి.
+6. **శూన్య శక్తి తనిఖీ (Zero State Check):** నిల్వ చేయబడిన లేదా మిగిలిపోయిన శక్తి పూర్తిగా తొలగించబడిందని నిర్ధారించుకోండి.
+7. **ధృవీకరణ (Verification):** ఐసోలేషన్ విజయవంతమైందని నిర్ధారించడానికి పరికరాలను మళ్లీ ప్రారంభించడానికి ప్రయత్నించండి. పని ప్రారంభించే ముందు నియంత్రణలను 'ఆఫ్' స్థానానికి మార్చండి.`,
+        source: "లాకౌట్-ట్యాగౌట్ (LOTO) భద్రతా ప్రోటోకాల్",
+        learning: ["పారిశ్రామిక భద్రత సూత్రాలు", "శూన్య శక్తి స్థితి ధృవీకరణ", "గ్రూప్ లాకౌట్ విధానాలు"],
+        topics: ["శక్తి ఐసోలేషన్", "భద్రతా తాళాలు", "శూన్య శక్తి తనిఖీ"]
       }
     }
   }
@@ -590,6 +707,26 @@ export const multilingualResponses = {
 export const detectLanguage = (text) => {
   if (!text) return "en";
   
+  const lower = text.toLowerCase();
+  if (lower.includes("hindi") || lower.includes("हिंदी") || lower.includes("हिन्दी")) {
+    return "hi";
+  }
+  if (lower.includes("marathi") || lower.includes("मराठी")) {
+    return "mr";
+  }
+  if (lower.includes("bengali") || lower.includes("বাংলা") || lower.includes("बंगाली")) {
+    return "bn";
+  }
+  if (lower.includes("punjabi") || lower.includes("ਪੰਜਾਬੀ") || lower.includes("पंजाबी")) {
+    return "pa";
+  }
+  if (lower.includes("telugu") || lower.includes("తెలుగు") || lower.includes("तेలుగు")) {
+    return "te";
+  }
+  if (lower.includes("english") || lower.includes("अंग्रेजी") || lower.includes("इंग्रजी") || lower.includes("ਅੰਗਰੇਜ਼ੀ")) {
+    return "en";
+  }
+
   // Hindi & Marathi (Devanagari): range \u0900-\u097F
   if (/[\u0900-\u097F]/.test(text)) {
     // If it contains Marathi specific words or we just fall back, Devanagari covers both.
@@ -624,26 +761,66 @@ export const detectLanguage = (text) => {
   return "en"; // Default to English
 };
 
-export const getResponseForQuery = (queryText) => {
+export const getResponseForQuery = (queryText, context) => {
   const query = queryText.toLowerCase().trim();
-  const detectedLang = detectLanguage(queryText);
+  let detectedLang = detectLanguage(queryText);
+
+  // If context is a two-letter language code, override language selection
+  if (context && typeof context === 'string' && context.length === 2) {
+    detectedLang = context;
+  }
+
   const translations = multilingualResponses[detectedLang] || multilingualResponses["en"];
   const defaults = multilingualResponses["en"];
 
-  let key = null;
-  // Match keywords across multiple scripts
-  if (query.includes("welding") || query.includes("वेल्डिंग") || query.includes("ওয়েল্ডিং") || query.includes("ਵੈਲਡਿੰਗ") || query.includes("వెల్డింగ్")) {
-    key = "welding";
-  } else if (query.includes("summarize") || query.includes("manual") || query.includes("ਸਾਰ") || query.includes("सारांश") || query.includes("সংক্ষিপ্ত") || query.includes("సారాంశం")) {
-    key = "manual";
-  } else if (query.includes("blast furnace") || query.includes("operation") || query.includes("ब्लास्ट फर्नेस") || query.includes("ਧਮਨ ਭੱਠੀ") || query.includes("ধমন ভट्टी") || query.includes("ఫర్నేస్")) {
-    key = "furnace";
-  } else if (query.includes("startup") || query.includes("mistakes") || query.includes("ਗਲਤੀਆਂ") || query.includes("गलतियां") || query.includes("ভুল") || query.includes("తప్పులు")) {
-    key = "startup";
-  } else if (query.includes("electrical") || query.includes("बिजली") || query.includes("ਇਲੈਕਟ੍ਰੀਕਲ") || query.includes("বৈদ্যুতিক") || query.includes("ఎలక్ట్రికల్")) {
-    key = "electrical";
-  } else if (query.includes("begin") || query.includes("new employee") || query.includes("learning journey") || query.includes("ਸ਼ੁਰੂ") || query.includes("शुरू") || query.includes("শুরু") || query.includes("ప్రారంభ")) {
-    key = "onboarding";
+  const extractKey = (txt) => {
+    if (!txt) return null;
+    const q = txt.toLowerCase().trim();
+    if (q.includes("welding") || q.includes("वेल्डिंग") || q.includes("ওয়েল্ডিং") || q.includes("ਵੈਲਡਿੰਗ") || q.includes("వెల్డింగ్")) {
+      return "welding";
+    } else if (q.includes("summarize") || q.includes("manual") || q.includes("ਸਾਰ") || q.includes("सारांश") || q.includes("সংক্ষিপ্ত") || q.includes("సారాంశం")) {
+      return "manual";
+    } else if (q.includes("blast furnace") || q.includes("operation") || q.includes("ब्लास्ट फर्नेस") || q.includes("ਧਮਨ ਭੱਠੀ") || q.includes("ধমন ভट्टी") || q.includes("ఫర్నేస్")) {
+      return "furnace";
+    } else if (q.includes("startup") || q.includes("mistakes") || q.includes("ਗਲਤੀਆਂ") || q.includes("गलतियां") || q.includes("ভুল") || q.includes("తప్పులు")) {
+      return "startup";
+    } else if (q.includes("electrical") || q.includes("बिजली") || q.includes("ਇਲੈਕਟ੍ਰੀਕਲ") || q.includes("বৈद्यੁতিক") || q.includes("ఎలక్ట్రికల్")) {
+      return "electrical";
+    } else if (q.includes("begin") || q.includes("new employee") || q.includes("learning journey") || q.includes("onboarding") || q.includes("roadmap") || q.includes("ऑनबोर्डिंग") || q.includes("रोडमैप") || q.includes("ਔਨਬੋਰਡਿੰਗ") || q.includes("రోడ్‌మ్యాప్") || q.includes("ਸ਼ੁਰੂ") || q.includes("शुरू") || q.includes("ਸ਼ੁਰੂ") || q.includes("ప్రారంభ")) {
+      return "onboarding";
+    } else if (q.includes("machine learning") || q.includes("ml")) {
+      return "ml";
+    } else if (q.includes("loto") || q.includes("lockout") || q.includes("tagout") || q.includes("लोटो") || q.includes("लॉकाउट") || q.includes("ਲੋਟੋ") || q.includes("లోటో")) {
+      return "loto";
+    }
+    return null;
+  };
+
+  let key = extractKey(query);
+
+  // If no key matches but this is a language request, extract topic from the context (previous queries)
+  if (!key && context) {
+    const isLanguageQuery = query.includes("hindi") || query.includes("हिंदी") || query.includes("हिन्दी") ||
+                            query.includes("marathi") || query.includes("मराठी") ||
+                            query.includes("bengali") || query.includes("বাংলা") || query.includes("बंगाली") ||
+                            query.includes("punjabi") || query.includes("ਪੰਜਾਬੀ") || query.includes("पंजाबी") ||
+                            query.includes("telugu") || query.includes("తెలుగు") || query.includes("తేలుగు") ||
+                            query.includes("english") || query.includes("अंग्रेजी") || query.includes("इंग्रजी") || query.includes("ਅੰਗਰੇਜ਼ੀ") ||
+                            query.includes("translate") || query.includes("भाषा") || query.includes("अनुवाद") || query.includes("ভাষান্তর") || query.includes("ਅਨੁਵਾਦ") || query.includes("అనువాదం");
+    if (isLanguageQuery) {
+      if (Array.isArray(context)) {
+        // search backwards for the first query that matches a topic key
+        for (let i = context.length - 1; i >= 0; i--) {
+          const k = extractKey(context[i]);
+          if (k) {
+            key = k;
+            break;
+          }
+        }
+      } else if (typeof context === 'string' && context.length > 2) {
+        key = extractKey(context);
+      }
+    }
   }
 
   if (key) {
@@ -679,13 +856,15 @@ export const getResponseForQuery = (queryText) => {
 - "Explain Lockout-Tagout."
 - "Explain blast furnace operation."`;
       default:
-        return `I found information related to your query in our L&D knowledge base. To get the best results, you can try one of our suggested prompts:
-- "Explain Lockout-Tagout."
-- "Recommend training for a maintenance engineer."
-- "Summarize this SOP."
-- "What PPE is required before furnace maintenance?"
-- "Explain blast furnace operation."
-- "How should a new employee begin learning?"`;
+        return `I found matches in the Mentora L&D Knowledge Base, but I couldn't find a direct answer to your exact question.
+
+To get the most relevant details, you can try asking about one of our core topics:
+* **Lockout-Tagout (LOTO)** safety procedures
+* **Blast Furnace Operations** and thermal safety checks
+* **Welding Techniques** and dielectric testing
+* **Onboarding Roadmap** for new maintenance engineers
+
+Alternatively, try uploading a manual or SOP document using the attachment icon below, and I will summarize it or answer questions directly from it!`;
     }
   };
 

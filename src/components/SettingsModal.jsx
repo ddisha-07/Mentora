@@ -1,22 +1,628 @@
-import React, { useState } from "react";
-import { X, Settings, Sliders, Cpu, Save } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { X, Settings, Sliders, Cpu, Save, User, Sparkles, Key } from "lucide-react";
 
-export default function SettingsModal({ isOpen, onClose }) {
-  const [model, setModel] = useState("Kai-Pro-v2 (Agentic)");
-  const [temperature, setTemperature] = useState(0.2);
-  const [chunkSize, setChunkSize] = useState(500);
-  const [chunkOverlap, setChunkOverlap] = useState(50);
-  const [systemPrompt, setSystemPrompt] = useState(
-    "You are Kai, an Agentic AI L&D assistant of the Mentora platform. Always search the knowledge base before answering, cite source documents, recommend next learning steps, and respond in the user's detected language."
+// Theme and Accent helpers
+const applyTheme = (appearance) => {
+  const root = document.documentElement;
+  if (appearance === "Light") {
+    root.style.setProperty("--bg-app", "#F8FAFC");
+    root.style.setProperty("--bg-sidebar", "#FFFFFF");
+    root.style.setProperty("--bg-card", "#FFFFFF");
+    root.style.setProperty("--bg-input", "#F1F5F9");
+    root.style.setProperty("--text-primary", "#0F172A");
+    root.style.setProperty("--text-secondary", "#475569");
+    root.style.setProperty("--text-muted", "#94A3B8");
+    root.style.setProperty("--border", "#E2E8F0");
+    root.style.setProperty("--border-hover", "#CBD5E1");
+  } else {
+    // Dark (default)
+    root.style.setProperty("--bg-app", "#090D1A");
+    root.style.setProperty("--bg-sidebar", "#090D1A");
+    root.style.setProperty("--bg-card", "rgba(13, 20, 38, 0.4)");
+    root.style.setProperty("--bg-input", "#111625");
+    root.style.setProperty("--text-primary", "#FFFFFF");
+    root.style.setProperty("--text-secondary", "#8E9BAE");
+    root.style.setProperty("--text-muted", "#5F6E80");
+    root.style.setProperty("--border", "rgba(255, 255, 255, 0.08)");
+    root.style.setProperty("--border-hover", "rgba(255, 255, 255, 0.16)");
+  }
+};
+
+const applyAccentColor = (color) => {
+  const root = document.documentElement;
+  if (color === "Green") {
+    root.style.setProperty("--accent", "#10B981");
+    root.style.setProperty("--accent-hover", "#059669");
+    root.style.setProperty("--accent-light", "#34D399");
+    root.style.setProperty("--accent-gradient", "linear-gradient(135deg, #10B981 0%, #059669 100%)");
+  } else if (color === "Blue") {
+    root.style.setProperty("--accent", "#2563EB");
+    root.style.setProperty("--accent-hover", "#1D4ED8");
+    root.style.setProperty("--accent-light", "#60A5FA");
+    root.style.setProperty("--accent-gradient", "linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)");
+  } else if (color === "Orange") {
+    root.style.setProperty("--accent", "#EA580C");
+    root.style.setProperty("--accent-hover", "#D97706");
+    root.style.setProperty("--accent-light", "#FDBA74");
+    root.style.setProperty("--accent-gradient", "linear-gradient(135deg, #EA580C 0%, #D97706 100%)");
+  } else if (color === "Rose") {
+    root.style.setProperty("--accent", "#E11D48");
+    root.style.setProperty("--accent-hover", "#BE123C");
+    root.style.setProperty("--accent-light", "#FDA4AF");
+    root.style.setProperty("--accent-gradient", "linear-gradient(135deg, #E11D48 0%, #BE123C 100%)");
+  } else {
+    // Purple (default)
+    root.style.setProperty("--accent", "#4F46E5");
+    root.style.setProperty("--accent-hover", "#5850EC");
+    root.style.setProperty("--accent-light", "#C084FC");
+    root.style.setProperty("--accent-gradient", "linear-gradient(135deg, #4F46E5 0%, #5850EC 100%)");
+  }
+};
+
+// Premium Custom Select Component
+function CustomSelect({ value, onChange, options, align = "right" }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const selectedOption = options.find(opt => 
+    typeof opt === "object" ? opt.value === value : opt === value
   );
+
+  const displayLabel = typeof selectedOption === "object" ? selectedOption.label : selectedOption;
+  const displayColor = typeof selectedOption === "object" ? selectedOption.colorCircle : null;
+
+  return (
+    <div ref={dropdownRef} style={{ position: "relative", display: "inline-block" }}>
+      {/* Trigger Button */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          background: "transparent",
+          border: "none",
+          color: "var(--text-primary)",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          fontSize: "14px",
+          fontWeight: "600",
+          outline: "none",
+          padding: "6px 12px",
+          borderRadius: "6px",
+          transition: "background 0.2s"
+        }}
+        className="custom-select-trigger"
+      >
+        {displayColor && (
+          <span style={{
+            width: "8px",
+            height: "8px",
+            borderRadius: "50%",
+            backgroundColor: displayColor,
+            display: "inline-block"
+          }} />
+        )}
+        <span>{displayLabel}</span>
+        <span style={{ 
+          fontSize: "9px", 
+          transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", 
+          transition: "transform 0.2s",
+          opacity: 0.7 
+        }}>▼</span>
+      </button>
+
+      {/* Floating Options Menu */}
+      {isOpen && (
+        <div style={{
+          position: "absolute",
+          top: "100%",
+          right: align === "right" ? 0 : "auto",
+          left: align === "left" ? 0 : "auto",
+          marginTop: "4px",
+          background: "var(--bg-input)",
+          backdropFilter: "blur(24px)",
+          border: "1px solid var(--border)",
+          borderRadius: "8px",
+          boxShadow: "var(--shadow-md)",
+          zIndex: 1100,
+          minWidth: "160px",
+          padding: "4px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "2px",
+          maxHeight: "240px",
+          overflowY: "auto"
+        }}>
+          {options.map((opt) => {
+            const val = typeof opt === "object" ? opt.value : opt;
+            const label = typeof opt === "object" ? opt.label : opt;
+            const color = typeof opt === "object" ? opt.colorCircle : null;
+            const isSelected = val === value;
+
+            return (
+              <button
+                key={val}
+                type="button"
+                onClick={() => {
+                  onChange(val);
+                  setIsOpen(false);
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  width: "100%",
+                  padding: "0.5rem 0.75rem",
+                  borderRadius: "6px",
+                  border: "none",
+                  background: isSelected ? "rgba(139, 92, 246, 0.12)" : "transparent",
+                  color: isSelected ? "var(--accent-light)" : "var(--text-primary)",
+                  fontSize: "13px",
+                  fontWeight: isSelected ? "700" : "500",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  transition: "background 0.2s, color 0.2s"
+                }}
+                className="custom-select-option"
+              >
+                {color && (
+                  <span style={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    backgroundColor: color,
+                    display: "inline-block"
+                  }} />
+                )}
+                <span style={{ flex: 1 }}>{label}</span>
+                {isSelected && <span style={{ fontSize: "10px", color: "var(--accent-light)" }}>✔</span>}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function SettingsModal({ isOpen, onClose, user, onSaveProfile }) {
+  const [activeTab, setActiveTab] = useState("general");
+
+  // General Tab States
+  const [appearance, setAppearance] = useState("Dark");
+  const [contrast, setContrast] = useState("Standard");
+  const [accentColor, setAccentColor] = useState("Purple");
+  const [language, setLanguage] = useState("Auto-detect");
+  const [higherIntelligence, setHigherIntelligence] = useState(true);
+  const [enableDictation, setEnableDictation] = useState(true);
+  const [separateVoice, setSeparateVoice] = useState(false);
+
+  // Personalization Tab States
+  const [baseStyle, setBaseStyle] = useState("Friendly");
+  const [warm, setWarm] = useState("Default");
+  const [enthusiastic, setEnthusiastic] = useState("Default");
+  const [headersLists, setHeadersLists] = useState("Default");
+  const [emoji, setEmoji] = useState("Default");
+  const [fastAnswers, setFastAnswers] = useState(true);
+  const [customInstructions, setCustomInstructions] = useState("");
+  const [nickname, setNickname] = useState("Disha");
+  const [occupation, setOccupation] = useState("Student");
+  const [moreAboutYou, setMoreAboutYou] = useState("");
+  const [enableMemory, setEnableMemory] = useState(true);
+
+  // Apply visual theme / accents dynamically
+  useEffect(() => {
+    if (isOpen) {
+      applyTheme(appearance);
+      applyAccentColor(accentColor);
+    }
+  }, [appearance, accentColor, isOpen]);
 
   if (!isOpen) return null;
 
   const handleSave = (e) => {
     e.preventDefault();
-    alert("Settings saved successfully! Ingestion variables synced.");
+    alert("Settings saved successfully! Customizations applied globally.");
     onClose();
   };
+
+  // Custom Toggle switch component
+  const renderToggle = (checkedState, setCheckedState) => {
+    const unselectedBg = appearance === "Light" ? "#CBD5E1" : "#3F3F46";
+    return (
+      <label style={{ position: "relative", display: "inline-block", width: "42px", height: "24px", cursor: "pointer", flexShrink: 0 }}>
+        <input 
+          type="checkbox" 
+          checked={checkedState} 
+          onChange={(e) => setCheckedState(e.target.checked)} 
+          style={{ opacity: 0, width: 0, height: 0 }} 
+        />
+        <span style={{
+          position: "absolute",
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: checkedState ? "var(--accent)" : unselectedBg,
+          borderRadius: "24px",
+          transition: "background-color 0.2s"
+        }} />
+        <span style={{
+          position: "absolute",
+          left: checkedState ? "22px" : "4px",
+          bottom: "4px",
+          width: "16px",
+          height: "16px",
+          backgroundColor: "white",
+          borderRadius: "50%",
+          transition: "left 0.2s"
+        }} />
+      </label>
+    );
+  };
+
+  // Render functions for individual tabs (removing redundant headers)
+  const renderGeneralTab = () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+      
+      {/* Appearance select */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Appearance</span>
+        </div>
+        <CustomSelect
+          value={appearance}
+          onChange={setAppearance}
+          options={[
+            { value: "Dark", label: "Dark" },
+            { value: "Light", label: "Light" }
+          ]}
+        />
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* Contrast select */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Contrast</span>
+        </div>
+        <CustomSelect
+          value={contrast}
+          onChange={setContrast}
+          options={[
+            { value: "Standard", label: "Standard" },
+            { value: "Increased", label: "Increased" }
+          ]}
+        />
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* Accent Color select */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Accent color</span>
+        </div>
+        <CustomSelect
+          value={accentColor}
+          onChange={setAccentColor}
+          options={[
+            { value: "Purple", label: "Purple", colorCircle: "#C084FC" },
+            { value: "Blue", label: "Blue", colorCircle: "#60A5FA" },
+            { value: "Green", label: "Green", colorCircle: "#34D399" },
+            { value: "Orange", label: "Orange", colorCircle: "#FDBA74" },
+            { value: "Rose", label: "Rose", colorCircle: "#FDA4AF" }
+          ]}
+        />
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* Language select */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Language</span>
+        </div>
+        <CustomSelect
+          value={language}
+          onChange={setLanguage}
+          options={[
+            { value: "Auto-detect", label: "Auto-detect" },
+            { value: "English", label: "English" },
+            { value: "Spanish", label: "Spanish" },
+            { value: "French", label: "French" },
+            { value: "German", label: "German" },
+            { value: "Hindi", label: "Hindi" }
+          ]}
+        />
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* Higher Intelligence */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ marginRight: "1rem" }}>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Higher intelligence</div>
+          <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
+            Kai can automatically use a higher intelligence setting when you ask a complex question.
+          </div>
+        </div>
+        {renderToggle(higherIntelligence, setHigherIntelligence)}
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* Enable Dictation */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ marginRight: "1rem" }}>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Enable Dictation</div>
+          <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
+            Use dictation in the chat composer.
+          </div>
+        </div>
+        {renderToggle(enableDictation, setEnableDictation)}
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* Separate Voice */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ marginRight: "1rem" }}>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Separate Voice</div>
+          <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
+            Keep Kai Voice in a separate full screen, without real time transcripts and visuals.
+          </div>
+        </div>
+        {renderToggle(separateVoice, setSeparateVoice)}
+      </div>
+
+    </div>
+  );
+
+  const renderPersonalizationTab = () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+      
+      {/* Base Style & Tone */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Base style and tone</div>
+          <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
+            Set the style and tone of how Kai responds to you. This doesn't impact Kai's capabilities.
+          </div>
+        </div>
+        <CustomSelect
+          value={baseStyle}
+          onChange={setBaseStyle}
+          options={[
+            { value: "Friendly", label: "Friendly" },
+            { value: "Professional", label: "Professional" },
+            { value: "Concise", label: "Concise" },
+            { value: "Gen Z", label: "Gen Z" }
+          ]}
+        />
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* Characteristics Header */}
+      <div>
+        <span style={{ fontSize: "14px", fontWeight: "700", color: "var(--text-primary)", fontFamily: "var(--font-title)" }}>Characteristics</span>
+        <p style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Choose additional customizations on top of your base style and tone.</p>
+      </div>
+
+      {/* Warm select */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingLeft: "0.5rem" }}>
+        <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)" }}>Warm</span>
+        <CustomSelect
+          value={warm}
+          onChange={setWarm}
+          options={["Default", "High", "Low"]}
+        />
+      </div>
+
+      {/* Enthusiastic select */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingLeft: "0.5rem" }}>
+        <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)" }}>Enthusiastic</span>
+        <CustomSelect
+          value={enthusiastic}
+          onChange={setEnthusiastic}
+          options={["Default", "High", "Low"]}
+        />
+      </div>
+
+      {/* Headers & Lists select */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingLeft: "0.5rem" }}>
+        <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)" }}>Headers & Lists</span>
+        <CustomSelect
+          value={headersLists}
+          onChange={setHeadersLists}
+          options={["Default", "Always", "Never"]}
+        />
+      </div>
+
+      {/* Emoji select */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingLeft: "0.5rem" }}>
+        <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)" }}>Emoji</span>
+        <CustomSelect
+          value={emoji}
+          onChange={setEmoji}
+          options={["Default", "Frequently", "Rarely"]}
+        />
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* Fast Answers Toggle */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ marginRight: "1rem" }}>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Fast answers</div>
+          <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
+            Kai can sometimes use its general knowledge to give fast, in-depth answers. These aren't personalized and don't use your memory.
+          </div>
+        </div>
+        {renderToggle(fastAnswers, setFastAnswers)}
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* Custom Instructions */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+        <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Custom instructions</span>
+        <textarea
+          value={customInstructions}
+          onChange={(e) => setCustomInstructions(e.target.value)}
+          rows="2"
+          style={{
+            width: "100%",
+            padding: "0.6rem",
+            borderRadius: "8px",
+            border: "1px solid var(--border)",
+            background: "var(--bg-input)",
+            fontSize: "13px",
+            outline: "none",
+            resize: "none",
+            color: "var(--text-primary)",
+            lineHeight: "1.4"
+          }}
+        />
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* User Info Fields */}
+      <div style={{ display: "flex", gap: "0.75rem" }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+          <label style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)" }}>Nickname</label>
+          <input
+            type="text"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            style={{ width: "100%", padding: "0.5rem", borderRadius: "8px", border: "1px solid var(--border)", background: "var(--bg-input)", color: "var(--text-primary)", fontSize: "13px", outline: "none" }}
+          />
+        </div>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+          <label style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)" }}>Occupation</label>
+          <input
+            type="text"
+            value={occupation}
+            onChange={(e) => setOccupation(e.target.value)}
+            style={{ width: "100%", padding: "0.5rem", borderRadius: "8px", border: "1px solid var(--border)", background: "var(--bg-input)", color: "var(--text-primary)", fontSize: "13px", outline: "none" }}
+          />
+        </div>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+        <label style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)" }}>More about you</label>
+        <input
+          type="text"
+          value={moreAboutYou}
+          onChange={(e) => setMoreAboutYou(e.target.value)}
+          placeholder="Interests, values, or preferences to keep in mind"
+          style={{ width: "100%", padding: "0.5rem", borderRadius: "8px", border: "1px solid var(--border)", background: "var(--bg-input)", color: "var(--text-primary)", fontSize: "13px", outline: "none" }}
+        />
+      </div>
+      <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+      {/* Memory Header */}
+      <div>
+        <span style={{ fontSize: "14px", fontWeight: "700", color: "var(--text-primary)", fontFamily: "var(--font-title)" }}>Memory</span>
+      </div>
+
+      {/* Enable Memory Toggle */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ marginRight: "1rem" }}>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Enable memory</div>
+          <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
+            Let Kai personalize your experience based on your chats, files, and connected apps. <span style={{ color: "var(--accent-light)", cursor: "pointer" }}>Learn more</span>
+          </div>
+        </div>
+        {renderToggle(enableMemory, setEnableMemory)}
+      </div>
+
+      {/* Memory summary Row */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Memory summary</div>
+          <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
+            View a brief overview of what Kai has learned about you. You can still view and manage your old <span style={{ textDecoration: "underline", cursor: "pointer" }}>saved memories</span>.
+          </div>
+        </div>
+        <button 
+          type="button" 
+          onClick={() => alert("Simulated memory manager opened.")}
+          style={{ background: "rgba(139, 92, 246, 0.08)", border: "1px solid var(--border)", color: "var(--text-primary)", padding: "0.4rem 1rem", borderRadius: "99px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+        >
+          Manage
+        </button>
+      </div>
+
+    </div>
+  );
+
+
+
+  const renderAccountTab = () => {
+    const displayName = user ? user.name : "D Disha Shree";
+    const displayEmail = user ? user.email : "ddishashree2006@gmail.com";
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        
+        {/* Name Display */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: "13px", color: "var(--text-secondary)" }}>Name</div>
+            <div style={{ fontSize: "15px", fontWeight: "600", color: "var(--text-primary)", marginTop: "2px" }}>{displayName}</div>
+          </div>
+          <button
+            type="button"
+            onClick={() => alert("To change your name, click your profile card in the sidebar footer.")}
+            style={{ background: "transparent", border: "1px solid var(--border)", color: "var(--text-primary)", padding: "0.4rem 0.85rem", borderRadius: "8px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+          >
+            Edit
+          </button>
+        </div>
+        <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+        {/* Email Display */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: "13px", color: "var(--text-secondary)" }}>Email</div>
+            <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-secondary)", marginTop: "2px" }}>{displayEmail}</div>
+          </div>
+        </div>
+        <hr style={{ border: "none", borderTop: "1px solid var(--border)" }} />
+
+
+
+        {/* Delete Account */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>Delete account</div>
+            <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
+              Permanently delete your account and all associated data.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              if (confirm("Are you sure you want to permanently delete your account? This action is irreversible.")) {
+                alert("Account deleted.");
+              }
+            }}
+            style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.3)", color: "var(--error)", padding: "0.4rem 1rem", borderRadius: "99px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+          >
+            Delete
+          </button>
+        </div>
+
+      </div>
+    );
+  };
+
+  const sidebarBg = appearance === "Light" ? "rgba(0, 0, 0, 0.02)" : "rgba(0, 0, 0, 0.2)";
 
   return (
     <div style={{
@@ -35,142 +641,177 @@ export default function SettingsModal({ isOpen, onClose }) {
     }}>
       <div className="card-dark slide-up" style={{
         width: "100%",
-        maxWidth: "550px",
-        maxHeight: "90vh",
+        maxWidth: "760px",
+        height: "560px",
         display: "flex",
-        flexDirection: "column",
-        overflow: "hidden"
+        flexDirection: "row",
+        overflow: "hidden",
+        backgroundColor: "var(--bg-card)",
+        color: "var(--text-primary)",
+        borderColor: "var(--border)"
       }}>
-        {/* Header */}
-        <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Settings style={{ color: "var(--accent)" }} size={20} />
-            <h2 style={{ fontSize: "18px", fontWeight: "700", fontFamily: "var(--font-title)" }}>System Configuration</h2>
+        
+        {/* Sidebar Nav */}
+        <div style={{
+          width: "220px",
+          backgroundColor: sidebarBg,
+          borderRight: "1px solid var(--border)",
+          padding: "1.25rem 0.75rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.25rem",
+          flexShrink: 0
+        }}>
+          <div style={{ fontSize: "12px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", paddingLeft: "0.6rem", marginBottom: "0.5rem", fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>
+            Settings
           </div>
+          
           <button 
-            onClick={onClose}
-            style={{ background: "transparent", border: "none", cursor: "pointer", color: "var(--text-secondary)" }}
+            type="button"
+            onClick={() => setActiveTab("general")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.65rem",
+              padding: "0.6rem 0.85rem",
+              borderRadius: "8px",
+              background: activeTab === "general" ? "rgba(139, 92, 246, 0.12)" : "transparent",
+              border: "none",
+              color: activeTab === "general" ? "var(--text-primary)" : "var(--text-secondary)",
+              fontSize: "14px",
+              fontWeight: "600",
+              cursor: "pointer",
+              textAlign: "left",
+              width: "100%"
+            }}
           >
-            <X size={18} />
+            <Settings size={16} /> General
+          </button>
+          
+          <button 
+            type="button"
+            onClick={() => setActiveTab("personalization")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.65rem",
+              padding: "0.6rem 0.85rem",
+              borderRadius: "8px",
+              background: activeTab === "personalization" ? "rgba(139, 92, 246, 0.12)" : "transparent",
+              border: "none",
+              color: activeTab === "personalization" ? "var(--text-primary)" : "var(--text-secondary)",
+              fontSize: "14px",
+              fontWeight: "600",
+              cursor: "pointer",
+              textAlign: "left",
+              width: "100%"
+            }}
+          >
+            <Sparkles size={16} /> Personalization
+          </button>
+          
+          <button 
+            type="button"
+            onClick={() => setActiveTab("account")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.65rem",
+              padding: "0.6rem 0.85rem",
+              borderRadius: "8px",
+              background: activeTab === "account" ? "rgba(139, 92, 246, 0.12)" : "transparent",
+              border: "none",
+              color: activeTab === "account" ? "var(--text-primary)" : "var(--text-secondary)",
+              fontSize: "14px",
+              fontWeight: "600",
+              cursor: "pointer",
+              textAlign: "left",
+              width: "100%"
+            }}
+          >
+            <User size={16} /> Account
           </button>
         </div>
 
-        {/* Content form */}
-        <form onSubmit={handleSave} style={{ padding: "1.5rem", overflowY: "auto", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        {/* Content Panel */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
           
-          {/* Model selection */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-            <label style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "var(--font-title)" }}>
-              <Cpu size={14} /> Cognitive Model Preset
-            </label>
-            <select
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "0.6rem",
-                borderRadius: "8px",
-                border: "1px solid var(--border)",
-                background: "var(--bg-app)",
-                fontSize: "14px",
-                outline: "none"
-              }}
+          {/* Sticky Header with Title and Close button */}
+          <div style={{ 
+            padding: "1rem 1.5rem", 
+            borderBottom: "1px solid var(--border)", 
+            display: "flex", 
+            justifyContent: "space-between", 
+            alignItems: "center",
+            height: "56px",
+            flexShrink: 0
+          }}>
+            <h2 style={{ 
+              fontSize: "16px", 
+              fontWeight: "700", 
+              fontFamily: "var(--font-title)", 
+              color: "var(--text-primary)", 
+              margin: 0,
+              textTransform: "capitalize"
+            }}>
+              {activeTab} Settings
+            </h2>
+            <button 
+              onClick={onClose}
+              style={{ background: "transparent", border: "none", cursor: "pointer", color: "var(--text-secondary)", display: "flex", alignItems: "center" }}
             >
-              <option value="Kai-Pro-v2 (Agentic)">Kai-Pro-v2 (Agentic LLM)</option>
-              <option value="GPT-4o-Turbo">GPT-4o-Turbo (Generic Core)</option>
-              <option value="Claude-3.5-Sonnet">Claude-3.5-Sonnet (Reasoning Engine)</option>
-            </select>
-          </div>
-
-          {/* Temperature Slider */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)", fontFamily: "var(--font-title)" }}>
-              <label>Temperature (Creativity Parameter)</label>
-              <span style={{ color: "var(--accent-light)" }}>{temperature}</span>
-            </div>
-            <input 
-              type="range" 
-              min="0" 
-              max="1" 
-              step="0.05" 
-              value={temperature}
-              onChange={(e) => setTemperature(parseFloat(e.target.value))}
-              style={{ width: "100%", cursor: "pointer", accentColor: "var(--accent)" }}
-            />
-            <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>
-              Lower temperatures focus output on specific context facts.
-            </span>
-          </div>
-
-          {/* RAG Chunk size slider */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)", fontFamily: "var(--font-title)" }}>
-              <label>RAG Index Chunk Size</label>
-              <span style={{ color: "var(--accent-light)" }}>{chunkSize} tokens</span>
-            </div>
-            <input 
-              type="range" 
-              min="100" 
-              max="1500" 
-              step="50" 
-              value={chunkSize}
-              onChange={(e) => setChunkSize(parseInt(e.target.value, 10))}
-              style={{ width: "100%", cursor: "pointer", accentColor: "var(--accent)" }}
-            />
-          </div>
-
-          {/* RAG Chunk overlap slider */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)", fontFamily: "var(--font-title)" }}>
-              <label>Chunk Overlap Margin</label>
-              <span style={{ color: "var(--accent-light)" }}>{chunkOverlap} tokens</span>
-            </div>
-            <input 
-              type="range" 
-              min="10" 
-              max="200" 
-              step="10" 
-              value={chunkOverlap}
-              onChange={(e) => setChunkOverlap(parseInt(e.target.value, 10))}
-              style={{ width: "100%", cursor: "pointer", accentColor: "var(--accent)" }}
-            />
-          </div>
-
-          {/* System prompt instruction */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-            <label style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "var(--font-title)" }}>
-              <Sliders size={14} /> System Directive (System Prompt)
-            </label>
-            <textarea
-              value={systemPrompt}
-              onChange={(e) => setSystemPrompt(e.target.value)}
-              rows="3"
-              style={{
-                width: "100%",
-                padding: "0.6rem",
-                borderRadius: "8px",
-                border: "1px solid var(--border)",
-                background: "var(--bg-app)",
-                fontSize: "13px",
-                outline: "none",
-                resize: "none",
-                lineHeight: "1.4"
-              }}
-            />
-          </div>
-
-          {/* Buttons footer */}
-          <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem", marginTop: "0.5rem", display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
-            <button type="button" onClick={onClose} className="btn-outline" style={{ padding: "0.5rem 1rem", fontSize: "14px" }}>
-              Cancel
-            </button>
-            <button type="submit" className="btn-accent" style={{ padding: "0.5rem 1rem", fontSize: "14px", boxShadow: "none" }}>
-              <Save size={16} /> Save Changes
+              <X size={18} />
             </button>
           </div>
 
-        </form>
+          {/* Form / Scroll area */}
+          <form onSubmit={handleSave} style={{ 
+            flex: 1, 
+            overflowY: "auto", 
+            padding: "1.5rem 2rem 2rem 2rem",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between"
+          }}>
+            <div style={{ flex: 1 }}>
+              {activeTab === "general" && renderGeneralTab()}
+              {activeTab === "personalization" && renderPersonalizationTab()}
+              {activeTab === "account" && renderAccountTab()}
+            </div>
+
+            {/* Buttons Footer */}
+            <div style={{ 
+              borderTop: "1px solid var(--border)", 
+              paddingTop: "1.25rem", 
+              marginTop: "1.5rem", 
+              display: "flex", 
+              justifyContent: "flex-end", 
+              gap: "0.5rem",
+              flexShrink: 0
+            }}>
+              <button type="button" onClick={onClose} className="btn-outline" style={{ padding: "0.5rem 1rem", fontSize: "14px" }}>
+                Cancel
+              </button>
+              <button type="submit" className="btn-accent" style={{ padding: "0.5rem 1rem", fontSize: "14px", display: "flex", alignItems: "center", gap: "0.35rem", boxShadow: "none" }}>
+                <Save size={16} /> Save Changes
+              </button>
+            </div>
+          </form>
+
+        </div>
+
       </div>
+      
+      {/* Visual overrides to custom dropdown styles */}
+      <style>{`
+        .custom-select-trigger:hover {
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+        .custom-select-option:hover {
+          background-color: rgba(139, 92, 246, 0.08) !important;
+          color: var(--accent-light) !important;
+        }
+      `}</style>
     </div>
   );
 }

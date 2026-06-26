@@ -11,6 +11,61 @@ export default function UploadDocs() {
   const [docMessages, setDocMessages] = useState([]);
   const [docInput, setDocInput] = useState("");
 
+  const renderMarkdown = (text) => {
+    if (!text) return "";
+    let html = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    const lines = html.split("\n");
+    let inList = false;
+    const formattedLines = [];
+    lines.forEach((line) => {
+      const trimmed = line.trim();
+      const headerMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+      const listMatch = trimmed.match(/^[\*\-]\s+(.*)$/);
+      if (headerMatch) {
+        if (inList) {
+          formattedLines.push("</ul>");
+          inList = false;
+        }
+        formattedLines.push(`<strong>${headerMatch[2]}</strong>`);
+      } else if (listMatch) {
+        if (!inList) {
+          formattedLines.push("<ul style='padding-left: 1.25rem; margin: 0.25rem 0; list-style-type: disc;'>");
+          inList = true;
+        }
+        formattedLines.push(`<li style='margin-bottom: 0.15rem;'>${listMatch[1]}</li>`);
+      } else {
+        if (inList) {
+          formattedLines.push("</ul>");
+          inList = false;
+        }
+        formattedLines.push(line);
+      }
+    });
+    if (inList) {
+      formattedLines.push("</ul>");
+    }
+    
+    let finalHtml = "";
+    for (let i = 0; i < formattedLines.length; i++) {
+      const line = formattedLines[i];
+      if (line.startsWith("<ul") || line.startsWith("<li") || line.startsWith("</ul>")) {
+        finalHtml += line;
+      } else {
+        const nextLine = formattedLines[i + 1];
+        const needsBr = i < formattedLines.length - 1 && 
+                        !line.startsWith("<ul") && !line.startsWith("<li") && !line.startsWith("</ul>") &&
+                        nextLine !== undefined &&
+                        !nextLine.startsWith("<ul") && !nextLine.startsWith("<li") && !nextLine.startsWith("</ul>");
+        finalHtml += line + (needsBr ? "<br />" : "");
+      }
+    }
+    return finalHtml;
+  };
+
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -239,7 +294,6 @@ export default function UploadDocs() {
               Queries in this pane are scoped specifically to the context of <strong>{uploadedFile.name}</strong>.
             </p>
 
-            {/* Chat Box Scroll Container */}
             <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "0.75rem", padding: "0.5rem", marginBottom: "1rem" }}>
               {docMessages.map((msg, idx) => (
                 <div 
@@ -255,11 +309,14 @@ export default function UploadDocs() {
                     borderBottomRightRadius: msg.sender === "user" ? "2px" : "12px",
                     borderBottomLeftRadius: msg.sender === "user" ? "12px" : "2px",
                     fontSize: "0.85rem",
-                    whiteSpace: "pre-wrap",
                     lineHeight: "1.4"
                   }}
                 >
-                  {msg.text}
+                  {msg.sender === "user" ? (
+                    <div style={{ whiteSpace: "pre-wrap" }}>{msg.text}</div>
+                  ) : (
+                    <div dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.text) }} />
+                  )}
                 </div>
               ))}
             </div>

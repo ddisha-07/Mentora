@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Dancing+Script:wght@400..700&display=swap');
 
 :root {
   --bg-app: #090D1A;
@@ -29,6 +29,7 @@
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-cursive: 'Dancing Script', cursive;
 }
 
 * {
@@ -198,6 +199,80 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(192, 132, 252, 0.1);
 }
+
+/* Button Utilities matching theme */
+.btn-accent, .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--accent-gradient);
+  border: 1px solid transparent;
+  color: #FFFFFF !important;
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-accent:hover, .btn-primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.btn-accent:active, .btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-outline, .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary) !important;
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-outline:hover, .btn-secondary:hover {
+  background-color: rgba(128, 128, 128, 0.08);
+  border-color: var(--border-hover);
+  color: var(--text-primary) !important;
+}
+
+.btn-outline:active, .btn-secondary:active {
+  background-color: rgba(128, 128, 128, 0.12);
+}
+
+/* Premium micro-animations */
+.scale-up-hover {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.scale-up-hover:hover {
+  transform: scale(1.025) translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.scale-up-hover:active {
+  transform: scale(1.005) translateY(0) !important;
+}
+
+
 
 /* Premium Card Lifts */
 .card-dark {
@@ -433,4 +508,14 @@ h1, h2, h3, h4, h5, h6 {
   .main-content {
     width: 100vw;
   }
+}
+
+/* Spinner Animation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spinner-accent, .agent-spinner {
+  animation: spin 1.5s linear infinite;
+  display: inline-block;
 }
