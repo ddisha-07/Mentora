@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { X, Settings, Sliders, Cpu, Save, User, Sparkles, Key } from "lucide-react";
+import { 
+  X, Settings, Sliders, Cpu, Save, User, Sparkles, Key,
+  Search, FileText, Calendar, Tag, MessageSquare, ArrowRight, Library,
+  Layers, Workflow, Link2, Users, UsersRound, Mic, Database 
+} from "lucide-react";
+import { mockDocuments } from "../data/mockData";
 
 // Theme and Accent helpers
 const applyTheme = (appearance) => {
@@ -199,8 +204,18 @@ function CustomSelect({ value, onChange, options, align = "right" }) {
   );
 }
 
-export default function SettingsModal({ isOpen, onClose, user, onSaveProfile }) {
-  const [activeTab, setActiveTab] = useState("general");
+export default function SettingsModal({ isOpen, onClose, user, onSaveProfile, onSelectDocForChat, initialTab = "general" }) {
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(initialTab);
+    }
+  }, [isOpen, initialTab]);
+
+  // RAG Search States
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDocId, setSelectedDocId] = useState(null);
 
   // General Tab States
   const [appearance, setAppearance] = useState("Dark");
@@ -622,6 +637,223 @@ export default function SettingsModal({ isOpen, onClose, user, onSaveProfile }) 
     );
   };
 
+  const renderKBTab = () => {
+    const filteredDocs = mockDocuments.filter((doc) => {
+      return (
+        doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doc.keywords.some((k) => k.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    });
+
+    const activeDoc = mockDocuments.find((d) => d.id === selectedDocId) || null;
+
+    return (
+      <div style={{ display: "flex", height: "420px", overflow: "hidden", margin: "-1.5rem -2rem -2rem -2rem", borderTop: "1px solid var(--border)" }}>
+        {/* Left: Document List */}
+        <div style={{ width: "200px", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", background: "rgba(0,0,0,0.1)", flexShrink: 0 }}>
+          <div style={{ padding: "0.75rem", borderBottom: "1px solid var(--border)", position: "relative" }}>
+            <Search size={13} style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "var(--text-secondary)" }} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search index..."
+              style={{
+                width: "100%",
+                padding: "0.4rem 0.4rem 0.4rem 1.6rem",
+                borderRadius: "6px",
+                border: "1px solid var(--border)",
+                background: "var(--bg-app)",
+                fontSize: "12px",
+                outline: "none",
+                color: "var(--text-primary)"
+              }}
+            />
+          </div>
+          
+          <div style={{ flex: 1, overflowY: "auto", padding: "0.4rem", display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+            {filteredDocs.map((doc) => {
+              const isActive = doc.id === selectedDocId;
+              return (
+                <div
+                  key={doc.id}
+                  onClick={() => setSelectedDocId(doc.id)}
+                  style={{
+                    padding: "0.6rem",
+                    borderRadius: "6px",
+                    background: isActive ? "rgba(255, 255, 255, 0.03)" : "transparent",
+                    border: isActive ? "1px solid var(--border)" : "1px solid transparent",
+                    cursor: "pointer"
+                  }}
+                  className="scale-hover"
+                >
+                  <h3 style={{ fontSize: "12px", fontWeight: "600", color: "white", marginBottom: "0.15rem", fontFamily: "var(--font-title)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {doc.title}
+                  </h3>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9px", color: "var(--text-secondary)" }}>
+                    <span>{doc.category}</span>
+                  </div>
+                </div>
+              );
+            })}
+
+            {filteredDocs.length === 0 && (
+              <p style={{ textAlign: "center", fontSize: "11px", color: "var(--text-secondary)", marginTop: "1rem" }}>
+                No files found.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Right: Document Preview */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {activeDoc ? (
+            <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <div>
+                <div style={{ display: "flex", gap: "0.35rem", marginBottom: "0.35rem" }}>
+                  <span style={{ fontSize: "9px", fontWeight: "700", padding: "0.15rem 0.4rem", background: "rgba(59, 130, 246, 0.15)", color: "var(--accent-light)", borderRadius: "3px", fontFamily: "var(--font-title)" }}>
+                    {activeDoc.category.toUpperCase()}
+                  </span>
+                  <span style={{ fontSize: "9px", fontWeight: "700", padding: "0.15rem 0.4rem", background: "rgba(16, 185, 129, 0.15)", color: "var(--success)", borderRadius: "3px", fontFamily: "var(--font-title)" }}>
+                    INDEXED
+                  </span>
+                </div>
+                <h2 style={{ fontSize: "15px", fontWeight: "700", fontFamily: "var(--font-title)", margin: 0 }}>{activeDoc.title}</h2>
+                <p style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
+                  Updated {activeDoc.uploadDate}
+                </p>
+              </div>
+
+              <div style={{ background: "rgba(59, 130, 246, 0.03)", border: "1px solid rgba(59, 130, 246, 0.15)", padding: "0.75rem", borderRadius: "8px", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                <h4 style={{ fontSize: "11px", fontWeight: "700", color: "var(--accent-light)", display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "var(--font-title)", margin: 0 }}>
+                  <MessageSquare size={12} /> VECTOR INGESTION SUMMARY
+                </h4>
+                <p style={{ fontSize: "12px", color: "white", lineHeight: "1.4", margin: 0 }}>{activeDoc.summary}</p>
+              </div>
+
+              <div>
+                <h4 style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-secondary)", marginBottom: "0.35rem", fontFamily: "var(--font-title)", margin: 0 }}>Extracted Text Ingestion Check</h4>
+                <pre style={{
+                  background: "rgba(0,0,0,0.2)",
+                  border: "1px solid var(--border)",
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  fontSize: "11px",
+                  fontFamily: "var(--font-body)",
+                  whiteSpace: "pre-wrap",
+                  lineHeight: "1.4",
+                  maxHeight: "140px",
+                  overflowY: "auto",
+                  margin: 0
+                }}>
+                  {activeDoc.content}
+                </pre>
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", borderTop: "1px solid var(--border)", paddingTop: "0.75rem", marginTop: "0.5rem" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSelectDocForChat(activeDoc);
+                    onClose();
+                  }}
+                  className="btn-accent"
+                  style={{ padding: "0.4rem 0.85rem", fontSize: "12px", boxShadow: "none" }}
+                >
+                  Bind Document Context
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", color: "var(--text-secondary)", gap: "0.5rem" }}>
+              <FileText size={32} style={{ opacity: 0.5 }} />
+              <p style={{ fontSize: "13px", margin: 0 }}>Select a document from the left pane to check vector previews.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderIntegrationsTab = () => {
+    const components = [
+      {
+        title: "Vector Database (Chroma / PgVector)",
+        desc: "Stores high-dimensional embeddings of SOPs, training manuals, and transcripts for semantic search.",
+        icon: Database,
+        status: "Ready for Connection"
+      },
+      {
+        title: "RAG Pipeline (LangChain / LlamaIndex)",
+        desc: "Orchestrates prompt building, retrieves top-k documents, and feeds them into the LLM context.",
+        icon: Workflow,
+        status: "Ready for Connection"
+      },
+      {
+        title: "LMS Sync (Moodle / Cornerstone)",
+        desc: "Saves training path progress and updates course completions to SCORM specifications.",
+        icon: Link2,
+        status: "API Hook Ready"
+      },
+      {
+        title: "HRMS Integration (Workday / SuccessFactors)",
+        desc: "Synchronizes user credentials, job functions, and safety certification prerequisites.",
+        icon: Users,
+        status: "API Hook Ready"
+      },
+      {
+        title: "Multi-Agent Workflows",
+        desc: "Dispatches sub-agents for safety checklist, compliance monitoring, and quiz creation.",
+        icon: UsersRound,
+        status: "Framework Mocked"
+      },
+      {
+        title: "Voice Assistant API",
+        desc: "Hands-free speech-to-text API allowing technicians to trigger checklists in the field.",
+        icon: Mic,
+        status: "Hardware Spec Built"
+      }
+    ];
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", height: "420px", overflowY: "auto", margin: "-1.5rem -2rem -2rem -2rem", padding: "1.5rem 2rem", borderTop: "1px solid var(--border)" }}>
+        <div style={{ background: "rgba(59, 130, 246, 0.03)", border: "1px solid rgba(59, 130, 246, 0.15)", padding: "0.75rem 1rem", borderRadius: "8px", fontSize: "12px", lineHeight: "1.5" }}>
+          💡 <strong>RAG Pipeline Alert:</strong> All database queries, translations, and file uploads in this demo are processed instantly in the client layer. The interfaces are engineered to bind directly to vector API endpoints, RAG routers, and local databases when deployed.
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "0.75rem" }}>
+          {components.map((c, i) => {
+            const Icon = c.icon;
+            return (
+              <div key={i} style={{ padding: "0.75rem", borderRadius: "10px", border: "1px solid var(--border)", background: "rgba(255,255,255,0.01)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.35rem" }}>
+                  <div style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "6px",
+                    backgroundColor: "var(--bg-app)",
+                    border: "1px solid var(--border)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--accent)"
+                  }}>
+                     <Icon size={15} />
+                  </div>
+                  <span style={{ fontSize: "9px", padding: "0.15rem 0.4rem", borderRadius: "20px", background: "rgba(59, 130, 246, 0.1)", color: "var(--accent-light)", border: "1px solid rgba(59, 130, 246, 0.2)", fontWeight: "600" }}>
+                    {c.status}
+                  </span>
+                </div>
+                <h3 style={{ fontSize: "13px", fontWeight: "600", marginBottom: "0.2rem", margin: 0 }}>{c.title}</h3>
+                <p style={{ fontSize: "11px", color: "var(--text-secondary)", lineHeight: "1.4", margin: 0, marginTop: "0.25rem" }}>{c.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   const sidebarBg = appearance === "Light" ? "rgba(0, 0, 0, 0.02)" : "rgba(0, 0, 0, 0.2)";
 
   return (
@@ -731,6 +963,50 @@ export default function SettingsModal({ isOpen, onClose, user, onSaveProfile }) 
           >
             <User size={16} /> Account
           </button>
+
+          <button 
+            type="button"
+            onClick={() => setActiveTab("kb")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.65rem",
+              padding: "0.6rem 0.85rem",
+              borderRadius: "8px",
+              background: activeTab === "kb" ? "rgba(139, 92, 246, 0.12)" : "transparent",
+              border: "none",
+              color: activeTab === "kb" ? "var(--text-primary)" : "var(--text-secondary)",
+              fontSize: "14px",
+              fontWeight: "600",
+              cursor: "pointer",
+              textAlign: "left",
+              width: "100%"
+            }}
+          >
+            <Library size={16} /> Knowledge Base
+          </button>
+          
+          <button 
+            type="button"
+            onClick={() => setActiveTab("integrations")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.65rem",
+              padding: "0.6rem 0.85rem",
+              borderRadius: "8px",
+              background: activeTab === "integrations" ? "rgba(139, 92, 246, 0.12)" : "transparent",
+              border: "none",
+              color: activeTab === "integrations" ? "var(--text-primary)" : "var(--text-secondary)",
+              fontSize: "14px",
+              fontWeight: "600",
+              cursor: "pointer",
+              textAlign: "left",
+              width: "100%"
+            }}
+          >
+            <Cpu size={16} /> Future Integrations
+          </button>
         </div>
 
         {/* Content Panel */}
@@ -751,10 +1027,9 @@ export default function SettingsModal({ isOpen, onClose, user, onSaveProfile }) 
               fontWeight: "700", 
               fontFamily: "var(--font-title)", 
               color: "var(--text-primary)", 
-              margin: 0,
-              textTransform: "capitalize"
+              margin: 0
             }}>
-              {activeTab} Settings
+              {activeTab === "kb" ? "Knowledge Base (RAG Library)" : activeTab === "integrations" ? "System Integrations Roadmap" : `${activeTab} Settings`}
             </h2>
             <button 
               onClick={onClose}
@@ -777,25 +1052,29 @@ export default function SettingsModal({ isOpen, onClose, user, onSaveProfile }) 
               {activeTab === "general" && renderGeneralTab()}
               {activeTab === "personalization" && renderPersonalizationTab()}
               {activeTab === "account" && renderAccountTab()}
+              {activeTab === "kb" && renderKBTab()}
+              {activeTab === "integrations" && renderIntegrationsTab()}
             </div>
 
-            {/* Buttons Footer */}
-            <div style={{ 
-              borderTop: "1px solid var(--border)", 
-              paddingTop: "1.25rem", 
-              marginTop: "1.5rem", 
-              display: "flex", 
-              justifyContent: "flex-end", 
-              gap: "0.5rem",
-              flexShrink: 0
-            }}>
-              <button type="button" onClick={onClose} className="btn-outline" style={{ padding: "0.5rem 1rem", fontSize: "14px" }}>
-                Cancel
-              </button>
-              <button type="submit" className="btn-accent" style={{ padding: "0.5rem 1rem", fontSize: "14px", display: "flex", alignItems: "center", gap: "0.35rem", boxShadow: "none" }}>
-                <Save size={16} /> Save Changes
-              </button>
-            </div>
+            {/* Buttons Footer (Only show for standard settings) */}
+            {activeTab !== "kb" && activeTab !== "integrations" && (
+              <div style={{ 
+                borderTop: "1px solid var(--border)", 
+                paddingTop: "1.25rem", 
+                marginTop: "1.5rem", 
+                display: "flex", 
+                justifyContent: "flex-end", 
+                gap: "0.5rem",
+                flexShrink: 0
+              }}>
+                <button type="button" onClick={onClose} className="btn-outline" style={{ padding: "0.5rem 1rem", fontSize: "14px" }}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-accent" style={{ padding: "0.5rem 1rem", fontSize: "14px", display: "flex", alignItems: "center", gap: "0.35rem", boxShadow: "none" }}>
+                  <Save size={16} /> Save Changes
+                </button>
+              </div>
+            )}
           </form>
 
         </div>

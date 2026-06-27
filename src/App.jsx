@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import ChatWindow from "./components/ChatWindow";
 import IntegrationModal from "./components/IntegrationModal";
@@ -6,6 +6,19 @@ import SettingsModal from "./components/SettingsModal";
 import KBModal from "./components/KBModal";
 import LoginPage from "./components/LoginPage";
 import EditProfileModal from "./components/EditProfileModal";
+import KeyboardShortcutsModal from "./components/KeyboardShortcutsModal";
+
+const DEFAULT_SHORTCUTS = [
+  { id: "send_msg", section: "Composer", desc: "Send message", keys: ["Enter"], enabled: true },
+  { id: "attach_doc", section: "Composer", desc: "Add photos & files", keys: ["Ctrl", "Alt", "A"], enabled: true },
+  { id: "dictation", section: "Composer", desc: "Toggle dictation", keys: ["Ctrl", "Alt", "D"], enabled: true },
+  { id: "new_chat", section: "App", desc: "Open new chat", keys: ["Ctrl", "Alt", "N"], enabled: true },
+  { id: "toggle_sidebar", section: "App", desc: "Toggle sidebar", keys: ["Ctrl", "Alt", "S"], enabled: true },
+  { id: "open_settings", section: "App", desc: "Open settings", keys: ["Ctrl", "Alt", "K"], enabled: true },
+  { id: "open_profile", section: "App", desc: "Show profile modal", keys: ["Ctrl", "Alt", "P"], enabled: true },
+  { id: "clear_chats", section: "App", desc: "Clear all chats", keys: ["Ctrl", "Alt", "C"], enabled: true },
+  { id: "show_shortcuts", section: "App", desc: "Show shortcuts", keys: ["Ctrl", "Alt", "/"], enabled: true }
+];
 
 export default function App() {
   const [user, setUser] = useState(() => {
@@ -16,15 +29,58 @@ export default function App() {
       return null;
     }
   });
-  const [chats, setChats] = useState([
-    { id: "chat-1", title: "New Conversation", messages: [], document: null, createdAt: Date.now() }
-  ]);
-  const [activeChatId, setActiveChatId] = useState("chat-1");
+
+  const [chats, setChats] = useState(() => {
+    try {
+      const savedUserStr = localStorage.getItem("mentora_active_user");
+      if (savedUserStr) {
+        const savedUser = JSON.parse(savedUserStr);
+        if (savedUser && !savedUser.isGuest) {
+          const savedChats = localStorage.getItem("mentora_chats_" + savedUser.email);
+          if (savedChats) {
+            return JSON.parse(savedChats);
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return [
+      { id: "chat-1", title: "New Conversation", messages: [], document: null, createdAt: Date.now() }
+    ];
+  });
+
+  const [activeChatId, setActiveChatId] = useState(() => {
+    try {
+      const savedUserStr = localStorage.getItem("mentora_active_user");
+      if (savedUserStr) {
+        const savedUser = JSON.parse(savedUserStr);
+        if (savedUser && !savedUser.isGuest) {
+          const savedActiveId = localStorage.getItem("mentora_active_chat_" + savedUser.email);
+          if (savedActiveId) return savedActiveId;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return "chat-1";
+  });
+
+  // Synchronize chats history and active chat to localStorage
+  useEffect(() => {
+    if (user && !user.isGuest) {
+      localStorage.setItem("mentora_chats_" + user.email, JSON.stringify(chats));
+    }
+  }, [chats, user]);
+
+  useEffect(() => {
+    if (user && !user.isGuest) {
+      localStorage.setItem("mentora_active_chat_" + user.email, activeChatId);
+    }
+  }, [activeChatId, user]);
   
-  // Dialog Open States
-  const [integrationOpen, setIntegrationOpen] = useState(false);
-  const [kbOpen, setKbOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsTab, setSettingsTab] = useState("general");
   const [profileOpen, setProfileOpen] = useState(false);
   
   // Responsive sidebar layouts
@@ -56,11 +112,44 @@ export default function App() {
       ]);
       setActiveChatId("chat-guest");
     } else {
-      // Start a clean/fresh regular user session
-      setChats([
-        { id: "chat-1", title: "New Conversation", messages: [], document: null, createdAt: Date.now() }
-      ]);
-      setActiveChatId("chat-1");
+      // Regular user - try to retrieve saved chats
+      let initialChats = null;
+      let initialActiveId = null;
+      try {
+        const savedChats = localStorage.getItem("mentora_chats_" + email);
+        if (savedChats) {
+          initialChats = JSON.parse(savedChats);
+          initialActiveId = localStorage.getItem("mentora_active_chat_" + email);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+      if (initialChats && initialChats.length > 0) {
+        // If the first chat in the retrieved list is already empty, just select it
+        if (initialChats[0].messages && initialChats[0].messages.length === 0) {
+          setChats(initialChats);
+          setActiveChatId(initialChats[0].id);
+        } else {
+          // Prepend a fresh new conversation so they log back in to a new conversation
+          const newId = `chat-${Date.now()}`;
+          const newSession = {
+            id: newId,
+            title: "New Conversation",
+            messages: [],
+            document: null,
+            createdAt: Date.now()
+          };
+          setChats([newSession, ...initialChats]);
+          setActiveChatId(newId);
+        }
+      } else {
+        const newId = "chat-1";
+        setChats([
+          { id: newId, title: "New Conversation", messages: [], document: null, createdAt: Date.now() }
+        ]);
+        setActiveChatId(newId);
+      }
     }
     
     const activeUser = { email: email || "guest@mentora.internal", role, name, userRole, avatar, isGuest };
@@ -74,10 +163,16 @@ export default function App() {
   };
 
   const handleUpdateProfile = (updatedDetails) => {
-    setUser((prev) => ({
-      ...prev,
-      ...updatedDetails
-    }));
+    setUser((prev) => {
+      const nextUser = {
+        ...prev,
+        ...updatedDetails
+      };
+      if (localStorage.getItem("mentora_active_user")) {
+        localStorage.setItem("mentora_active_user", JSON.stringify(nextUser));
+      }
+      return nextUser;
+    });
   };
 
   // Retrieve active chat object
@@ -117,6 +212,21 @@ export default function App() {
         const nextActive = updatedChats.find(c => !c.archived) || updatedChats[0];
         setActiveChatId(nextActive.id);
       }
+    }
+  };
+
+  const handleClearAllChats = () => {
+    if (window.confirm("Are you sure you want to clear all conversations? This action cannot be undone.")) {
+      const newId = `chat-${Date.now()}`;
+      const newSession = {
+        id: newId,
+        title: "New Conversation",
+        messages: [],
+        document: null,
+        createdAt: Date.now()
+      };
+      setChats([newSession]);
+      setActiveChatId(newId);
     }
   };
 
@@ -276,6 +386,114 @@ export default function App() {
       })
     );
   };
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [shortcuts, setShortcuts] = useState(() => {
+    try {
+      const saved = localStorage.getItem("mentora_keyboard_shortcuts");
+      return saved ? JSON.parse(saved) : DEFAULT_SHORTCUTS;
+    } catch {
+      return DEFAULT_SHORTCUTS;
+    }
+  });
+
+  // Persist custom shortcut configuration
+  useEffect(() => {
+    localStorage.setItem("mentora_keyboard_shortcuts", JSON.stringify(shortcuts));
+  }, [shortcuts]);
+
+  const handleSaveShortcut = (id, updatedFields) => {
+    setShortcuts((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, ...updatedFields } : s))
+    );
+  };
+
+  const handleRestoreDefaults = () => {
+    if (window.confirm("Restore all keyboard shortcuts to defaults?")) {
+      setShortcuts(DEFAULT_SHORTCUTS);
+    }
+  };
+
+  const isShortcutMatch = (shortcutKeys, e) => {
+    const hasCtrl = shortcutKeys.includes("Ctrl");
+    const hasAlt = shortcutKeys.includes("Alt");
+    const hasShift = shortcutKeys.includes("Shift");
+
+    // Modifier check
+    if (hasCtrl !== (e.ctrlKey || e.metaKey)) return false;
+    if (hasAlt !== e.altKey) return false;
+    if (hasShift !== e.shiftKey) return false;
+
+    // Find the base key
+    const baseKey = shortcutKeys.find(k => k !== "Ctrl" && k !== "Alt" && k !== "Shift");
+    if (!baseKey) return false;
+
+    let eventKey = e.key;
+    if (eventKey === " ") eventKey = "Space";
+    if (eventKey === "ArrowUp") eventKey = "Up";
+    if (eventKey === "ArrowDown") eventKey = "Down";
+    if (eventKey === "ArrowLeft") eventKey = "Left";
+    if (eventKey === "ArrowRight") eventKey = "Right";
+
+    return eventKey.toLowerCase() === baseKey.toLowerCase();
+  };
+
+  // Global Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // 1. General escape close handler
+      if (e.key === "Escape") {
+        setSettingsOpen(false);
+        setProfileOpen(false);
+        setShortcutsOpen(false);
+        return;
+      }
+
+      // 2. Find matching, enabled shortcut
+      const matched = shortcuts.find(s => s.enabled && isShortcutMatch(s.keys, e));
+      if (!matched) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      switch (matched.id) {
+        case "new_chat":
+          handleNewChat();
+          break;
+        case "toggle_sidebar":
+          setIsCollapsed((prev) => !prev);
+          break;
+        case "open_settings":
+          setSettingsTab("general");
+          setSettingsOpen(true);
+          break;
+        case "open_profile":
+          setProfileOpen(true);
+          break;
+        case "clear_chats":
+          handleClearAllChats();
+          break;
+        case "show_shortcuts":
+          setShortcutsOpen(true);
+          break;
+        case "attach_doc":
+          const attachBtn = document.getElementById("chat-attach-trigger");
+          if (attachBtn) attachBtn.click();
+          break;
+        case "dictation":
+          alert("Dictation mode is a prototype interface component. Configure integrations in Settings roadmap!");
+          break;
+        case "send_msg":
+          const sendBtn = document.getElementById("chat-send-trigger");
+          if (sendBtn) sendBtn.click();
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [chats, activeChatId, shortcuts]);
 
   if (!user) {
     return <LoginPage onLogin={handleLogin} />;
@@ -304,13 +522,16 @@ export default function App() {
         onRenameChat={handleRenameChat}
         onPinChat={handlePinChat}
         onArchiveChat={handleArchiveChat}
-        onOpenIntegrations={() => setIntegrationOpen(true)}
-        onOpenKB={() => setKbOpen(true)}
-        onOpenSettings={() => setSettingsOpen(true)}
+        onOpenSettings={(tab) => {
+          setSettingsTab(tab || "general");
+          setSettingsOpen(true);
+        }}
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
+        onClearAllChats={handleClearAllChats}
+        onOpenShortcuts={() => setShortcutsOpen(true)}
       />
 
       {/* Main chat window container */}
@@ -327,25 +548,14 @@ export default function App() {
         />
       </main>
 
-      {/* RAG Integrations Specifications Modal */}
-      <IntegrationModal 
-        isOpen={integrationOpen}
-        onClose={() => setIntegrationOpen(false)}
-      />
-
-      {/* System Parameter Configurations Modal */}
+      {/* System Parameter Configurations & Administration Modal */}
       <SettingsModal 
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
         user={user}
         onSaveProfile={handleUpdateProfile}
-      />
-
-      {/* RAG Document Library Modal */}
-      <KBModal 
-        isOpen={kbOpen}
-        onClose={() => setKbOpen(false)}
         onSelectDocForChat={handleSelectDocForChat}
+        initialTab={settingsTab}
       />
 
       {/* Edit Profile Details Modal */}
@@ -354,6 +564,15 @@ export default function App() {
         onClose={() => setProfileOpen(false)}
         user={user}
         onSave={handleUpdateProfile}
+      />
+
+      {/* Keyboard Shortcuts Modal */}
+      <KeyboardShortcutsModal 
+        isOpen={shortcutsOpen}
+        onClose={() => setShortcutsOpen(false)}
+        shortcuts={shortcuts}
+        onSaveShortcut={handleSaveShortcut}
+        onRestoreDefaults={handleRestoreDefaults}
       />
 
     </div>

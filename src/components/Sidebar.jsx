@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { 
-  MessageSquare, 
+  MessageCircle, 
   Trash2, 
   Cpu, 
   Settings, 
@@ -9,6 +9,9 @@ import {
   User, 
   ChevronLeft, 
   ChevronRight,
+  PanelLeftClose,
+  Clock,
+  LayoutGrid,
   Bot,
   Sparkles,
   LogOut,
@@ -19,7 +22,15 @@ import {
   Folder,
   Pin,
   Archive,
-  MoreHorizontal
+  MoreHorizontal,
+  SquarePen,
+  Search,
+  Bell,
+  Shield,
+  Download,
+  Keyboard,
+  Info,
+  HelpCircle
 } from "lucide-react";
 
 export default function Sidebar({ 
@@ -31,8 +42,6 @@ export default function Sidebar({
   onRenameChat,
   onPinChat,
   onArchiveChat,
-  onOpenIntegrations,
-  onOpenKB,
   onOpenSettings,
   isCollapsed,
   setIsCollapsed,
@@ -40,7 +49,9 @@ export default function Sidebar({
   setMobileOpen,
   user,
   onLogout,
-  onOpenProfile
+  onOpenProfile,
+  onClearAllChats,
+  onOpenShortcuts
 }) {
 
   const activeUser = user || {
@@ -50,14 +61,298 @@ export default function Sidebar({
   };
 
   const [activeMenuChatId, setActiveMenuChatId] = useState(null);
-  const [projectMenuOpen, setProjectMenuOpen] = useState(false);
   const [toast, setToast] = useState(null);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const menuOptionStyle = {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.75rem",
+    width: "100%",
+    padding: "0.55rem 0.75rem",
+    background: "transparent",
+    border: "none",
+    borderRadius: "8px",
+    color: "rgba(255, 255, 255, 0.75)",
+    fontSize: "13.5px",
+    fontWeight: "500",
+    cursor: "pointer",
+    textAlign: "left",
+    fontFamily: "var(--font-title)",
+    transition: "all 0.15s ease"
+  };
 
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => {
       setToast((curr) => (curr === msg ? null : curr));
     }, 3000);
+  };
+  const handleExportConversations = () => {
+    try {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chats, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `mentora_conversations_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast("Conversations exported successfully!");
+    } catch (e) {
+      showToast("Failed to export conversations.");
+    }
+  };
+
+  const renderProfileMenu = () => {
+    if (!showProfileMenu) return null;
+    const popoverItemStyle = {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.65rem",
+      width: "100%",
+      background: "transparent",
+      border: "none",
+      padding: "0.45rem 0.6rem",
+      borderRadius: "8px",
+      color: "var(--text-primary)",
+      fontSize: "13px",
+      cursor: "pointer",
+      textAlign: "left",
+      justifyContent: "flex-start",
+      fontFamily: "var(--font-title)",
+      boxShadow: "none"
+    };
+
+    const popoverItemRedStyle = {
+      ...popoverItemStyle,
+      color: "var(--error)"
+    };
+
+    return (
+      <>
+        {/* Overlay catcher */}
+        <div 
+          onClick={() => setShowProfileMenu(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9998,
+            background: "transparent",
+            cursor: "default"
+          }}
+        />
+        {/* Popover container */}
+        <div 
+          style={{
+            position: "absolute",
+            bottom: "65px",
+            left: isCollapsed ? "12px" : "16px",
+            width: "250px",
+            backgroundColor: "rgba(10, 14, 28, 0.95)",
+            backdropFilter: "blur(24px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "14px",
+            boxShadow: "0 12px 40px rgba(0, 0, 0, 0.55)",
+            padding: "0.4rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.15rem",
+            zIndex: 9999,
+            animation: "fadeInUp 0.18s ease-out"
+          }}
+        >
+          {/* Header Card */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
+            padding: "0.6rem 0.6rem",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+            marginBottom: "0.25rem"
+          }}>
+            <div style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "50%",
+              backgroundColor: "var(--bg-card)",
+              border: "1px solid var(--border)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--accent-light)",
+              fontWeight: "bold",
+              fontSize: "14px",
+              overflow: "hidden",
+              flexShrink: 0
+            }}>
+              {activeUser.profilePic ? (
+                <img src={activeUser.profilePic} alt="User Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                activeUser.avatar
+              )}
+            </div>
+            <div style={{ overflow: "hidden" }}>
+              <div style={{ fontSize: "13px", fontWeight: "600", color: "white", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontFamily: "var(--font-title)", lineHeight: 1.2 }}>
+                {activeUser.name}
+              </div>
+              <div style={{ fontSize: "11px", color: "var(--text-secondary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", marginTop: "2px" }}>
+                {activeUser.userRole}
+              </div>
+            </div>
+          </div>
+
+          {/* Edit Profile */}
+          <button 
+            onClick={() => {
+              setShowProfileMenu(false);
+              onOpenProfile();
+            }}
+            style={popoverItemStyle}
+            className="popover-menu-item"
+          >
+            <User size={14} style={{ color: "var(--text-secondary)" }} />
+            <span>Edit Profile</span>
+          </button>
+
+          {/* Settings */}
+          <button 
+            onClick={() => {
+              setShowProfileMenu(false);
+              onOpenSettings("general");
+            }}
+            style={popoverItemStyle}
+            className="popover-menu-item"
+          >
+            <Settings size={14} style={{ color: "var(--text-secondary)" }} />
+            <span>Settings</span>
+          </button>
+
+          {/* Notifications */}
+          <button 
+            onClick={() => {
+              setShowProfileMenu(false);
+              onOpenSettings("personalization");
+              showToast("Notifications opened");
+            }}
+            style={popoverItemStyle}
+            className="popover-menu-item"
+          >
+            <Bell size={14} style={{ color: "var(--text-secondary)" }} />
+            <span>Notifications</span>
+          </button>
+
+          {/* Privacy & Security */}
+          <button 
+            onClick={() => {
+              setShowProfileMenu(false);
+              onOpenSettings("account");
+              showToast("Privacy & Security opened");
+            }}
+            style={popoverItemStyle}
+            className="popover-menu-item"
+          >
+            <Shield size={14} style={{ color: "var(--text-secondary)" }} />
+            <span>Privacy & Security</span>
+          </button>
+
+          {/* Export Conversations */}
+          <button 
+            onClick={() => {
+              setShowProfileMenu(false);
+              handleExportConversations();
+            }}
+            style={popoverItemStyle}
+            className="popover-menu-item"
+          >
+            <Download size={14} style={{ color: "var(--text-secondary)" }} />
+            <span>Export Conversations</span>
+          </button>
+
+          <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 0.05)", margin: "0.25rem 0" }} />
+
+          {/* Keyboard Shortcuts */}
+          <button 
+            onClick={() => {
+              setShowProfileMenu(false);
+              if (onOpenShortcuts) onOpenShortcuts();
+            }}
+            style={popoverItemStyle}
+            className="popover-menu-item"
+          >
+            <Keyboard size={14} style={{ color: "var(--text-secondary)" }} />
+            <span>Keyboard Shortcuts</span>
+          </button>
+
+          {/* About Kai */}
+          <button 
+            onClick={() => {
+              setShowProfileMenu(false);
+              showToast("Mentora AI v1.0.0 — Your Knowledge Companion");
+            }}
+            style={popoverItemStyle}
+            className="popover-menu-item"
+          >
+            <Info size={14} style={{ color: "var(--text-secondary)" }} />
+            <span>About Kai</span>
+          </button>
+
+          {/* Help & Support */}
+          <button 
+            onClick={() => {
+              setShowProfileMenu(false);
+              showToast("Wiki docs available at docs.mentora.ai");
+            }}
+            style={popoverItemStyle}
+            className="popover-menu-item"
+          >
+            <HelpCircle size={14} style={{ color: "var(--text-secondary)" }} />
+            <span>Help & Support</span>
+          </button>
+
+          <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 0.05)", margin: "0.25rem 0" }} />
+
+          {/* Clear All Chats */}
+          <button 
+            onClick={() => {
+              setShowProfileMenu(false);
+              if (onClearAllChats) onClearAllChats();
+            }}
+            style={popoverItemRedStyle}
+            className="popover-menu-item-red"
+          >
+            <Trash2 size={14} style={{ color: "var(--error)" }} />
+            <span>Clear All Chats</span>
+          </button>
+
+          {/* Sign Out */}
+          <button 
+            onClick={() => {
+              setShowProfileMenu(false);
+              if (onLogout) onLogout();
+            }}
+            style={popoverItemRedStyle}
+            className="popover-menu-item-red"
+          >
+            <LogOut size={14} style={{ color: "var(--error)" }} />
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </>
+    );
+  };
+
+  const [renamingChatId, setRenamingChatId] = useState(null);
+  const [renamingText, setRenamingText] = useState("");
+
+  const handleSaveRename = (chatId) => {
+    if (renamingText.trim()) {
+      onRenameChat(chatId, renamingText.trim());
+      showToast("Conversation renamed!");
+    }
+    setRenamingChatId(null);
   };
 
   // Group chats dynamically for visual prototype mapping
@@ -109,9 +404,9 @@ export default function Sidebar({
           width: isCollapsed ? "42px" : "100%",
           height: isCollapsed ? "42px" : "auto",
           margin: isCollapsed ? "0 auto" : "0",
-          borderRadius: "10px",
-          background: isActive ? "rgba(139, 92, 246, 0.08)" : "transparent",
-          border: isActive ? "1px solid rgba(139, 92, 246, 0.35)" : "1px solid transparent",
+          borderRadius: "8px",
+          background: isActive ? "rgba(255, 255, 255, 0.05)" : "transparent",
+          border: "none",
           cursor: "pointer",
           position: "relative",
           transition: "all 0.2s"
@@ -132,11 +427,40 @@ export default function Sidebar({
           whiteSpace: "nowrap", 
           flex: isCollapsed ? "none" : 1 
         }}>
-          <MessageSquare size={16} style={{ color: isActive ? "var(--accent-light)" : "var(--text-secondary)", minWidth: "16px" }} />
+          <MessageCircle size={16} style={{ color: isActive ? "var(--accent-light)" : "var(--text-secondary)", minWidth: "16px" }} />
           {!isCollapsed && (
-            <span style={{ fontSize: "14px", color: isActive ? "white" : "var(--text-secondary)", fontWeight: isActive ? "600" : "400", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {chat.title}
-            </span>
+            renamingChatId === chat.id ? (
+              <input
+                type="text"
+                value={renamingText}
+                onChange={(e) => setRenamingText(e.target.value)}
+                onBlur={() => handleSaveRename(chat.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSaveRename(chat.id);
+                  } else if (e.key === "Escape") {
+                    setRenamingChatId(null);
+                  }
+                }}
+                autoFocus
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  background: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid var(--accent-light)",
+                  borderRadius: "6px",
+                  color: "white",
+                  fontSize: "14px",
+                  padding: "2px 6px",
+                  width: "100%",
+                  outline: "none",
+                  fontFamily: "var(--font-title)"
+                }}
+              />
+            ) : (
+              <span style={{ fontSize: "14px", color: isActive ? "white" : "var(--text-secondary)", fontWeight: isActive ? "600" : "400", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {chat.title}
+              </span>
+            )
           )}
         </div>
 
@@ -147,10 +471,8 @@ export default function Sidebar({
                 e.stopPropagation();
                 if (isMenuOpen) {
                   setActiveMenuChatId(null);
-                  setProjectMenuOpen(false);
                 } else {
                   setActiveMenuChatId(chat.id);
-                  setProjectMenuOpen(false);
                 }
               }}
               style={{
@@ -190,34 +512,12 @@ export default function Sidebar({
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Share */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    try {
-                      navigator.clipboard.writeText(`https://mentora.ai/share/${chat.id}`);
-                      showToast("Share link copied to clipboard!");
-                    } catch (err) {
-                      showToast("Mock link generated for sharing!");
-                    }
-                    setActiveMenuChatId(null);
-                    setProjectMenuOpen(false);
-                  }}
-                  className="dropdown-item"
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <Share2 size={14} />
-                    <span>Share</span>
-                  </div>
-                </button>
-
                 {/* Group Chat */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     showToast("Group Chat capability coming soon!");
                     setActiveMenuChatId(null);
-                    setProjectMenuOpen(false);
                   }}
                   className="dropdown-item"
                 >
@@ -231,13 +531,9 @@ export default function Sidebar({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    const newTitle = prompt("Rename conversation:", chat.title);
-                    if (newTitle && newTitle.trim()) {
-                      onRenameChat(chat.id, newTitle.trim());
-                      showToast("Conversation renamed!");
-                    }
+                    setRenamingChatId(chat.id);
+                    setRenamingText(chat.title);
                     setActiveMenuChatId(null);
-                    setProjectMenuOpen(false);
                   }}
                   className="dropdown-item"
                 >
@@ -246,63 +542,6 @@ export default function Sidebar({
                     <span>Rename</span>
                   </div>
                 </button>
-
-                {/* Move to project */}
-                <div style={{ position: "relative" }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setProjectMenuOpen(!projectMenuOpen);
-                    }}
-                    onMouseEnter={() => setProjectMenuOpen(true)}
-                    className="dropdown-item"
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <Folder size={14} />
-                      <span>Move to project</span>
-                    </div>
-                    <ChevronRight size={14} />
-                  </button>
-
-                  {projectMenuOpen && (
-                    <div 
-                      style={{
-                        position: "absolute",
-                        right: "100%",
-                        top: "0",
-                        marginRight: "6px",
-                        width: "180px",
-                        backgroundColor: "rgba(20, 20, 30, 0.95)",
-                        backdropFilter: "blur(16px)",
-                        border: "1px solid rgba(255, 255, 255, 0.08)",
-                        borderRadius: "12px",
-                        boxShadow: "0 10px 40px rgba(0, 0, 0, 0.6)",
-                        padding: "6px",
-                        zIndex: 1000,
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "2px"
-                      }}
-                      onMouseEnter={() => setProjectMenuOpen(true)}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {["EHS Safety", "Mechanical Maintenance", "Steel Production"].map((proj) => (
-                        <button
-                          key={proj}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            showToast(`Moved chat to ${proj}!`);
-                            setActiveMenuChatId(null);
-                            setProjectMenuOpen(false);
-                          }}
-                          className="dropdown-item"
-                        >
-                          {proj}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
 
                 <div className="dropdown-divider" />
 
@@ -313,7 +552,6 @@ export default function Sidebar({
                     onPinChat(chat.id);
                     showToast(chat.pinned ? "Chat unpinned!" : "Chat pinned to top!");
                     setActiveMenuChatId(null);
-                    setProjectMenuOpen(false);
                   }}
                   className="dropdown-item"
                 >
@@ -330,7 +568,6 @@ export default function Sidebar({
                     onArchiveChat(chat.id);
                     showToast("Chat archived!");
                     setActiveMenuChatId(null);
-                    setProjectMenuOpen(false);
                   }}
                   className="dropdown-item"
                 >
@@ -353,7 +590,6 @@ export default function Sidebar({
                       showToast("Conversation deleted!");
                     }
                     setActiveMenuChatId(null);
-                    setProjectMenuOpen(false);
                   }}
                   className="dropdown-item dropdown-item-danger"
                 >
@@ -370,6 +606,237 @@ export default function Sidebar({
     );
   };
 
+  if (isCollapsed) {
+    return (
+      <aside 
+        className="sidebar collapsed"
+        style={{ 
+          borderRight: "1px solid var(--border)", 
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          padding: "1rem 0",
+          gap: "1rem",
+          backgroundColor: "var(--bg-sidebar)",
+          width: "56px",
+          height: "100vh"
+        }}
+      >
+        {/* 1. Kai Logo */}
+        <button
+          onClick={() => setIsCollapsed(false)}
+          style={{
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "32px",
+            height: "32px",
+            marginBottom: "0.25rem"
+          }}
+          title="Expand Sidebar"
+        >
+          <img src="/logo.png" alt="Kai Logo" className="logo-pulse" style={{ width: "32px", height: "32px", borderRadius: "8px", objectFit: "cover" }} />
+        </button>
+
+        {/* 2. New Chat Button */}
+        {!activeUser.isGuest && (
+          <button
+            onClick={() => {
+              onNewChat();
+              showToast("New conversation started!");
+            }}
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: "var(--text-secondary)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "36px",
+              height: "36px",
+              borderRadius: "8px",
+              transition: "all 0.2s"
+            }}
+            className="collapsed-nav-btn scale-hover"
+            title="New Conversation"
+          >
+            <SquarePen size={18} />
+          </button>
+        )}
+
+        {/* 3. Search Icon */}
+        <button
+          onClick={() => {
+            onOpenSettings("kb");
+            showToast("Opening Knowledge Base RAG Search...");
+          }}
+          style={{
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            color: "var(--text-secondary)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "36px",
+            height: "36px",
+            borderRadius: "8px",
+            transition: "all 0.2s"
+          }}
+          className="collapsed-nav-btn scale-hover"
+          title="Search Knowledge Base"
+        >
+          <Search size={18} />
+        </button>
+
+        {/* 4. Pin Icon */}
+        <button
+          onClick={() => {
+            setIsCollapsed(false);
+            showToast("Showing Pinned Conversations");
+          }}
+          style={{
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            color: "var(--text-secondary)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "36px",
+            height: "36px",
+            borderRadius: "8px",
+            transition: "all 0.2s"
+          }}
+          className="collapsed-nav-btn scale-hover"
+          title="Pinned Chats"
+        >
+          <Pin size={18} style={{ transform: "rotate(45deg)" }} />
+        </button>
+
+        {/* 5. Chat Icon */}
+        <button
+          onClick={() => {
+            setIsCollapsed(false);
+          }}
+          style={{
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            color: "var(--text-secondary)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "36px",
+            height: "36px",
+            borderRadius: "8px",
+            transition: "all 0.2s"
+          }}
+          className="collapsed-nav-btn scale-hover"
+          title="Recent Chats"
+        >
+          <MessageCircle size={18} />
+        </button>
+
+        {/* Spacer to push profile to bottom */}
+        <div style={{ flex: 1 }} />
+
+        {/* 6. Profile Avatar at the Bottom */}
+        <button
+          onClick={() => setShowProfileMenu(!showProfileMenu)}
+          title={`Profile: ${activeUser.name}`}
+          style={{
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "36px",
+            height: "36px",
+            position: "relative"
+          }}
+        >
+          <div style={{
+            width: "36px",
+            height: "36px",
+            borderRadius: "50%",
+            backgroundColor: "var(--bg-card)",
+            border: "1px solid var(--border)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--accent-light)",
+            fontWeight: "bold",
+            fontSize: "12px",
+            fontFamily: "var(--font-title)",
+            overflow: "hidden"
+          }}>
+            {activeUser.profilePic ? (
+              <img src={activeUser.profilePic} alt="User Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              activeUser.avatar
+            )}
+          </div>
+          {/* Green Online Dot */}
+          <div style={{
+            position: "absolute",
+            bottom: "0px",
+            right: "0px",
+            width: "8px",
+            height: "8px",
+            borderRadius: "50%",
+            backgroundColor: "var(--success)",
+            border: "2px solid var(--bg-sidebar)"
+          }} />
+        </button>
+
+        {/* Toast Alert */}
+        {toast && (
+          <div style={{
+            position: "fixed",
+            bottom: "20px",
+            left: "20px",
+            backgroundColor: "rgba(15, 15, 25, 0.85)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid rgba(139, 92, 246, 0.4)",
+            borderRadius: "8px",
+            padding: "10px 16px",
+            color: "white",
+            zIndex: 9999,
+            fontSize: "13px",
+            fontWeight: "500",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            animation: "fadeInUp 0.3s ease-out"
+          }}>
+            <Sparkles size={14} style={{ color: "var(--accent-light)" }} />
+            <span>{toast}</span>
+          </div>
+        )}
+
+        {/* Profile menu popover overlay */}
+        {renderProfileMenu()}
+
+        <style>{`
+          .collapsed-nav-btn:hover {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+          }
+        `}</style>
+      </aside>
+    );
+  }
+
   return (
     <aside 
       className={`sidebar ${isCollapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""}`}
@@ -377,160 +844,130 @@ export default function Sidebar({
     >
       {/* Sidebar Header */}
       <div style={{ 
-        padding: isCollapsed ? "1.25rem 0" : "1.25rem 1.25rem", 
-        borderBottom: "1px solid var(--border)", 
+        padding: "1rem 0.75rem 0.5rem 0.75rem", 
         display: "flex", 
         alignItems: "center", 
-        justifyContent: isCollapsed ? "center" : "space-between",
+        justifyContent: "space-between",
         position: "relative"
       }}>
-        <div style={{ 
-          display: "flex", 
-          alignItems: "center", 
-          justifyContent: isCollapsed ? "center" : "flex-start",
-          gap: isCollapsed ? "0" : "0.75rem", 
-          overflow: "hidden",
-          width: isCollapsed ? "100%" : "auto"
-        }}>
-          
-          {/* Logo container with gradient and Sparkle */}
-          <img src="/logo.png" alt="Kai Logo" className="logo-pulse" style={{ width: "36px", height: "36px", borderRadius: "8px", objectFit: "cover", flexShrink: 0 }} />
-
-          {!isCollapsed && (
-            <div style={{ minWidth: "120px" }}>
-              <h1 style={{ fontSize: "18px", fontWeight: "700", color: "#FFFFFF", fontFamily: "var(--font-serif)", letterSpacing: "-0.01em" }}>
-                Kai
-              </h1>
-              <p style={{ fontSize: "11px", color: "var(--text-secondary)", fontWeight: "500" }}>Mentora AI</p>
-            </div>
-          )}
+        {/* Kai Logo */}
+        <div 
+          onClick={() => {
+            onNewChat();
+            setMobileOpen(false);
+          }}
+          style={{ 
+            display: "flex", 
+            alignItems: "center", 
+            gap: "0.5rem", 
+            cursor: "pointer",
+            padding: "4px"
+          }}
+          className="scale-hover"
+          title="New Chat"
+        >
+          <img src="/logo.png" alt="Kai Logo" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />
+          <span style={{ fontSize: "15px", fontWeight: "700", color: "white", fontFamily: "var(--font-title)" }}>Kai</span>
         </div>
 
-        {/* Collapse toggle (desktop only) */}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
+        {/* Collapse Button */}
+        <button 
+          onClick={() => setIsCollapsed(true)} 
           style={{
-            background: "var(--bg-sidebar)",
-            border: "1px solid var(--border)",
-            borderRadius: "50%",
-            width: "24px",
-            height: "24px",
+            background: "transparent",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            borderRadius: "8px",
             cursor: "pointer",
             color: "var(--text-secondary)",
+            padding: "6px",
+            width: "32px",
+            height: "32px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            position: isCollapsed ? "absolute" : "static",
-            right: isCollapsed ? "-12px" : "auto",
-            top: isCollapsed ? "50%" : "auto",
-            transform: isCollapsed ? "translateY(-50%)" : "none",
-            zIndex: 110,
-            boxShadow: isCollapsed ? "0 2px 8px rgba(0,0,0,0.5)" : "none"
+            transition: "all 0.2s"
           }}
-          className="desktop-only-toggle"
+          className="scale-hover hover-white-border"
+          title="Collapse Sidebar"
         >
-          {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          <PanelLeftClose size={16} />
         </button>
       </div>
 
-      {/* New Chat Action */}
-      {!activeUser.isGuest && (
-        <div style={{ padding: isCollapsed ? "1rem 0" : "1rem 0.75rem 0.5rem 0.75rem", display: "flex", justifyContent: "center" }}>
-          <button
-            onClick={() => {
-              onNewChat();
-              setMobileOpen(false);
-            }}
-            className="btn-new-conv"
-            style={{
-              width: isCollapsed ? "42px" : "100%",
-              height: isCollapsed ? "42px" : "auto",
-              borderRadius: isCollapsed ? "50%" : "99px",
-              justifyContent: "center",
-              padding: isCollapsed ? "0" : "0.65rem 1rem",
-              display: "flex",
-              alignItems: "center"
-            }}
-          >
-            <Plus size={16} /> {!isCollapsed && "New conversation"}
-          </button>
-        </div>
-      )}
+      {/* Navigation Links / Options */}
+      <div style={{ 
+        padding: "0.5rem 0.75rem 0.25rem 0.75rem", 
+        display: "flex", 
+        flexDirection: "column", 
+        gap: "0.2rem" 
+      }}>
+        {/* New Chat Button */}
+        <button
+          onClick={() => {
+            onNewChat();
+            setMobileOpen(false);
+          }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
+            width: "100%",
+            padding: "0.65rem 0.75rem",
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            border: "none",
+            borderRadius: "8px",
+            color: "white",
+            fontSize: "13.5px",
+            fontWeight: "600",
+            cursor: "pointer",
+            textAlign: "left",
+            fontFamily: "var(--font-title)"
+          }}
+          className="scale-hover"
+        >
+          <SquarePen size={16} />
+          <span>New chat</span>
+        </button>
 
-      {/* Navigation Links */}
-      <div style={{ padding: isCollapsed ? "0.5rem 0" : "0.5rem 0.75rem", display: "flex", flexDirection: "column", gap: "0.25rem", borderBottom: "1px solid var(--border)", paddingBottom: "1rem" }}>
+        {/* Search Chats */}
         <button 
           onClick={() => {
-            onOpenKB();
+            onOpenSettings("kb");
             setMobileOpen(false);
           }}
-          className="nav-btn scale-hover"
-          style={{ 
-            display: "flex", 
-            alignItems: "center", 
-            justifyContent: isCollapsed ? "center" : "flex-start",
-            gap: isCollapsed ? "0" : "0.75rem", 
-            background: "transparent", 
-            border: "none", 
-            width: isCollapsed ? "42px" : "100%", 
-            height: isCollapsed ? "42px" : "auto", 
-            margin: isCollapsed ? "0 auto" : "0", 
-            padding: isCollapsed ? "0" : "0.6rem 0.85rem", 
-            borderRadius: "8px", 
-            cursor: "pointer" 
-          }}
+          style={menuOptionStyle}
+          className="sidebar-menu-btn"
         >
-          <Database size={16} style={{ color: "var(--text-secondary)" }} />
-          {!isCollapsed && <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-secondary)", fontFamily: "var(--font-title)" }}>Knowledge Base</span>}
+          <Search size={16} />
+          <span>Search chats</span>
         </button>
+
+        {/* Library */}
         <button 
           onClick={() => {
-            onOpenIntegrations();
+            onOpenSettings("kb");
             setMobileOpen(false);
           }}
-          className="nav-btn scale-hover"
-          style={{ 
-            display: "flex", 
-            alignItems: "center", 
-            justifyContent: isCollapsed ? "center" : "flex-start",
-            gap: isCollapsed ? "0" : "0.75rem", 
-            background: "transparent", 
-            border: "none", 
-            width: isCollapsed ? "42px" : "100%", 
-            height: isCollapsed ? "42px" : "auto", 
-            margin: isCollapsed ? "0 auto" : "0", 
-            padding: isCollapsed ? "0" : "0.6rem 0.85rem", 
-            borderRadius: "8px", 
-            cursor: "pointer" 
-          }}
+          style={menuOptionStyle}
+          className="sidebar-menu-btn"
         >
-          <Cpu size={16} style={{ color: "var(--text-secondary)" }} />
-          {!isCollapsed && <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-secondary)", fontFamily: "var(--font-title)" }}>Future Integrations</span>}
+          <Database size={16} />
+          <span>Library</span>
         </button>
+
+        {/* Projects */}
         <button 
           onClick={() => {
-            onOpenSettings();
+            onOpenSettings("integrations");
             setMobileOpen(false);
           }}
-          className="nav-btn scale-hover"
-          style={{ 
-            display: "flex", 
-            alignItems: "center", 
-            justifyContent: isCollapsed ? "center" : "flex-start",
-            gap: isCollapsed ? "0" : "0.75rem", 
-            background: "transparent", 
-            border: "none", 
-            width: isCollapsed ? "42px" : "100%", 
-            height: isCollapsed ? "42px" : "auto", 
-            margin: isCollapsed ? "0 auto" : "0", 
-            padding: isCollapsed ? "0" : "0.6rem 0.85rem", 
-            borderRadius: "8px", 
-            cursor: "pointer" 
-          }}
+          style={menuOptionStyle}
+          className="sidebar-menu-btn"
         >
-          <Settings size={16} style={{ color: "var(--text-secondary)" }} />
-          {!isCollapsed && <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-secondary)", fontFamily: "var(--font-title)" }}>Settings</span>}
+          <Folder size={16} />
+          <span>Projects</span>
         </button>
+
       </div>
 
       {/* History Scroller */}
@@ -579,7 +1016,7 @@ export default function Sidebar({
           <>
             {/* Pinned Section */}
             {pinned.length > 0 && (
-              <div style={{ borderBottom: "1px dashed rgba(255, 255, 255, 0.08)", paddingBottom: "0.75rem", marginBottom: "0.5rem" }}>
+              <div style={{ paddingBottom: "0.75rem", marginBottom: "0.5rem" }}>
                 {!isCollapsed && (
                   <p className="history-section-header" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                     <Pin size={11} style={{ transform: "rotate(45deg)", color: "var(--accent-light)" }} />
@@ -629,8 +1066,8 @@ export default function Sidebar({
       {/* User profile footer */}
       <div style={{ 
         padding: isCollapsed ? "1.25rem 0.5rem" : "1.25rem 1rem", 
-        borderTop: "1px solid var(--border)", 
-        backgroundColor: "rgba(0,0,0,0.15)",
+        borderTop: "none", 
+        backgroundColor: "transparent",
         transition: "padding 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
       }}>
         <div style={{ 
@@ -642,8 +1079,8 @@ export default function Sidebar({
         }}>
           
           <div 
-            onClick={onOpenProfile}
-            title="Edit Profile"
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+            title="Profile Menu"
             className="profile-info-container"
             style={{ 
               display: "flex", 
@@ -671,9 +1108,14 @@ export default function Sidebar({
                 color: "var(--accent-light)",
                 fontWeight: "bold",
                 fontSize: "14px",
-                fontFamily: "var(--font-title)"
+                fontFamily: "var(--font-title)",
+                overflow: "hidden"
               }}>
-                {activeUser.avatar}
+                {activeUser.profilePic ? (
+                  <img src={activeUser.profilePic} alt="User Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  activeUser.avatar
+                )}
               </div>
               {/* Green Online Dot */}
               <div style={{
@@ -700,27 +1142,7 @@ export default function Sidebar({
             )}
           </div>
 
-          {!isCollapsed && onLogout && (
-            <button
-              onClick={onLogout}
-              title="Sign Out"
-              style={{
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--text-secondary)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "6px",
-                borderRadius: "6px",
-                transition: "all 0.2s"
-              }}
-              className="logout-btn"
-            >
-              <LogOut size={16} />
-            </button>
-          )}
+
 
         </div>
       </div>
@@ -741,7 +1163,6 @@ export default function Sidebar({
           onClick={(e) => {
             e.stopPropagation();
             setActiveMenuChatId(null);
-            setProjectMenuOpen(false);
           }}
         />
       )}
@@ -824,6 +1245,48 @@ export default function Sidebar({
             transform: translateY(0);
           }
         }
+      `}</style>
+
+      {/* Profile menu popover overlay */}
+      {renderProfileMenu()}
+
+      <style>{`
+        .popover-menu-item {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          width: 100%;
+          background: transparent;
+          border: none;
+          padding: 0.45rem 0.6rem;
+          border-radius: 8px;
+          color: var(--text-primary);
+          font-size: 13px;
+          cursor: pointer;
+          text-align: left;
+          transition: background 0.15s;
+        }
+        .popover-menu-item:hover {
+          background: rgba(255, 255, 255, 0.05);
+        }
+        .popover-menu-item-red {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          width: 100%;
+          background: transparent;
+          border: none;
+          padding: 0.45rem 0.6rem;
+          border-radius: 8px;
+          color: var(--error);
+          font-size: 13px;
+          cursor: pointer;
+          text-align: left;
+          transition: background 0.15s;
+        }
+        .popover-menu-item-red:hover {
+          background: rgba(239, 68, 68, 0.08);
+        }
         .history-section-header {
           font-family: var(--font-title);
           font-size: 11px;
@@ -846,6 +1309,11 @@ export default function Sidebar({
         .logout-btn:hover {
           color: var(--error) !important;
           background-color: rgba(239, 68, 68, 0.1) !important;
+        }
+        .hover-white-border:hover {
+          border-color: rgba(255, 255, 255, 0.4) !important;
+          color: white !important;
+          background-color: rgba(255, 255, 255, 0.05) !important;
         }
         @media (max-width: 768px) {
           .desktop-only-toggle {

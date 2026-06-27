@@ -290,7 +290,6 @@ export default function ChatWindow({
         alignItems: "center",
         justifyContent: "space-between",
         padding: "0 2rem",
-        borderBottom: "1px solid var(--border)",
         background: "rgba(9, 13, 26, 0.75)",
         backdropFilter: "blur(20px)",
         zIndex: 50,
