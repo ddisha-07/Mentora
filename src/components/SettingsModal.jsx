@@ -857,7 +857,7 @@ export default function SettingsModal({ isOpen, onClose, user, onSaveProfile, on
   const sidebarBg = appearance === "Light" ? "rgba(0, 0, 0, 0.02)" : "rgba(0, 0, 0, 0.2)";
 
   return (
-    <div style={{
+    <div className="modal-overlay" style={{
       position: "fixed",
       top: 0,
       left: 0,
@@ -882,6 +882,10 @@ export default function SettingsModal({ isOpen, onClose, user, onSaveProfile, on
         color: "var(--text-primary)",
         borderColor: "var(--border)"
       }}>
+        {/* Mobile Drag Handle */}
+        <div className="mobile-drag-handle">
+          <div className="drag-handle-pill"></div>
+        </div>
         
         {/* Sidebar Nav */}
         <div style={{

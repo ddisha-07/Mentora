@@ -59,7 +59,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onSave }) {
   };
 
   return (
-    <div style={{
+    <div className="modal-overlay" style={{
       position: "fixed",
       top: 0,
       left: 0,
@@ -87,6 +87,11 @@ export default function EditProfileModal({ isOpen, onClose, user, onSave }) {
         color: "var(--text-primary)",
         boxShadow: "0 24px 64px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
       }}>
+        {/* Mobile Drag Handle */}
+        <div className="mobile-drag-handle">
+          <div className="drag-handle-pill"></div>
+        </div>
+
         {/* Header */}
         <div style={{ padding: "1.25rem 1.75rem", borderBottom: "1px solid rgba(255, 255, 255, 0.05)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
