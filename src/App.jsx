@@ -502,6 +502,14 @@ export default function App() {
   return (
     <div className="app-container">
       
+      {/* Mobile Sidebar Overlay Backdrop */}
+      {mobileOpen && (
+        <div 
+          onClick={() => setMobileOpen(false)}
+          className="mobile-sidebar-overlay"
+        />
+      )}
+      
       {/* Sidebar Navigation Panel */}
       <Sidebar 
         user={user}
