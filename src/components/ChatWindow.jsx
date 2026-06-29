@@ -326,7 +326,7 @@ export default function ChatWindow({
         </div>
       </header>
 
-      {/* Mobile Header (Top-Left Burger, Top-Right Temporary Chat) */}
+      {/* Mobile Header (Top-Left Burger & Brand Name, Top-Right Temporary Chat) */}
       <header className="chat-header glass mobile-header chat-mobile-header" style={{
         height: "4rem",
         alignItems: "center",
@@ -337,51 +337,47 @@ export default function ChatWindow({
         zIndex: 50,
         position: "relative"
       }}>
-        {/* Left Side: Sidebar Burger Toggle Button */}
-        <button 
-          onClick={() => setMobileOpen(!mobileOpen)}
-          style={{
-            background: "rgba(255, 255, 255, 0.05)",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            cursor: "pointer",
-            color: "white",
-            width: "36px",
-            height: "36px",
-            borderRadius: "8px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            transition: "all 0.2s"
-          }}
-          className="mobile-burger-btn scale-hover"
-          title="Toggle Sidebar"
-        >
-          <Menu size={20} />
-        </button>
-
-        {/* Center: Kai Label */}
-        <span style={{ fontSize: "17px", fontWeight: "800", color: "white", fontFamily: "var(--font-serif)" }}>Kai</span>
+        {/* Left Side: Sidebar Burger Toggle Button & Kai Brand Label */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <button 
+            onClick={() => setMobileOpen(!mobileOpen)}
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "4px",
+              transition: "all 0.2s"
+            }}
+            className="mobile-burger-btn scale-hover"
+            title="Toggle Sidebar"
+          >
+            <Menu size={24} />
+          </button>
+          <span style={{ fontSize: "17px", fontWeight: "800", color: "white", fontFamily: "var(--font-serif)" }}>Kai</span>
+        </div>
 
         {/* Right Side: Temporary Chat Option Symbol */}
         <button 
           onClick={onStartTemporaryChat}
           style={{
-            background: "rgba(255, 255, 255, 0.05)",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
+            background: "transparent",
+            border: "none",
             cursor: "pointer",
             color: "var(--accent-light)",
-            width: "36px",
-            height: "36px",
-            borderRadius: "8px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            padding: "4px",
             transition: "all 0.2s"
           }}
           className="mobile-temp-chat-btn scale-hover"
           title="Start Temporary Chat"
         >
-          <Ghost size={20} />
+          <Ghost size={24} />
         </button>
       </header>
 
