@@ -162,8 +162,8 @@ export default function LoginPage({ onLogin }) {
         justifyContent: "center",
         position: "relative",
         background: "var(--bg-app)",
-        padding: "1rem",
-        overflow: "hidden"
+        padding: "2rem 1rem",
+        overflowY: "auto"
       }}>
         {/* Background ambient elements */}
         <div className="grid-bg" />
@@ -173,10 +173,10 @@ export default function LoginPage({ onLogin }) {
           width: "100%",
           maxWidth: "440px",
           borderRadius: "20px",
-          padding: "2.5rem",
+          padding: "2rem",
           display: "flex",
           flexDirection: "column",
-          gap: "1.5rem",
+          gap: "1.25rem",
           zIndex: 10,
           background: "rgba(13, 20, 38, 0.55)",
           backdropFilter: "blur(20px)",
@@ -342,8 +342,8 @@ export default function LoginPage({ onLogin }) {
       justifyContent: "center",
       position: "relative",
       background: "var(--bg-app)",
-      padding: "1rem",
-      overflow: "hidden"
+      padding: "2rem 1rem",
+      overflowY: "auto"
     }}>
       {/* Background ambient elements */}
       <div className="grid-bg" />
@@ -353,10 +353,10 @@ export default function LoginPage({ onLogin }) {
         width: "100%",
         maxWidth: "440px",
         borderRadius: "20px",
-        padding: "2.5rem",
+        padding: "2rem",
         display: "flex",
         flexDirection: "column",
-        gap: "1.5rem",
+        gap: "1.25rem",
         zIndex: 10,
         background: "rgba(13, 20, 38, 0.55)",
         backdropFilter: "blur(20px)",
