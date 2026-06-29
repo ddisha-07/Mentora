@@ -113,6 +113,7 @@ export default function ChatWindow({
   
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
+  const scrollContainerRef = useRef(null);
 
   const workflowSteps = [
     { label: "Understanding your request...", icon: Brain },
@@ -143,7 +144,12 @@ export default function ChatWindow({
 
   // Auto-scroll chat
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (scrollContainerRef.current && (activeChat.messages.length > 0 || activeWorkflow)) {
+      scrollContainerRef.current.scrollTo({
+        top: scrollContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   }, [activeChat.messages, activeWorkflow, workflowStep]);
 
   // Handle Form Submit
@@ -382,7 +388,10 @@ export default function ChatWindow({
       </header>
 
       {/* Chat scroll box */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "2.5rem 2rem", display: "flex", flexDirection: "column", gap: "2rem", position: "relative", zIndex: 2 }}>
+      <div 
+        ref={scrollContainerRef}
+        style={{ flex: 1, overflowY: "auto", padding: "2.5rem 2rem", display: "flex", flexDirection: "column", gap: "2rem", position: "relative", zIndex: 2 }}
+      >
         
         {activeChat.temporary && (
           <div style={{
@@ -729,7 +738,7 @@ export default function ChatWindow({
                   border: "none",
                   outline: "none",
                   color: "white",
-                  fontSize: "15px",
+                  fontSize: "16px",
                   padding: "0.5rem 0"
                 }}
               />
