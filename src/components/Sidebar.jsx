@@ -610,7 +610,7 @@ export default function Sidebar({
   if (isCollapsed) {
     return (
       <aside 
-        className="sidebar collapsed"
+        className={`sidebar collapsed ${mobileOpen ? "mobile-open" : ""}`}
         style={{ 
           borderRight: "1px solid var(--border)", 
           position: "relative",
@@ -873,7 +873,10 @@ export default function Sidebar({
 
         {/* Collapse Button */}
         <button 
-          onClick={() => setIsCollapsed(true)} 
+          onClick={() => {
+            setIsCollapsed(true);
+            setMobileOpen(false);
+          }} 
           style={{
             background: "transparent",
             border: "1px solid rgba(255, 255, 255, 0.15)",

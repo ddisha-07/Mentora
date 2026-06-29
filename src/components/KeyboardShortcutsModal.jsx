@@ -48,7 +48,7 @@ export default function KeyboardShortcutsModal({ isOpen, onClose, shortcuts, onS
   const sections = ["Composer", "App"];
 
   return (
-    <div className="modal-overlay" style={{
+    <div style={{
       position: "fixed",
       top: 0,
       left: 0,
@@ -77,11 +77,6 @@ export default function KeyboardShortcutsModal({ isOpen, onClose, shortcuts, onS
         overflow: "hidden",
         position: "relative"
       }}>
-        {/* Mobile Drag Handle */}
-        <div className="mobile-drag-handle">
-          <div className="drag-handle-pill"></div>
-        </div>
-
         {/* Close Circular Button */}
         <button 
           onClick={onClose}

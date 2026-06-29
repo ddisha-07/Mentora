@@ -44,7 +44,7 @@ export default function IntegrationModal({ isOpen, onClose }) {
   ];
 
   return (
-    <div className="modal-overlay" style={{
+    <div style={{
       position: "fixed",
       top: 0,
       left: 0,
@@ -66,11 +66,6 @@ export default function IntegrationModal({ isOpen, onClose }) {
         flexDirection: "column",
         overflow: "hidden"
       }}>
-        {/* Mobile Drag Handle */}
-        <div className="mobile-drag-handle">
-          <div className="drag-handle-pill"></div>
-        </div>
-
         {/* Header */}
         <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
