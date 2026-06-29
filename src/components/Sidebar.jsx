@@ -43,7 +43,7 @@ export default function Sidebar({
   onPinChat,
   onArchiveChat,
   onOpenSettings,
-  isCollapsed,
+  isCollapsed: isCollapsedProp,
   setIsCollapsed,
   mobileOpen,
   setMobileOpen,
@@ -73,6 +73,9 @@ export default function Sidebar({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const isCollapsed = isCollapsedProp && !isMobileViewport;
+
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const menuOptionStyle = {
@@ -618,7 +621,7 @@ export default function Sidebar({
     );
   };
 
-  if (isCollapsed && !isMobileViewport) {
+  if (isCollapsed) {
     return (
       <aside 
         className={`sidebar collapsed ${mobileOpen ? "mobile-open" : ""}`}
