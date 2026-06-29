@@ -69,15 +69,19 @@ export default function App() {
   // Synchronize chats history and active chat to localStorage
   useEffect(() => {
     if (user && !user.isGuest) {
-      localStorage.setItem("mentora_chats_" + user.email, JSON.stringify(chats));
+      const persistentChats = chats.filter(c => !c.temporary);
+      localStorage.setItem("mentora_chats_" + user.email, JSON.stringify(persistentChats));
     }
   }, [chats, user]);
 
   useEffect(() => {
     if (user && !user.isGuest) {
-      localStorage.setItem("mentora_active_chat_" + user.email, activeChatId);
+      const currentActiveChat = chats.find(c => c.id === activeChatId);
+      if (currentActiveChat && !currentActiveChat.temporary) {
+        localStorage.setItem("mentora_active_chat_" + user.email, activeChatId);
+      }
     }
-  }, [activeChatId, user]);
+  }, [activeChatId, user, chats]);
   
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState("general");
@@ -190,6 +194,22 @@ export default function App() {
     };
     setChats((prev) => [newSession, ...prev]);
     setActiveChatId(newId);
+  };
+
+  // Create a temporary chat session (not persisted in history or localStorage)
+  const handleStartTemporaryChat = () => {
+    const newId = `chat-temp-${Date.now()}`;
+    const newSession = {
+      id: newId,
+      title: "Temporary Chat",
+      messages: [],
+      document: null,
+      createdAt: Date.now(),
+      temporary: true
+    };
+    setChats((prev) => [newSession, ...prev]);
+    setActiveChatId(newId);
+    setMobileOpen(false);
   };
 
   // Delete a chat session
@@ -553,6 +573,7 @@ export default function App() {
           mobileOpen={mobileOpen}
           setMobileOpen={setMobileOpen}
           isCollapsedSidebar={isCollapsed}
+          onStartTemporaryChat={handleStartTemporaryChat}
         />
       </main>
 

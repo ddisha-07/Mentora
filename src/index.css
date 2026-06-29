@@ -557,3 +557,20 @@ h1, h2, h3, h4, h5, h6 {
   animation: spin 1.5s linear infinite;
   display: inline-block;
 }
+
+/* Responsive Header Styles (Desktop vs Mobile Only) */
+.desktop-header {
+  display: flex !important;
+}
+.mobile-header {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .desktop-header {
+    display: none !important;
+  }
+  .mobile-header {
+    display: flex !important;
+  }
+}

@@ -368,6 +368,7 @@ export default function Sidebar({
 
     chats.forEach((chat) => {
       if (chat.archived) return;
+      if (chat.temporary) return;
       if (chat.pinned) {
         pinned.push(chat);
         return;

@@ -26,7 +26,8 @@ import {
   ThumbsUp,
   ThumbsDown,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Ghost
 } from "lucide-react";
 import { getResponseForQuery, detectLanguage } from "../data/mockData";
 
@@ -38,7 +39,8 @@ export default function ChatWindow({
   onClearDocument,
   mobileOpen, 
   setMobileOpen,
-  isCollapsedSidebar
+  isCollapsedSidebar,
+  onStartTemporaryChat
 }) {
   const [input, setInput] = useState("");
   const getFirstName = (fullName) => {
@@ -284,8 +286,8 @@ export default function ChatWindow({
       <div className="grid-bg" />
       <div className="logo-radial-glow" />
 
-      {/* Persistent Glassmorphic Header Bar (Redesigned) */}
-      <header className="chat-header glass" style={{
+      {/* Desktop Header */}
+      <header className="chat-header glass desktop-header" style={{
         height: "4rem",
         alignItems: "center",
         justifyContent: "space-between",
@@ -296,14 +298,6 @@ export default function ChatWindow({
         position: "relative"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <button 
-            onClick={() => setMobileOpen(!mobileOpen)}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "white" }}
-            className="chat-mobile-header"
-          >
-            <Menu size={20} />
-          </button>
-          
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span style={{ fontSize: "18px", fontWeight: "800", color: "white", fontFamily: "var(--font-serif)", letterSpacing: "-0.01em" }}>Kai</span>
             <span style={{ color: "var(--text-secondary)", opacity: 0.4 }}>·</span>
@@ -332,12 +326,95 @@ export default function ChatWindow({
         </div>
       </header>
 
+      {/* Mobile Header (Top-Right Burger, Top-Left Temporary Chat) */}
+      <header className="chat-header glass mobile-header" style={{
+        height: "4rem",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 1.25rem",
+        background: "rgba(9, 13, 26, 0.8)",
+        backdropFilter: "blur(20px)",
+        zIndex: 50,
+        position: "relative"
+      }}>
+        {/* Left Side: Temporary Chat Option */}
+        <button 
+          onClick={onStartTemporaryChat}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            background: "rgba(255, 255, 255, 0.05)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            padding: "0.45rem 0.75rem",
+            borderRadius: "8px",
+            color: "var(--accent-light)",
+            fontSize: "13px",
+            fontWeight: "600",
+            cursor: "pointer",
+            fontFamily: "var(--font-title)",
+            transition: "all 0.2s"
+          }}
+          className="mobile-temp-chat-btn"
+        >
+          <Ghost size={15} />
+          <span>Temp Chat</span>
+        </button>
+
+        {/* Center: Kai Label */}
+        <span style={{ fontSize: "17px", fontWeight: "800", color: "white", fontFamily: "var(--font-serif)" }}>Kai</span>
+
+        {/* Right Side: Sidebar Burger Toggle Button */}
+        <button 
+          onClick={() => setMobileOpen(!mobileOpen)}
+          style={{
+            background: "rgba(255, 255, 255, 0.05)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            cursor: "pointer",
+            color: "white",
+            width: "36px",
+            height: "36px",
+            borderRadius: "8px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.2s"
+          }}
+          className="mobile-burger-btn"
+        >
+          <Menu size={20} />
+        </button>
+      </header>
+
       {/* Chat scroll box */}
       <div style={{ flex: 1, overflowY: "auto", padding: "2.5rem 2rem", display: "flex", flexDirection: "column", gap: "2rem", position: "relative", zIndex: 2 }}>
         
+        {activeChat.temporary && (
+          <div style={{
+            background: "rgba(168, 85, 247, 0.08)",
+            border: "1px solid rgba(168, 85, 247, 0.2)",
+            borderRadius: "10px",
+            padding: "0.75rem 1rem",
+            color: "#d8b4fe",
+            fontSize: "13px",
+            fontWeight: "500",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.6rem",
+            maxWidth: "800px",
+            margin: "0 auto 0.5rem auto",
+            width: "100%",
+            justifyContent: "center",
+            zIndex: 10
+          }}>
+            <Ghost size={16} />
+            <span><strong>Temporary Chat:</strong> Messages are not saved to your profile history.</span>
+          </div>
+        )}
+
         {activeChat.messages.length === 0 ? (
           // Redesigned empty state matching Figma spec
-          <div className="fade-in" style={{ maxWidth: "800px", margin: "auto", display: "flex", flexDirection: "column", gap: "2.5rem", width: "100%", textAlign: "center", padding: "3rem 0" }}>
+          <div className="fade-in" style={{ maxWidth: "800px", margin: "auto", display: "flex", flexDirection: "column", gap: "2.5rem", width: "100%", textAlign: "center", padding: "1.5rem 0" }}>
             
             {/* Central Branding */}
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
