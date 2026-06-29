@@ -89,6 +89,7 @@ h1, h2, h3, h4, h5, h6 {
 .app-container {
   display: flex;
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
   overflow: hidden;
   position: relative;
@@ -98,6 +99,7 @@ h1, h2, h3, h4, h5, h6 {
 .sidebar {
   width: 240px;
   height: 100vh;
+  height: 100dvh;
   background-color: var(--bg-sidebar);
   border-right: 1px solid var(--border);
   display: flex;
@@ -113,6 +115,7 @@ h1, h2, h3, h4, h5, h6 {
 .main-content {
   flex: 1;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -504,6 +507,7 @@ h1, h2, h3, h4, h5, h6 {
     left: 0 !important;
     width: 260px !important;
     height: 100vh !important;
+    height: 100dvh !important;
     transform: translateX(-100%) !important;
     z-index: 1000 !important;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
