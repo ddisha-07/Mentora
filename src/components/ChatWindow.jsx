@@ -729,6 +729,7 @@ export default function ChatWindow({
                 placeholder={activeChat.document ? `Ask questions specifically about "${activeChat.document.name}"...` : "Message Kai..."}
                 style={{
                   flex: 1,
+                  minWidth: "0px",
                   background: "transparent",
                   border: "none",
                   outline: "none",
