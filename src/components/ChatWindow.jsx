@@ -327,7 +327,7 @@ export default function ChatWindow({
       </header>
 
       {/* Mobile Header (Top-Left Burger & Brand Name, Top-Right Temporary Chat) */}
-      <header className="chat-header glass mobile-header chat-mobile-header" style={{
+      <header className="chat-header glass mobile-header" style={{
         height: "4rem",
         alignItems: "center",
         justifyContent: "space-between",
@@ -790,9 +790,6 @@ export default function ChatWindow({
       </div>
 
       <style>{`
-        .chat-mobile-header {
-          display: none !important;
-        }
         .hover-white:hover {
           color: white !important;
         }
@@ -801,9 +798,6 @@ export default function ChatWindow({
           cursor: not-allowed !important;
         }
         @media (max-width: 768px) {
-          .chat-mobile-header {
-            display: flex !important;
-          }
           .capabilities-grid {
             grid-template-columns: 1fr !important;
           }
