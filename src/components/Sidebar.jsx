@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   MessageCircle, 
   Trash2, 
@@ -62,6 +62,17 @@ export default function Sidebar({
 
   const [activeMenuChatId, setActiveMenuChatId] = useState(null);
   const [toast, setToast] = useState(null);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleResize = () => {
+      setIsMobileViewport(window.innerWidth <= 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const menuOptionStyle = {
@@ -607,7 +618,7 @@ export default function Sidebar({
     );
   };
 
-  if (isCollapsed) {
+  if (isCollapsed && !isMobileViewport) {
     return (
       <aside 
         className={`sidebar collapsed ${mobileOpen ? "mobile-open" : ""}`}
@@ -975,7 +986,7 @@ export default function Sidebar({
       </div>
 
       {/* History Scroller */}
-      <div style={{ flex: 1, minHeight: "0", overflowY: "auto", padding: "1.25rem 0.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "1.25rem 0.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         
         {activeUser.isGuest ? (
           <div style={{
