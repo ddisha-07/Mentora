@@ -975,7 +975,7 @@ export default function Sidebar({
       </div>
 
       {/* History Scroller */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "1.25rem 0.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <div style={{ flex: 1, minHeight: "0", overflowY: "auto", padding: "1.25rem 0.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         
         {activeUser.isGuest ? (
           <div style={{
