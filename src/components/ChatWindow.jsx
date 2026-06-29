@@ -43,6 +43,16 @@ export default function ChatWindow({
   onStartTemporaryChat
 }) {
   const [input, setInput] = useState("");
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth <= 768 : false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const getFirstName = (fullName) => {
     if (!fullName) return "Guest";
     const parts = fullName.trim().split(/\s+/);
@@ -287,104 +297,108 @@ export default function ChatWindow({
       <div className="logo-radial-glow" />
 
       {/* Desktop Header */}
-      <header className="chat-header glass desktop-header" style={{
-        height: "4rem",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 2rem",
-        background: "rgba(9, 13, 26, 0.75)",
-        backdropFilter: "blur(20px)",
-        zIndex: 50,
-        position: "relative"
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "18px", fontWeight: "800", color: "white", fontFamily: "var(--font-serif)", letterSpacing: "-0.01em" }}>Kai</span>
-            <span style={{ color: "var(--text-secondary)", opacity: 0.4 }}>·</span>
-            <span style={{ fontSize: "14px", color: "var(--text-secondary)", fontStyle: "italic", fontFamily: "var(--font-sans)" }}>
-              Mentora's AI assistant
-            </span>
-          </div>
-        </div>
-
-        {/* Right Section - Online Indicator */}
-        <div style={{
-          display: "flex",
+      {!isMobile && (
+        <header className="chat-header glass desktop-header" style={{
+          height: "4rem",
           alignItems: "center",
-          gap: "0.5rem",
-          background: "rgba(16, 185, 129, 0.05)",
-          border: "1px solid rgba(16, 185, 129, 0.2)",
-          padding: "0.35rem 0.85rem",
-          borderRadius: "99px",
-          fontSize: "12px",
-          color: "#10B981",
-          fontWeight: "600",
-          fontFamily: "var(--font-title)"
+          justifyContent: "space-between",
+          padding: "0 2rem",
+          background: "rgba(9, 13, 26, 0.75)",
+          backdropFilter: "blur(20px)",
+          zIndex: 50,
+          position: "relative"
         }}>
-          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10B981" }} />
-          Online
-        </div>
-      </header>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ fontSize: "18px", fontWeight: "800", color: "white", fontFamily: "var(--font-serif)", letterSpacing: "-0.01em" }}>Kai</span>
+              <span style={{ color: "var(--text-secondary)", opacity: 0.4 }}>·</span>
+              <span style={{ fontSize: "14px", color: "var(--text-secondary)", fontStyle: "italic", fontFamily: "var(--font-sans)" }}>
+                Mentora's AI assistant
+              </span>
+            </div>
+          </div>
+
+          {/* Right Section - Online Indicator */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            background: "rgba(16, 185, 129, 0.05)",
+            border: "1px solid rgba(16, 185, 129, 0.2)",
+            padding: "0.35rem 0.85rem",
+            borderRadius: "99px",
+            fontSize: "12px",
+            color: "#10B981",
+            fontWeight: "600",
+            fontFamily: "var(--font-title)"
+          }}>
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10B981" }} />
+            Online
+          </div>
+        </header>
+      )}
 
       {/* Mobile Header (Top-Right Burger, Top-Left Temporary Chat) */}
-      <header className="chat-header glass mobile-header" style={{
-        height: "4rem",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 1.25rem",
-        background: "rgba(9, 13, 26, 0.8)",
-        backdropFilter: "blur(20px)",
-        zIndex: 50,
-        position: "relative"
-      }}>
-        {/* Left Side: Temporary Chat Option */}
-        <button 
-          onClick={onStartTemporaryChat}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.4rem",
-            background: "rgba(255, 255, 255, 0.05)",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            padding: "0.45rem 0.75rem",
-            borderRadius: "8px",
-            color: "var(--accent-light)",
-            fontSize: "13px",
-            fontWeight: "600",
-            cursor: "pointer",
-            fontFamily: "var(--font-title)",
-            transition: "all 0.2s"
-          }}
-          className="mobile-temp-chat-btn"
-        >
-          <Ghost size={15} />
-          <span>Temp Chat</span>
-        </button>
+      {isMobile && (
+        <header className="chat-header glass mobile-header" style={{
+          height: "4rem",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 1.25rem",
+          background: "rgba(9, 13, 26, 0.8)",
+          backdropFilter: "blur(20px)",
+          zIndex: 50,
+          position: "relative"
+        }}>
+          {/* Left Side: Temporary Chat Option */}
+          <button 
+            onClick={onStartTemporaryChat}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              padding: "0.45rem 0.75rem",
+              borderRadius: "8px",
+              color: "var(--accent-light)",
+              fontSize: "13px",
+              fontWeight: "600",
+              cursor: "pointer",
+              fontFamily: "var(--font-title)",
+              transition: "all 0.2s"
+            }}
+            className="mobile-temp-chat-btn"
+          >
+            <Ghost size={15} />
+            <span>Temp Chat</span>
+          </button>
 
-        {/* Center: Kai Label */}
-        <span style={{ fontSize: "17px", fontWeight: "800", color: "white", fontFamily: "var(--font-serif)" }}>Kai</span>
+          {/* Center: Kai Label */}
+          <span style={{ fontSize: "17px", fontWeight: "800", color: "white", fontFamily: "var(--font-serif)" }}>Kai</span>
 
-        {/* Right Side: Sidebar Burger Toggle Button */}
-        <button 
-          onClick={() => setMobileOpen(!mobileOpen)}
-          style={{
-            background: "rgba(255, 255, 255, 0.05)",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            cursor: "pointer",
-            color: "white",
-            width: "36px",
-            height: "36px",
-            borderRadius: "8px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            transition: "all 0.2s"
-          }}
-          className="mobile-burger-btn"
-        >
-          <Menu size={20} />
-        </button>
-      </header>
+          {/* Right Side: Sidebar Burger Toggle Button */}
+          <button 
+            onClick={() => setMobileOpen(!mobileOpen)}
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              cursor: "pointer",
+              color: "white",
+              width: "36px",
+              height: "36px",
+              borderRadius: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s"
+            }}
+            className="mobile-burger-btn"
+          >
+            <Menu size={20} />
+          </button>
+        </header>
+      )}
 
       {/* Chat scroll box */}
       <div style={{ flex: 1, overflowY: "auto", padding: "2.5rem 2rem", display: "flex", flexDirection: "column", gap: "2rem", position: "relative", zIndex: 2 }}>
