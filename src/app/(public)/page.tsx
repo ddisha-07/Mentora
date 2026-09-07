@@ -3,205 +3,218 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <div className="relative overflow-hidden selection:bg-indigo-500 selection:text-white">
-      {/* Radiant Background Glow Accents */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-indigo-600/15 via-purple-600/10 to-transparent blur-3xl pointer-events-none -z-10" />
-      <div className="absolute top-1/3 -left-48 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute top-1/2 -right-48 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
+    <div className="relative overflow-hidden bg-[#080604] text-[#fff7ed] bg-retro-dense-grid">
+      {/* Radiant Orange & Amber Ambient Glow Orbs */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] bg-gradient-to-b from-orange-600/20 via-amber-600/10 to-transparent blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute top-1/4 -left-36 w-96 h-96 bg-orange-600/15 rounded-full blur-[100px] pointer-events-none -z-10" />
+      <div className="absolute top-1/2 -right-36 w-96 h-96 bg-amber-500/15 rounded-full blur-[100px] pointer-events-none -z-10" />
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20 md:pt-24 md:pb-28">
-        <div className="text-center space-y-6 max-w-3xl mx-auto">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-950/70 border border-indigo-500/30 text-indigo-300 shadow-inner">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>AI-Driven Career Personalization Engine</span>
+        <div className="text-center space-y-7 max-w-4xl mx-auto flex flex-col items-center">
+          
+          {/* Centered Pixelated Mentora Title */}
+          <div className="relative group my-2">
+            <div className="absolute -inset-6 bg-gradient-to-r from-orange-600/30 via-amber-500/30 to-orange-600/30 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition duration-700 -z-10" />
+            <div className="flex flex-col items-center justify-center">
+              <h1 className="font-pixel text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-orange-400 to-orange-600 drop-shadow-pixel-bold select-none py-2">
+                MENTORA
+              </h1>
+              <div className="h-1 w-32 sm:w-48 bg-gradient-to-r from-transparent via-orange-500 to-transparent mt-3 rounded-full" />
+            </div>
           </div>
 
-          {/* Headline */}
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
-            Learn with precision.{' '}
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
-              Engineered for your career.
-            </span>
-          </h1>
-
-          {/* Subheadline */}
-          <p className="text-base sm:text-lg md:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto">
-            Ditch generic, one-size-fits-all video playlists. Mentora analyzes your current skills, predicts role-specific gaps, and generates progressive 3-level roadmaps with verified proof of competence.
-          </p>
+          {/* Subtitle / Tagline */}
+          <div className="space-y-3 max-w-2xl mx-auto">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white">
+              Learn with precision.{' '}
+              <span className="bg-gradient-to-r from-amber-300 via-orange-400 to-amber-200 bg-clip-text text-transparent">
+                Engineered for your career.
+              </span>
+            </h2>
+            <p className="text-sm sm:text-base md:text-lg text-zinc-400 leading-relaxed">
+              Ditch generic, passive tutorial loops. Mentora analyzes your current skills, predicts role-specific gaps, and generates progressive 3-level roadmaps with verified proof of competence.
+            </p>
+          </div>
 
           {/* CTA Buttons */}
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
             <Link
               href="/register"
-              className="w-full sm:w-auto px-8 py-4 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 rounded-2xl shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
+              className="w-full sm:w-auto px-8 py-4 text-sm font-bold text-black bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 hover:from-amber-300 hover:to-orange-400 rounded-2xl shadow-xl shadow-orange-600/35 hover:shadow-orange-600/60 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group font-mono uppercase tracking-wider"
             >
-              <span>Start Learning</span>
-              <span className="text-base group-hover:translate-x-0.5 transition-transform">→</span>
+              <span>Start Quest</span>
+              <span className="text-base group-hover:translate-x-1 transition-transform">→</span>
             </Link>
 
             <Link
               href="/journeys/demo"
-              className="w-full sm:w-auto px-7 py-4 text-sm font-semibold text-slate-300 hover:text-white bg-slate-900/80 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 rounded-2xl shadow-sm transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-7 py-4 text-sm font-semibold text-zinc-300 hover:text-white bg-[#140e09]/90 hover:bg-[#1c130d] border border-orange-900/60 hover:border-orange-600/60 rounded-2xl shadow-sm transition-all flex items-center justify-center gap-2 font-mono"
             >
               <span>View Roadmap Demo</span>
-              <span className="text-xs text-indigo-400 font-mono">⚡ 9 Modules</span>
+              <span className="text-xs text-orange-400 font-bold">⚡ 9 Modules</span>
             </Link>
           </div>
 
           {/* Quick Metrics Ticker */}
-          <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400">
-            <div className="flex items-center gap-2">
-              <span className="text-emerald-400 font-bold">✓</span> No Credit Card Required
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-zinc-400 font-mono">
+            <div className="flex items-center gap-2 bg-[#120b06] border border-orange-900/40 px-3.5 py-1.5 rounded-full">
+              <span className="text-orange-400 font-bold">✓</span> No Credit Card Required
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-indigo-400 font-bold">✓</span> Personalized in 2 Minutes
+            <div className="flex items-center gap-2 bg-[#120b06] border border-orange-900/40 px-3.5 py-1.5 rounded-full">
+              <span className="text-amber-400 font-bold">✓</span> Personalized in 2 Mins
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-amber-400 font-bold">✓</span> Verifiable Skill Passport
+            <div className="flex items-center gap-2 bg-[#120b06] border border-orange-900/40 px-3.5 py-1.5 rounded-full">
+              <span className="text-orange-400 font-bold">✓</span> Verifiable Skill Passport
             </div>
           </div>
         </div>
 
-        {/* Hero Visual Card: Simulated Interactive Journey Preview */}
-        <div className="mt-14 max-w-5xl mx-auto">
-          {/* Subtle Border Gradient Container */}
-          <div className="relative p-[1.5px] rounded-3xl bg-gradient-to-r from-indigo-500/40 via-purple-500/30 to-pink-500/40 shadow-2xl shadow-indigo-950/40">
-            <div className="rounded-[23px] bg-slate-950/90 backdrop-blur-2xl p-5 sm:p-8 space-y-6">
+        {/* Hero Visual Card: Simulated Retro Interactive Journey Preview */}
+        <div className="mt-16 max-w-5xl mx-auto">
+          {/* Border Gradient Container */}
+          <div className="relative p-[1.5px] rounded-3xl bg-gradient-to-r from-orange-500/50 via-amber-500/40 to-orange-600/50 shadow-2xl shadow-orange-950/50">
+            <div className="rounded-[23px] bg-[#0d0906]/95 backdrop-blur-2xl p-6 sm:p-8 space-y-6">
+              
               {/* Card Header Bar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-850 pb-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-orange-950/80 pb-5">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-950 border border-indigo-700/60 flex items-center justify-center text-indigo-400 font-black text-sm">
-                    AI
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-600 to-amber-600 p-[1px] flex items-center justify-center shadow-lg shadow-orange-950/50">
+                    <div className="w-full h-full bg-[#120c07] rounded-[11px] flex items-center justify-center text-orange-400 font-pixel text-xs">
+                      XP
+                    </div>
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono uppercase text-indigo-400 font-bold tracking-wider">
-                        Active Journey Preview
+                      <span className="text-[10px] font-mono uppercase text-orange-400 font-bold tracking-widest">
+                        Active Mission Preview
                       </span>
-                      <span className="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.2 rounded-full font-semibold">
+                      <span className="text-[10px] bg-orange-950/80 text-orange-300 border border-orange-700/60 px-2 py-0.5 rounded-full font-semibold font-mono">
                         Gated Progression
                       </span>
                     </div>
-                    <h3 className="text-lg font-bold text-white">Staff AI Systems Architect</h3>
+                    <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">Staff AI Systems Architect</h3>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <span className="text-xs text-slate-400 block">Overall Mastery</span>
-                    <span className="text-sm font-extrabold text-emerald-400">67% Complete</span>
+                    <span className="text-xs text-zinc-400 block font-mono">Overall Mastery</span>
+                    <span className="text-sm font-extrabold text-orange-400 font-mono">67% Complete</span>
                   </div>
-                  <div className="w-28 sm:w-32 h-2.5 bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 w-2/3" />
+                  <div className="w-28 sm:w-36 h-3 bg-[#1c120a] rounded-full overflow-hidden border border-orange-900/40 p-[1px]">
+                    <div className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 w-2/3 rounded-full shadow-sm" />
                   </div>
                 </div>
               </div>
 
               {/* 3 Step Sequence Row */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
                 {/* Level 1 Completed */}
-                <div className="p-4 rounded-2xl bg-slate-900/50 border border-emerald-500/30 space-y-2.5">
+                <div className="p-4 rounded-2xl bg-[#140e08]/70 border border-amber-500/40 space-y-2.5 relative">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold text-slate-400">LEVEL 1 • FOUNDATIONS</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
-                      ✓ Completed
+                    <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase">LVL 1 • FOUNDATIONS</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950/90 text-amber-300 border border-amber-600/60 flex items-center gap-1 font-mono">
+                      <span>✓</span> Verified
                     </span>
                   </div>
                   <h4 className="text-sm font-bold text-white">Generative AI Core Architectures</h4>
-                  <p className="text-xs text-slate-400">LLM tokenization, transformers & attention mechanism deep-dives.</p>
-                  <div className="pt-1 text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
+                  <p className="text-xs text-zinc-400 leading-relaxed">LLM tokenization, transformers & attention mechanism deep-dives.</p>
+                  <div className="pt-1 text-[11px] text-amber-400 font-semibold font-mono flex items-center gap-1">
                     <span>🏆 3 Modules Verified</span>
                   </div>
                 </div>
 
                 {/* Level 2 Active */}
-                <div className="p-4 rounded-2xl bg-slate-900/90 border-2 border-indigo-500/80 shadow-lg shadow-indigo-950/40 space-y-2.5 relative">
+                <div className="p-4 rounded-2xl bg-[#1a1109]/90 border-2 border-orange-500 shadow-lg shadow-orange-950/60 space-y-2.5 relative">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold text-indigo-300">LEVEL 2 • CORE PRACTICE</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-700 flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                    <span className="text-[10px] font-mono font-bold text-orange-300 uppercase">LVL 2 • CORE PRACTICE</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-950 text-orange-200 border border-orange-600 flex items-center gap-1 font-mono">
+                      <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
                       In Progress
                     </span>
                   </div>
                   <h4 className="text-sm font-bold text-white">Prompt Engineering & System Design</h4>
-                  <p className="text-xs text-slate-300">Few-shot prompting, chain-of-thought, logit sampling & structured outputs.</p>
-                  <div className="pt-1 flex items-center justify-between text-[11px]">
-                    <span className="text-amber-300 font-semibold">Quiz Score: 80% (Passed)</span>
-                    <span className="text-indigo-400 font-bold">+100 Leaderboard Pts</span>
+                  <p className="text-xs text-zinc-300 leading-relaxed">Few-shot prompting, chain-of-thought, logit sampling & structured outputs.</p>
+                  <div className="pt-1 flex items-center justify-between text-[11px] font-mono">
+                    <span className="text-amber-300 font-semibold">Quiz: 80% (Passed)</span>
+                    <span className="text-orange-400 font-bold">+100 Leaderboard XP</span>
                   </div>
                 </div>
 
                 {/* Level 3 Gated */}
-                <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800/80 space-y-2.5 opacity-70">
+                <div className="p-4 rounded-2xl bg-[#0e0a06]/60 border border-orange-950/80 space-y-2.5 opacity-70">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold text-slate-500">LEVEL 3 • SPECIALIZATION</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-slate-500 border border-slate-800">
+                    <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase">LVL 3 • SPECIALIZATION</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#120c08] text-zinc-400 border border-zinc-800 font-mono">
                       🔒 Gated
                     </span>
                   </div>
-                  <h4 className="text-sm font-bold text-slate-300">Production MLOps & Autonomous Agents</h4>
-                  <p className="text-xs text-slate-500">Unlocks automatically upon completing Level 2 assessments.</p>
-                  <div className="pt-1 text-[11px] text-slate-500 font-medium">
+                  <h4 className="text-sm font-bold text-zinc-300">Production MLOps & Autonomous Agents</h4>
+                  <p className="text-xs text-zinc-500 leading-relaxed">Unlocks automatically upon completing Level 2 assessments.</p>
+                  <div className="pt-1 text-[11px] text-zinc-500 font-mono">
                     Prerequisite: 70%+ score on Level 2
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
       </section>
 
       {/* 3-Column Feature Section */}
-      <section className="py-20 bg-slate-950 border-t border-slate-800/80">
+      <section className="py-20 bg-[#060403] border-t border-orange-950/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+          
           {/* Section Header */}
           <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-indigo-400">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-orange-400">
               Three Pillars of Mastery
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
               Designed for Speed, Retention, and Proof
             </h2>
-            <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+            <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
               Every feature in Mentora is engineered around cognitive science, prerequisite gating, and tangible career credibility.
             </p>
           </div>
 
           {/* 3 Columns Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
             {/* Feature 1: Personalized Journeys */}
-            <div className="group relative rounded-3xl p-[1.5px] bg-gradient-to-b from-indigo-500/30 via-slate-800/50 to-slate-900/20 hover:from-indigo-500/60 transition-all duration-300">
-              <div className="h-full rounded-[23px] bg-slate-900/80 backdrop-blur-sm p-7 sm:p-8 flex flex-col justify-between space-y-6">
+            <div className="group relative rounded-3xl p-[1.5px] bg-gradient-to-b from-orange-500/40 via-orange-900/30 to-amber-950/20 hover:from-orange-500/70 transition-all duration-300">
+              <div className="h-full rounded-[23px] bg-[#0c0805]/90 backdrop-blur-sm p-7 sm:p-8 flex flex-col justify-between space-y-6">
                 <div className="space-y-4">
-                  <div className="w-14 h-14 rounded-2xl bg-indigo-950/90 border border-indigo-700/60 flex items-center justify-center text-2xl shadow-lg shadow-indigo-950/40">
+                  <div className="w-14 h-14 rounded-2xl bg-orange-950/80 border border-orange-700/60 flex items-center justify-center text-2xl shadow-lg shadow-orange-950/40">
                     🧭
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[11px] font-mono font-bold uppercase text-indigo-400 tracking-wider">
+                    <span className="text-[11px] font-mono font-bold uppercase text-orange-400 tracking-wider">
                       Adaptive Curriculum
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-orange-300 transition-colors">
                       Personalized Journeys
                     </h3>
                   </div>
-                  <p className="text-sm text-slate-400 leading-relaxed">
+                  <p className="text-sm text-zinc-400 leading-relaxed">
                     Algorithmic gap prediction evaluates your current skills against target industry roles. Our engine sequences missing competencies into 3 progressive, level-gated tiers that unlock sequentially.
                   </p>
                 </div>
 
-                <ul className="space-y-2.5 pt-4 border-t border-slate-800 text-xs text-slate-300 font-medium">
+                <ul className="space-y-2.5 pt-4 border-t border-orange-950/80 text-xs text-zinc-300 font-medium">
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
                     <span>Automated skill-gap diagnostic</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
                     <span>Level-gated unlocking mechanism</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
                     <span>Zero fluff: Only modules you need</span>
                   </li>
                 </ul>
@@ -209,36 +222,36 @@ export default function HomePage() {
             </div>
 
             {/* Feature 2: Active Learning */}
-            <div className="group relative rounded-3xl p-[1.5px] bg-gradient-to-b from-purple-500/30 via-slate-800/50 to-slate-900/20 hover:from-purple-500/60 transition-all duration-300">
-              <div className="h-full rounded-[23px] bg-slate-900/80 backdrop-blur-sm p-7 sm:p-8 flex flex-col justify-between space-y-6">
+            <div className="group relative rounded-3xl p-[1.5px] bg-gradient-to-b from-amber-500/40 via-amber-900/30 to-orange-950/20 hover:from-amber-500/70 transition-all duration-300">
+              <div className="h-full rounded-[23px] bg-[#0c0805]/90 backdrop-blur-sm p-7 sm:p-8 flex flex-col justify-between space-y-6">
                 <div className="space-y-4">
-                  <div className="w-14 h-14 rounded-2xl bg-purple-950/90 border border-purple-700/60 flex items-center justify-center text-2xl shadow-lg shadow-purple-950/40">
+                  <div className="w-14 h-14 rounded-2xl bg-[#201309] border border-amber-700/60 flex items-center justify-center text-2xl shadow-lg shadow-orange-950/40">
                     ⚡
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[11px] font-mono font-bold uppercase text-purple-400 tracking-wider">
+                    <span className="text-[11px] font-mono font-bold uppercase text-amber-400 tracking-wider">
                       Flashcards & Video Lessons
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-amber-300 transition-colors">
                       Active Learning
                     </h3>
                   </div>
-                  <p className="text-sm text-slate-400 leading-relaxed">
+                  <p className="text-sm text-zinc-400 leading-relaxed">
                     Shift from passive scrolling to active recall. Retain complex architectural concepts with interactive flashcard decks, high-yield video breakdowns, and scenario micro-challenges.
                   </p>
                 </div>
 
-                <ul className="space-y-2.5 pt-4 border-t border-slate-800 text-xs text-slate-300 font-medium">
+                <ul className="space-y-2.5 pt-4 border-t border-orange-950/80 text-xs text-zinc-300 font-medium">
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                     <span>Spaced-repetition concept flashcards</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                     <span>High-density production video tutorials</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                     <span>Hands-on scenario problem solving</span>
                   </li>
                 </ul>
@@ -246,97 +259,108 @@ export default function HomePage() {
             </div>
 
             {/* Feature 3: Skill Verification */}
-            <div className="group relative rounded-3xl p-[1.5px] bg-gradient-to-b from-amber-500/30 via-slate-800/50 to-slate-900/20 hover:from-amber-500/60 transition-all duration-300">
-              <div className="h-full rounded-[23px] bg-slate-900/80 backdrop-blur-sm p-7 sm:p-8 flex flex-col justify-between space-y-6">
+            <div className="group relative rounded-3xl p-[1.5px] bg-gradient-to-b from-orange-600/40 via-amber-900/30 to-orange-950/20 hover:from-orange-600/70 transition-all duration-300">
+              <div className="h-full rounded-[23px] bg-[#0c0805]/90 backdrop-blur-sm p-7 sm:p-8 flex flex-col justify-between space-y-6">
                 <div className="space-y-4">
-                  <div className="w-14 h-14 rounded-2xl bg-amber-950/90 border border-amber-700/60 flex items-center justify-center text-2xl shadow-lg shadow-amber-950/40">
+                  <div className="w-14 h-14 rounded-2xl bg-[#241207] border border-orange-600/60 flex items-center justify-center text-2xl shadow-lg shadow-orange-950/40">
                     🛡️
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[11px] font-mono font-bold uppercase text-amber-400 tracking-wider">
+                    <span className="text-[11px] font-mono font-bold uppercase text-orange-400 tracking-wider">
                       70% Passing Threshold & Ranking
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-amber-300 transition-colors">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-orange-300 transition-colors">
                       Skill Verification
                     </h3>
                   </div>
-                  <p className="text-sm text-slate-400 leading-relaxed">
+                  <p className="text-sm text-zinc-400 leading-relaxed">
                     Verify competencies with rigorous assessments requiring at least 70% to pass. Accumulate points, rank on the competitive global leaderboard, and share your verified Skill Passport.
                   </p>
                 </div>
 
-                <ul className="space-y-2.5 pt-4 border-t border-slate-800 text-xs text-slate-300 font-medium">
+                <ul className="space-y-2.5 pt-4 border-t border-orange-950/80 text-xs text-zinc-300 font-medium">
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
                     <span>Strict ≥70% score gate to award points</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
                     <span>Global real-time competitive leaderboard</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
                     <span>Verifiable Skill Passport credentials</span>
                   </li>
                 </ul>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
       {/* Key Metrics / Impact Statistics */}
-      <section className="py-16 bg-gradient-to-b from-slate-950 via-slate-900/50 to-slate-950 border-t border-slate-850">
+      <section className="py-16 bg-gradient-to-b from-[#060403] via-[#0f0a06] to-[#060403] border-t border-orange-950/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
-              <div className="text-3xl sm:text-4xl font-black text-indigo-400">3x</div>
-              <div className="text-xs text-slate-400 mt-1 font-medium">Faster Skill Mastery</div>
+            
+            <div className="p-6 rounded-2xl bg-[#120c08]/80 border border-orange-900/40 shadow-md">
+              <div className="text-3xl sm:text-4xl font-pixel text-orange-400">3x</div>
+              <div className="text-xs text-zinc-400 mt-2 font-mono uppercase tracking-wider">Faster Skill Mastery</div>
             </div>
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
-              <div className="text-3xl sm:text-4xl font-black text-purple-400">70%</div>
-              <div className="text-xs text-slate-400 mt-1 font-medium">Rigorous Passing Gate</div>
+
+            <div className="p-6 rounded-2xl bg-[#120c08]/80 border border-orange-900/40 shadow-md">
+              <div className="text-3xl sm:text-4xl font-pixel text-amber-400">70%</div>
+              <div className="text-xs text-zinc-400 mt-2 font-mono uppercase tracking-wider">Rigorous Boss Gate</div>
             </div>
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
-              <div className="text-3xl sm:text-4xl font-black text-amber-400">100%</div>
-              <div className="text-xs text-slate-400 mt-1 font-medium">Role-Tailored Roadmaps</div>
+
+            <div className="p-6 rounded-2xl bg-[#120c08]/80 border border-orange-900/40 shadow-md">
+              <div className="text-3xl sm:text-4xl font-pixel text-orange-400">100%</div>
+              <div className="text-xs text-zinc-400 mt-2 font-mono uppercase tracking-wider">Tailored Roadmaps</div>
             </div>
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800">
-              <div className="text-3xl sm:text-4xl font-black text-emerald-400">Top 1%</div>
-              <div className="text-xs text-slate-400 mt-1 font-medium">Global Leaderboard Recognition</div>
+
+            <div className="p-6 rounded-2xl bg-[#120c08]/80 border border-orange-900/40 shadow-md">
+              <div className="text-2xl sm:text-3xl font-pixel text-amber-400">TOP 1%</div>
+              <div className="text-xs text-zinc-400 mt-2 font-mono uppercase tracking-wider">Leaderboard Ranks</div>
             </div>
+
           </div>
         </div>
       </section>
 
       {/* Bottom Conversion Banner */}
-      <section className="py-20">
+      <section className="py-20 bg-retro-dense-grid">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative rounded-3xl p-[1.5px] bg-gradient-to-r from-indigo-500/60 via-purple-500/40 to-pink-500/60 shadow-2xl overflow-hidden">
-            <div className="rounded-[23px] bg-slate-950/95 p-8 sm:p-12 text-center space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800">
-                🚀 Start Your Progression Today
+          <div className="relative rounded-3xl p-[1.5px] bg-gradient-to-r from-orange-500/70 via-amber-500/50 to-orange-600/70 shadow-2xl shadow-orange-950/60 overflow-hidden">
+            <div className="rounded-[23px] bg-[#0c0805]/95 p-8 sm:p-14 text-center space-y-7">
+              
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-mono font-semibold bg-orange-950/80 text-orange-300 border border-orange-700/60">
+                🚀 QUEST AWAITS • START YOUR PROGRESSION
               </div>
+
               <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
                 Ready to bridge your skill gap?
               </h2>
-              <p className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto leading-relaxed">
-                Complete your 2-minute diagnostic, generate your 3-level journey, and earn your first 100 leaderboard points today.
+
+              <p className="text-sm sm:text-base text-zinc-400 max-w-xl mx-auto leading-relaxed">
+                Complete your 2-minute diagnostic, generate your personalized 3-level journey, and earn your first 100 leaderboard points today.
               </p>
+
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
                   href="/register"
-                  className="w-full sm:w-auto px-8 py-4 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 rounded-2xl shadow-xl shadow-indigo-600/30 active:scale-95 transition-all"
+                  className="w-full sm:w-auto px-8 py-4 text-sm font-bold text-black bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 hover:from-amber-300 hover:to-orange-400 rounded-2xl shadow-xl shadow-orange-600/35 hover:shadow-orange-600/60 active:scale-95 transition-all font-mono uppercase tracking-wider"
                 >
                   Start Learning Free →
                 </Link>
                 <Link
                   href="/leaderboard"
-                  className="w-full sm:w-auto px-7 py-4 text-sm font-semibold text-slate-300 hover:text-white bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl transition-all"
+                  className="w-full sm:w-auto px-7 py-4 text-sm font-semibold text-zinc-300 hover:text-white bg-[#140e08] border border-orange-900/60 hover:border-orange-600/60 rounded-2xl transition-all font-mono"
                 >
                   View Global Leaderboard
                 </Link>
               </div>
+
             </div>
           </div>
         </div>
