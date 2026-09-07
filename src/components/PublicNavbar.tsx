@@ -12,7 +12,8 @@ export default function PublicNavbar() {
     { name: 'Home', href: '/' },
     { name: 'About', href: '/about' },
     { name: 'Blogs', href: '/blogs' },
-    { name: 'Leaderboard', href: '/leaderboard' },
+    { name: 'FAQs', href: '/faqs' },
+    { name: 'Contact Us', href: '/contact' },
   ];
 
   return (
@@ -39,14 +40,14 @@ export default function PublicNavbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1 bg-[#140e09]/80 border border-orange-900/40 px-4 py-1.5 rounded-full backdrop-blur-md">
+          <nav className="hidden lg:flex items-center gap-1 bg-[#140e09]/80 border border-orange-900/40 px-4 py-1.5 rounded-full backdrop-blur-md">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
                     isActive
                       ? 'bg-gradient-to-r from-orange-600/30 to-amber-600/30 border border-orange-500/50 text-orange-200 shadow-sm shadow-orange-950/40'
                       : 'text-zinc-300 hover:text-white hover:bg-orange-950/30'
@@ -58,30 +59,30 @@ export default function PublicNavbar() {
             })}
           </nav>
 
-          {/* Desktop CTA Action Buttons */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Desktop CTA Action Buttons: Login / Join Now */}
+          <div className="hidden sm:flex items-center gap-2.5">
             <Link
               href="/login"
               className="px-4 py-2 text-xs font-semibold text-zinc-300 hover:text-white hover:bg-orange-950/30 border border-transparent hover:border-orange-900/30 rounded-xl transition-all"
             >
-              Sign In
+              Login
             </Link>
             <Link
               href="/register"
-              className="px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-amber-500 via-orange-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 rounded-xl shadow-lg shadow-orange-600/30 active:scale-95 transition-all flex items-center gap-1.5"
+              className="px-5 py-2.5 text-xs font-bold text-black bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 hover:from-amber-300 hover:to-orange-400 rounded-xl shadow-lg shadow-orange-600/30 active:scale-95 transition-all flex items-center gap-1.5 font-mono uppercase tracking-wider"
             >
-              <span>Start Learning</span>
+              <span>Join Now</span>
               <span className="text-sm">→</span>
             </Link>
           </div>
 
           {/* Mobile Hamburger Toggle Button */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex sm:hidden items-center gap-2">
             <Link
               href="/login"
               className="px-3 py-1.5 text-xs font-semibold text-zinc-300 hover:text-white border border-orange-900/40 rounded-lg"
             >
-              Sign In
+              Login
             </Link>
             <button
               type="button"
@@ -105,7 +106,7 @@ export default function PublicNavbar() {
 
       {/* Mobile Menu Dropdown / Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-orange-950/70 bg-[#0c0805]/95 backdrop-blur-2xl px-6 py-5 space-y-4 animate-in slide-in-from-top-2 duration-200">
+        <div className="lg:hidden border-t border-orange-950/70 bg-[#0c0805]/95 backdrop-blur-2xl px-6 py-5 space-y-4 animate-in slide-in-from-top-2 duration-200">
           <div className="flex flex-col space-y-2">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -133,14 +134,14 @@ export default function PublicNavbar() {
               onClick={() => setMobileMenuOpen(false)}
               className="w-full text-center py-2.5 text-xs font-semibold text-zinc-200 bg-[#140e09] border border-orange-900/40 rounded-xl hover:bg-[#1c130d]"
             >
-              Sign In to Your Account
+              Login
             </Link>
             <Link
               href="/register"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-3 text-xs font-bold text-white bg-gradient-to-r from-amber-500 via-orange-500 to-orange-600 rounded-xl shadow-lg shadow-orange-600/30"
+              className="w-full text-center py-3 text-xs font-bold text-black bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 rounded-xl shadow-lg shadow-orange-600/30 font-mono uppercase tracking-wider"
             >
-              Start Learning Free →
+              Join Now →
             </Link>
           </div>
         </div>

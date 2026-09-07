@@ -27,13 +27,13 @@ export default function HomePage() {
           {/* Subtitle / Tagline */}
           <div className="space-y-3 max-w-2xl mx-auto">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white">
-              Learn with precision.{' '}
+              Don&apos;t just learn.{' '}
               <span className="bg-gradient-to-r from-amber-300 via-orange-400 to-amber-200 bg-clip-text text-transparent">
-                Engineered for your career.
+                Evolve!
               </span>
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-zinc-400 leading-relaxed">
-              Ditch generic, passive tutorial loops. Mentora analyzes your current skills, predicts role-specific gaps, and generates progressive 3-level roadmaps with verified proof of competence.
+            <p className="text-sm sm:text-base md:text-lg text-zinc-400 leading-relaxed max-w-3xl mx-auto">
+              Stop guessing what to learn next. Our AI understands your skills, uncovers your gaps, and builds a personalized path to your career goals &mdash; with courses, industry insights, daily challenges, an AI mentor, community, and a Skill Passport to prove your growth.
             </p>
           </div>
 

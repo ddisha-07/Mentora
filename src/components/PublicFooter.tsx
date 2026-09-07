@@ -5,9 +5,9 @@ export default function PublicFooter() {
   return (
     <footer className="border-t border-orange-950/70 bg-[#060403] text-zinc-400 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Col */}
-          <div className="space-y-4 md:col-span-1">
+          <div className="col-span-2 md:col-span-1 space-y-4">
             <Link href="/" className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 via-orange-500 to-orange-600 p-[1px] shadow-sm shadow-orange-500/20">
                 <div className="w-full h-full bg-[#0c0805] rounded-[7px] flex items-center justify-center">
@@ -20,16 +20,51 @@ export default function PublicFooter() {
               Personalized, level-gated learning ecosystem for software engineers, AI architects, and tech leaders.
             </p>
             <div className="text-[11px] text-orange-500/80 font-mono">
-              Designed for verifiable skill mastery.
+              ⚡ Verified skill mastery.
             </div>
           </div>
 
-          {/* Product & Features */}
+          {/* Quick Links */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-orange-400 font-mono">Quick Links</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/" className="hover:text-orange-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-orange-500 text-[10px]">›</span> Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-orange-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-orange-500 text-[10px]">›</span> About
+                </Link>
+              </li>
+              <li>
+                <Link href="/blogs" className="hover:text-orange-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-orange-500 text-[10px]">›</span> Blogs
+                </Link>
+              </li>
+              <li>
+                <Link href="/faqs" className="hover:text-orange-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-orange-500 text-[10px]">›</span> FAQs
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-orange-400 transition-colors flex items-center gap-1.5">
+                  <span className="text-orange-500 text-[10px]">›</span> Contact Us
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Platform & Features */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-200">Platform</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/register" className="hover:text-orange-400 transition-colors">Personalized Journeys</Link>
+                <Link href="/register" className="hover:text-orange-400 transition-colors">Join Now Free</Link>
+              </li>
+              <li>
+                <Link href="/login" className="hover:text-orange-400 transition-colors">Learner Login</Link>
               </li>
               <li>
                 <Link href="/leaderboard" className="hover:text-orange-400 transition-colors">Global Leaderboard</Link>
@@ -43,7 +78,7 @@ export default function PublicFooter() {
             </ul>
           </div>
 
-          {/* Resources & Content */}
+          {/* Resources & Support */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-200">Resources</h4>
             <ul className="space-y-2">
@@ -51,7 +86,7 @@ export default function PublicFooter() {
                 <Link href="/about" className="hover:text-orange-400 transition-colors">About Us</Link>
               </li>
               <li>
-                <Link href="/blogs" className="hover:text-orange-400 transition-colors">Engineering Insights & Blog</Link>
+                <Link href="/blogs" className="hover:text-orange-400 transition-colors">Engineering Insights</Link>
               </li>
               <li>
                 <Link href="/why-mentora" className="hover:text-orange-400 transition-colors">Why Mentora</Link>
@@ -59,24 +94,8 @@ export default function PublicFooter() {
               <li>
                 <Link href="/faqs" className="hover:text-orange-400 transition-colors">Platform FAQs</Link>
               </li>
-            </ul>
-          </div>
-
-          {/* Quick Access & Account */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-200">Account & Connect</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/login" className="hover:text-orange-400 transition-colors">Learner Sign In</Link>
-              </li>
-              <li>
-                <Link href="/register" className="hover:text-orange-400 transition-colors">Create Free Account</Link>
-              </li>
               <li>
                 <Link href="/contact" className="hover:text-orange-400 transition-colors">Contact Support</Link>
-              </li>
-              <li>
-                <Link href="/dashboard" className="hover:text-orange-400 transition-colors">Member Dashboard</Link>
               </li>
             </ul>
           </div>
