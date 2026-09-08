@@ -126,17 +126,17 @@ html.bright body {
 }
 
 html.bright .drop-shadow-pixel-bold {
-  filter: drop-shadow(3px 3px 0px #ea580c) drop-shadow(6px 6px 0px #9a3412) drop-shadow(0 0 25px rgba(249, 115, 22, 0.35));
+  filter: drop-shadow(4px 4px 0px #7c2d12) drop-shadow(8px 8px 0px #431407) drop-shadow(0 0 35px rgba(249, 115, 22, 0.85)) drop-shadow(0 0 65px rgba(234, 88, 12, 0.5));
 }
 
 html.bright .bg-retro-dense-grid {
   background-image: 
-    linear-gradient(to right, rgba(234, 88, 12, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(234, 88, 12, 0.06) 1px, transparent 1px);
+    linear-gradient(to right, rgba(234, 88, 12, 0.11) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(234, 88, 12, 0.11) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 html.bright .bg-retro-grid {
-  background-image: radial-gradient(rgba(234, 88, 12, 0.12) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(234, 88, 12, 0.20) 1px, transparent 1px);
   background-size: 28px 28px;
 }

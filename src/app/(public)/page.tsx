@@ -112,18 +112,18 @@ export default function HomePage() {
       <div
         className={`absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] blur-[120px] pointer-events-none -z-10 transition-opacity duration-300 ${
           isBright
-            ? 'bg-gradient-to-b from-orange-400/20 via-amber-300/15 to-transparent'
+            ? 'bg-gradient-to-b from-orange-500/30 via-amber-400/20 to-transparent'
             : 'bg-gradient-to-b from-orange-600/20 via-amber-600/10 to-transparent'
         }`}
       />
       <div
         className={`absolute top-1/4 -left-36 w-96 h-96 rounded-full blur-[100px] pointer-events-none -z-10 ${
-          isBright ? 'bg-orange-400/15' : 'bg-orange-600/15'
+          isBright ? 'bg-orange-500/20' : 'bg-orange-600/15'
         }`}
       />
       <div
         className={`absolute top-1/2 -right-36 w-96 h-96 rounded-full blur-[100px] pointer-events-none -z-10 ${
-          isBright ? 'bg-amber-400/15' : 'bg-amber-500/15'
+          isBright ? 'bg-amber-400/20' : 'bg-amber-500/15'
         }`}
       />
 
@@ -133,26 +133,32 @@ export default function HomePage() {
           
           {/* Centered Pixelated Mentora Title */}
           <div className="relative group my-2">
+            {/* Concentrated Fiery Orange Ambient Backlight Aura */}
             <div
-              className={`absolute -inset-6 rounded-3xl blur-2xl transition duration-700 -z-10 ${
+              className={`absolute -inset-10 rounded-3xl blur-3xl transition duration-700 -z-10 pointer-events-none ${
                 isBright
-                  ? 'bg-gradient-to-r from-orange-400/25 via-amber-300/25 to-orange-400/25 opacity-70 group-hover:opacity-100'
-                  : 'bg-gradient-to-r from-orange-600/30 via-amber-500/30 to-orange-600/30 opacity-80 group-hover:opacity-100'
+                  ? 'bg-gradient-to-r from-orange-500/50 via-amber-400/60 to-orange-500/50 opacity-95'
+                  : 'bg-gradient-to-r from-orange-600/40 via-amber-500/40 to-orange-600/40 opacity-85 group-hover:opacity-100'
               }`}
             />
+            <div
+              className={`absolute -inset-20 rounded-full blur-[80px] -z-10 pointer-events-none ${
+                isBright
+                  ? 'bg-gradient-to-b from-orange-500/35 via-amber-400/25 to-transparent'
+                  : 'bg-gradient-to-b from-orange-600/30 via-amber-500/20 to-transparent'
+              }`}
+            />
+
             <div className="flex flex-col items-center justify-center">
-              <h1
-                className={`font-pixel text-6xl sm:text-8xl md:text-9xl lg:text-[8.5rem] xl:text-[9.5rem] font-bold tracking-wider text-transparent bg-clip-text drop-shadow-pixel-bold select-none py-2 ${
-                  isBright
-                    ? 'bg-gradient-to-b from-[#EA580C] via-[#F97316] to-[#FB923C]'
-                    : 'bg-gradient-to-b from-amber-200 via-orange-400 to-orange-600'
-                }`}
-              >
+              <h1 className="font-pixel text-6xl sm:text-8xl md:text-9xl lg:text-[8.5rem] xl:text-[9.5rem] font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-orange-400 to-orange-600 drop-shadow-pixel-bold select-none py-2">
                 MENTORA
               </h1>
-              <div
-                className={`h-1 w-36 sm:w-56 md:w-64 bg-gradient-to-r from-transparent via-orange-500 to-transparent mt-3 rounded-full`}
-              />
+              
+              {/* Glowing Neon Accent Light Beam */}
+              <div className="relative flex items-center justify-center mt-3">
+                <div className="h-1.5 w-40 sm:w-60 md:w-72 bg-gradient-to-r from-transparent via-orange-500 to-transparent rounded-full shadow-[0_0_20px_rgba(249,115,22,1)] drop-shadow-[0_0_8px_rgba(249,115,22,0.9)]" />
+                <div className="absolute w-12 sm:w-20 h-2 bg-amber-300 rounded-full blur-[2px] opacity-90" />
+              </div>
             </div>
           </div>
 
