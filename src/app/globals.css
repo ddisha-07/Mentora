@@ -140,3 +140,138 @@ html.bright .bg-retro-grid {
   background-image: radial-gradient(rgba(234, 88, 12, 0.14) 1px, transparent 1px);
   background-size: 28px 28px;
 }
+
+/* --------------------------------------------------------------------------
+   Global Bright Mode Semantic Color Overrides (Warm Sand, Cream & Dark Stone)
+   -------------------------------------------------------------------------- */
+html.bright .bg-\[\#080604\],
+html.bright .bg-\[\#070503\],
+html.bright .bg-\[\#060403\] {
+  background-color: #FAF4EE !important;
+  color: #1C1917 !important;
+}
+
+html.bright .text-\[\#fff7ed\] {
+  color: #1C1917 !important;
+}
+
+/* Headings in Bright Mode */
+html.bright h1:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
+html.bright h2:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
+html.bright h3:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
+html.bright h4:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
+html.bright h5:not([class*="bg-clip-text"]):not([class*="text-transparent"]) {
+  color: #1C1917 !important;
+}
+
+/* Secondary and Muted Text in Bright Mode */
+html.bright .text-zinc-400,
+html.bright .text-zinc-300 {
+  color: #57534E !important;
+}
+
+html.bright .text-zinc-500 {
+  color: #78716C !important;
+}
+
+html.bright .text-zinc-200,
+html.bright .text-zinc-100 {
+  color: #292524 !important;
+}
+
+/* Body and Label text originally white in dark mode */
+html.bright p.text-white,
+html.bright label.text-white,
+html.bright div.text-white:not([class*="bg-"]):not([class*="from-"]) {
+  color: #1C1917 !important;
+}
+
+/* Buttons and Pills on Vibrant Backgrounds MUST ALWAYS RETAIN CRISP WHITE TEXT */
+html.bright [class*="bg-orange-500"],
+html.bright [class*="bg-orange-600"],
+html.bright [class*="bg-[#EA580C]"],
+html.bright [class*="from-orange-500"],
+html.bright [class*="from-orange-600"],
+html.bright [class*="from-amber-400"],
+html.bright [class*="from-amber-500"],
+html.bright button[class*="from-orange"],
+html.bright button[class*="from-amber"],
+html.bright a[class*="from-orange"],
+html.bright a[class*="from-amber"],
+html.bright button.text-white,
+html.bright a.text-white,
+html.bright .btn-white-text {
+  color: #FFFFFF !important;
+}
+
+/* Cards & Surface Containers in Bright Mode */
+html.bright .bg-\[\#0d0906\]\/95,
+html.bright .bg-\[\#0c0805\]\/95,
+html.bright .bg-\[\#0c0805\]\/90,
+html.bright .bg-\[\#0c0805\],
+html.bright .bg-\[\#120c08\]\/80,
+html.bright .bg-\[\#140e08\],
+html.bright .bg-\[\#140e09\],
+html.bright .bg-\[\#120b06\],
+html.bright .bg-\[\#201309\],
+html.bright .bg-\[\#241207\],
+html.bright .bg-slate-900,
+html.bright .bg-slate-950 {
+  background-color: #FFFFFF !important;
+  border-color: #EAE0D5 !important;
+}
+
+/* Dark CTA banners adapted to warm sand / cream in Bright Mode */
+html.bright [class*="from-orange-950"],
+html.bright [class*="via-[#120c08]"] {
+  background-image: linear-gradient(to right, rgba(254, 215, 170, 0.45), #FFFFFF, rgba(254, 215, 170, 0.45)) !important;
+  background-color: #FFFFFF !important;
+  border-color: #EAE0D5 !important;
+  box-shadow: 0 10px 30px -10px rgba(234, 88, 12, 0.08) !important;
+}
+
+/* Inputs, Textareas, and Selects in Bright Mode */
+html.bright input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]),
+html.bright textarea,
+html.bright select {
+  background-color: #FFFFFF !important;
+  border-color: #E3D4C5 !important;
+  color: #1C1917 !important;
+}
+
+html.bright input::placeholder,
+html.bright textarea::placeholder {
+  color: #A8A29E !important;
+}
+
+html.bright input:focus,
+html.bright textarea:focus,
+html.bright select:focus {
+  border-color: #EA580C !important;
+}
+
+/* Borders in Bright Mode */
+html.bright .border-orange-950\/40,
+html.bright .border-orange-950\/50,
+html.bright .border-orange-950\/60,
+html.bright .border-orange-950\/70,
+html.bright .border-orange-950\/80,
+html.bright .border-orange-950,
+html.bright .border-orange-900\/40,
+html.bright .border-orange-900\/50,
+html.bright .border-orange-900\/60,
+html.bright .border-orange-900,
+html.bright .border-slate-800 {
+  border-color: #EAE0D5 !important;
+}
+
+/* Badges & Pills in Bright Mode */
+html.bright .bg-orange-950\/70,
+html.bright .bg-orange-950\/80,
+html.bright .bg-orange-950\/60,
+html.bright .bg-orange-950 {
+  background-color: #FFF0E5 !important;
+  border-color: #FDDAC5 !important;
+  color: #EA580C !important;
+}
+

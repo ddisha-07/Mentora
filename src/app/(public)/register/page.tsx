@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { isBright } = useTheme();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -73,50 +75,102 @@ export default function RegisterPage() {
               priority
             />
           </Link>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+          <h1
+            className={`text-2xl sm:text-3xl font-extrabold tracking-tight transition-colors ${
+              isBright ? 'text-[#1C1917]' : 'text-white'
+            }`}
+          >
             Start your learning journey
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-400">
+          <p
+            className={`text-xs sm:text-sm transition-colors ${
+              isBright ? 'text-[#57534E]' : 'text-zinc-400'
+            }`}
+          >
             Create your profile to generate your 3-level personalized roadmap
           </p>
         </div>
 
         {/* Card with subtle gradient border */}
-        <div className="p-[1px] rounded-3xl bg-gradient-to-b from-orange-500/40 via-amber-500/20 to-orange-950/60 shadow-2xl shadow-orange-950/50">
-          <div className="rounded-[23px] bg-[#0d0906]/95 backdrop-blur-xl p-6 sm:p-8 space-y-5 border border-orange-950/50">
+        <div
+          className={`p-[1px] rounded-3xl transition-all ${
+            isBright
+              ? 'bg-gradient-to-b from-orange-400/40 via-[#EAE0D5] to-transparent shadow-xl shadow-orange-950/5'
+              : 'bg-gradient-to-b from-orange-500/40 via-amber-500/20 to-orange-950/60 shadow-2xl shadow-orange-950/50'
+          }`}
+        >
+          <div
+            className={`rounded-[23px] backdrop-blur-xl p-6 sm:p-8 space-y-5 border transition-colors ${
+              isBright
+                ? 'bg-white border-[#EAE0D5] shadow-sm'
+                : 'bg-[#0d0906]/95 border-orange-950/50'
+            }`}
+          >
             {error && (
-              <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 text-xs font-medium">
+              <div
+                className={`p-3.5 rounded-xl text-xs font-medium border ${
+                  isBright
+                    ? 'bg-rose-50 border-rose-200 text-rose-700'
+                    : 'bg-rose-950/60 border-rose-800 text-rose-300'
+                }`}
+              >
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <label className="text-zinc-300 font-semibold block">Full Name</label>
+                <label
+                  className={`font-semibold block transition-colors ${
+                    isBright ? 'text-[#1C1917]' : 'text-zinc-300'
+                  }`}
+                >
+                  Full Name
+                </label>
                 <input
                   type="text"
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Alex Morgan"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#140e08] border border-orange-900/40 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors"
+                  className={`w-full px-3.5 py-2.5 rounded-xl border transition-colors focus:outline-none ${
+                    isBright
+                      ? 'bg-white border-[#E3D4C5] text-[#1C1917] placeholder-[#A8A29E] focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs'
+                      : 'bg-[#140e08] border-orange-900/40 text-white placeholder-zinc-500 focus:border-orange-500'
+                  }`}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-zinc-300 font-semibold block">Email address</label>
+                <label
+                  className={`font-semibold block transition-colors ${
+                    isBright ? 'text-[#1C1917]' : 'text-zinc-300'
+                  }`}
+                >
+                  Email address
+                </label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="alex@company.com"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#140e08] border border-orange-900/40 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors"
+                  className={`w-full px-3.5 py-2.5 rounded-xl border transition-colors focus:outline-none ${
+                    isBright
+                      ? 'bg-white border-[#E3D4C5] text-[#1C1917] placeholder-[#A8A29E] focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs'
+                      : 'bg-[#140e08] border-orange-900/40 text-white placeholder-zinc-500 focus:border-orange-500'
+                  }`}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-zinc-300 font-semibold block">Password (min. 6 chars)</label>
+                <label
+                  className={`font-semibold block transition-colors ${
+                    isBright ? 'text-[#1C1917]' : 'text-zinc-300'
+                  }`}
+                >
+                  Password (min. 6 chars)
+                </label>
                 <input
                   type="password"
                   required
@@ -124,16 +178,30 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#140e08] border border-orange-900/40 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors"
+                  className={`w-full px-3.5 py-2.5 rounded-xl border transition-colors focus:outline-none ${
+                    isBright
+                      ? 'bg-white border-[#E3D4C5] text-[#1C1917] placeholder-[#A8A29E] focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs'
+                      : 'bg-[#140e08] border-orange-900/40 text-white placeholder-zinc-500 focus:border-orange-500'
+                  }`}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-zinc-300 font-semibold block">Target Career Role</label>
+                <label
+                  className={`font-semibold block transition-colors ${
+                    isBright ? 'text-[#1C1917]' : 'text-zinc-300'
+                  }`}
+                >
+                  Target Career Role
+                </label>
                 <select
                   value={targetRole}
                   onChange={(e) => setTargetRole(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#140e08] border border-orange-900/40 text-white focus:outline-none focus:border-orange-500 transition-colors"
+                  className={`w-full px-3.5 py-2.5 rounded-xl border transition-colors focus:outline-none ${
+                    isBright
+                      ? 'bg-white border-[#E3D4C5] text-[#1C1917] focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs'
+                      : 'bg-[#140e08] border-orange-900/40 text-white focus:border-orange-500'
+                  }`}
                 >
                   <option value="Senior AI Systems Architect">Senior AI Systems Architect</option>
                   <option value="AI Product Lead">AI Product Lead</option>
@@ -144,16 +212,27 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-zinc-300 font-semibold block">Current Experience Level</label>
+                <label
+                  className={`font-semibold block transition-colors ${
+                    isBright ? 'text-[#1C1917]' : 'text-zinc-300'
+                  }`}
+                >
+                  Current Experience Level
+                </label>
                 <div className="grid grid-cols-3 gap-2 pt-1">
                   {(['beginner', 'intermediate', 'advanced'] as const).map((lvl) => (
                     <button
                       key={lvl}
                       type="button"
                       onClick={() => setExperienceLevel(lvl)}
-                      className={`py-2 px-2 rounded-xl border text-center capitalize text-xs font-semibold transition-all ${
+                      style={isBright && experienceLevel === lvl ? { color: '#ffffff' } : undefined}
+                      className={`py-2 px-2 rounded-xl border text-center capitalize text-xs font-semibold transition-all cursor-pointer ${
                         experienceLevel === lvl
-                          ? 'bg-orange-600/30 border-orange-400 text-white shadow-sm'
+                          ? isBright
+                            ? 'bg-[#EA580C] border-[#EA580C] text-white shadow-sm shadow-orange-500/30'
+                            : 'bg-orange-600/30 border-orange-400 text-white shadow-sm'
+                          : isBright
+                          ? 'bg-white border-[#E3D4C5] text-[#57534E] hover:text-[#1C1917] hover:border-orange-300'
                           : 'bg-[#140e08] border-orange-900/40 text-zinc-400 hover:text-white'
                       }`}
                     >
@@ -166,15 +245,29 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 mt-4 rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 hover:from-amber-300 hover:to-orange-400 text-black font-bold text-xs font-mono uppercase tracking-wider shadow-lg shadow-orange-600/30 active:scale-95 transition-all disabled:opacity-50"
+                style={isBright ? { color: '#ffffff' } : undefined}
+                className={`w-full py-3.5 mt-4 rounded-xl font-bold text-xs font-mono uppercase tracking-wider active:scale-95 transition-all disabled:opacity-50 text-white ${
+                  isBright
+                    ? 'bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/30'
+                    : 'bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 hover:from-amber-300 hover:to-orange-400 text-black shadow-lg shadow-orange-600/30'
+                }`}
               >
                 {loading ? 'Creating Account & Roadmap...' : 'Start Learning Free →'}
               </button>
             </form>
 
-            <div className="pt-2 text-center text-xs text-zinc-400">
+            <div
+              className={`pt-2 text-center text-xs transition-colors ${
+                isBright ? 'text-[#57534E]' : 'text-zinc-400'
+              }`}
+            >
               Already have an account?{' '}
-              <Link href="/login" className="text-orange-400 font-bold hover:underline">
+              <Link
+                href="/login"
+                className={`font-bold hover:underline ${
+                  isBright ? 'text-[#EA580C]' : 'text-orange-400'
+                }`}
+              >
                 Sign in
               </Link>
             </div>
