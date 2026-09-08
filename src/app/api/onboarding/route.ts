@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { journeys, modules, moduleProgress, profiles, users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { getSession } from '@/lib/auth';
-import { DEMO_USER_ID } from '@/lib/seedQuizAndLeaderboard';
 import { buildJourney, classifyLevel, ExperienceLevel, predictSkillGaps } from '@/lib/personalization';
 
 const ROLE_SKILL_TARGETS: Record<string, string[]> = {
@@ -66,7 +65,32 @@ export async function POST(request: NextRequest) {
 
     // 1. Identify user
     const session = await getSession();
-    const resolvedUserId = session?.userId || DEMO_USER_ID;
+    let resolvedUserId = session?.userId;
+
+    if (!resolvedUserId) {
+      const [latestUser] = await db
+        .select({ id: users.id })
+        .from(users)
+        .orderBy(desc(users.createdAt))
+        .limit(1);
+
+      if (latestUser) {
+        resolvedUserId = latestUser.id;
+      } else {
+        const { hashPassword } = await import('@/lib/auth');
+        const defaultHash = await hashPassword('mentora_learner');
+        const [newUser] = await db
+          .insert(users)
+          .values({
+            email: 'learner@mentora.ai',
+            passwordHash: defaultHash,
+            role: 'learner',
+            onboardingComplete: true,
+          })
+          .returning();
+        resolvedUserId = newUser.id;
+      }
+    }
 
     // 2. Classify Experience Level
     let resolvedLevel: ExperienceLevel = 'intermediate';

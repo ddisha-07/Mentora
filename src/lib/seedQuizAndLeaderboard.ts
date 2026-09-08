@@ -70,7 +70,7 @@ export const SAMPLE_QUIZ_QUESTIONS: QuizQuestion[] = [
 ];
 
 export async function ensureQuizAndLeaderboardSeed() {
-  // 1. Ensure Quiz exists
+  // Only ensure the quiz structure template exists if not present
   const [existingQuiz] = await db
     .select()
     .from(quizzes)
@@ -88,86 +88,6 @@ export async function ensureQuizAndLeaderboardSeed() {
     });
   }
 
-  // 2. Check if leaderboard has entries
-  const existingPoints = await db.select().from(leaderboardPoints).limit(1);
-  if (existingPoints.length > 0) {
-    return;
-  }
-
-  // 3. Seed demo users for competitive leaderboard
-  const seedUsers = [
-    {
-      id: '20000000-0000-0000-0000-000000000001',
-      email: 'sarah.chen@mentora.ai',
-      fullName: 'Sarah Chen',
-      targetRole: 'Staff AI Systems Architect',
-      experienceLevel: 'advanced',
-      points: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 150], // 1,450
-    },
-    {
-      id: '20000000-0000-0000-0000-000000000002',
-      email: 'alex.rivera@mentora.ai',
-      fullName: 'Alex Rivera',
-      targetRole: 'AI Product Lead',
-      experienceLevel: 'advanced',
-      points: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100], // 1,200
-    },
-    {
-      id: '20000000-0000-0000-0000-000000000003',
-      email: 'priya.sharma@mentora.ai',
-      fullName: 'Priya Sharma',
-      targetRole: 'Senior MLOps Engineer',
-      experienceLevel: 'intermediate',
-      points: [100, 100, 100, 100, 100, 100, 100, 100, 150], // 950
-    },
-    {
-      id: '20000000-0000-0000-0000-000000000004',
-      email: 'david.kim@mentora.ai',
-      fullName: 'David Kim',
-      targetRole: 'Full-Stack AI Developer',
-      experienceLevel: 'intermediate',
-      points: [100, 100, 100, 100, 100, 100, 100, 100], // 800
-    },
-    {
-      id: DEMO_USER_ID,
-      email: 'learner.demo@mentora.ai',
-      fullName: 'Alex Morgan (You)',
-      targetRole: 'Senior AI Engineer',
-      experienceLevel: 'intermediate',
-      points: [100, 100, 100, 100, 100], // 500
-    },
-  ];
-
-  const dummyHash = await hashPassword('password123');
-
-  for (const u of seedUsers) {
-    // Insert user if not exists
-    const [existing] = await db.select().from(users).where(eq(users.id, u.id)).limit(1);
-    if (!existing) {
-      await db.insert(users).values({
-        id: u.id,
-        email: u.email,
-        passwordHash: dummyHash,
-        role: 'learner',
-        onboardingComplete: true,
-      });
-
-      await db.insert(profiles).values({
-        userId: u.id,
-        fullName: u.fullName,
-        targetRole: u.targetRole,
-        experienceLevel: u.experienceLevel,
-      });
-    }
-
-    // Insert points
-    for (let i = 0; i < u.points.length; i++) {
-      await db.insert(leaderboardPoints).values({
-        userId: u.id,
-        points: u.points[i],
-        source: i % 2 === 0 ? 'quiz_completion' : 'module_completion',
-        sourceId: DEMO_QUIZ_ID,
-      });
-    }
-  }
+  // DO NOT seed dummy users or dummy leaderboard points until requested
+  return;
 }

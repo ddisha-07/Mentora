@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { leaderboardPoints, quizAttempts, quizzes } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { leaderboardPoints, quizAttempts, quizzes, users } from '@/db/schema';
+import { desc, eq } from 'drizzle-orm';
 import { getSession } from '@/lib/auth';
-import { DEMO_QUIZ_ID, DEMO_USER_ID, ensureQuizAndLeaderboardSeed } from '@/lib/seedQuizAndLeaderboard';
+import { DEMO_QUIZ_ID } from '@/lib/seedQuizAndLeaderboard';
 
 export async function POST(
   request: NextRequest,
@@ -20,8 +20,6 @@ export async function POST(
         { status: 400 }
       );
     }
-
-    await ensureQuizAndLeaderboardSeed();
 
     // 1. Locate quiz
     let targetQuizId = id;
@@ -47,7 +45,24 @@ export async function POST(
 
     // 2. Determine user
     const session = await getSession();
-    const resolvedUserId = session?.userId || body.userId || DEMO_USER_ID;
+    let resolvedUserId = session?.userId || body.userId;
+
+    if (!resolvedUserId) {
+      const [latestUser] = await db
+        .select({ id: users.id })
+        .from(users)
+        .orderBy(desc(users.createdAt))
+        .limit(1);
+
+      if (latestUser) {
+        resolvedUserId = latestUser.id;
+      } else {
+        return NextResponse.json(
+          { error: 'Authentication required to submit quiz attempt' },
+          { status: 401 }
+        );
+      }
+    }
 
     // 3. Evaluate answers
     const questions = quiz.questions || [];

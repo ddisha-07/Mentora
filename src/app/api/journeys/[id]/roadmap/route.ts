@@ -57,9 +57,10 @@ export async function GET(
     }
 
     if (!journey) {
-      // Fallback to ensuring demo journey so testing with any id works gracefully
-      journey = await ensureDemoJourney();
-      targetJourneyId = journey.id;
+      return NextResponse.json(
+        { error: 'No active journey found. Please complete onboarding first.' },
+        { status: 404 }
+      );
     }
 
     // Retrieve modules for this journey ordered by level and order

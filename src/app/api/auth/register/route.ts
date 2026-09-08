@@ -64,13 +64,31 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    return NextResponse.json(
+    // Generate session JWT
+    const { createSessionToken, SESSION_COOKIE_NAME } = await import('@/lib/auth');
+    const token = await createSessionToken({
+      userId: newUser.id,
+      email: newUser.email,
+      role: newUser.role,
+    });
+
+    const response = NextResponse.json(
       {
         message: 'User registered successfully',
         user: newUser,
       },
       { status: 201 }
     );
+
+    response.cookies.set(SESSION_COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return response;
   } catch (error) {
     console.error('Registration error:', error);
     return NextResponse.json(

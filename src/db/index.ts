@@ -14,6 +14,10 @@ const pool =
   globalThis.__dbPool ??
   new Pool({
     connectionString: connectionString || undefined,
+    ssl: connectionString ? { rejectUnauthorized: false } : undefined,
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000,
   });
 
 if (process.env.NODE_ENV !== 'production') {
