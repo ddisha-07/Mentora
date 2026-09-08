@@ -104,7 +104,7 @@ export default function PublicFooter() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-orange-950/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-500">
-          <p>© {new Date().getFullYear()} Mentora AI. All rights reserved.</p>
+          <p suppressHydrationWarning>© {new Date().getFullYear()} Mentora AI. All rights reserved.</p>
           <div className="flex items-center gap-6 text-[11px]">
             <span className="hover:text-orange-400/80 cursor-pointer transition-colors">Privacy Policy</span>
             <span className="hover:text-orange-400/80 cursor-pointer transition-colors">Terms of Service</span>
