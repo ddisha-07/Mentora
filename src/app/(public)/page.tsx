@@ -52,113 +52,19 @@ export default function HomePage() {
               className="w-full sm:w-auto px-7 py-4 text-sm font-semibold text-zinc-300 hover:text-white bg-[#140e09]/90 hover:bg-[#1c130d] border border-orange-900/60 hover:border-orange-600/60 rounded-2xl shadow-sm transition-all flex items-center justify-center gap-2 font-mono"
             >
               <span>View Roadmap Demo</span>
-              <span className="text-xs text-orange-400 font-bold">⚡ 9 Modules</span>
             </Link>
           </div>
 
           {/* Quick Metrics Ticker */}
           <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-zinc-400 font-mono">
             <div className="flex items-center gap-2 bg-[#120b06] border border-orange-900/40 px-3.5 py-1.5 rounded-full">
-              <span className="text-orange-400 font-bold">✓</span> No Credit Card Required
+              <span className="text-orange-400 font-bold">✓</span> AI-Powered Skill Diagnostic
             </div>
             <div className="flex items-center gap-2 bg-[#120b06] border border-orange-900/40 px-3.5 py-1.5 rounded-full">
-              <span className="text-amber-400 font-bold">✓</span> Personalized in 2 Mins
+              <span className="text-amber-400 font-bold">✓</span> 3-Tier Gated Roadmap
             </div>
             <div className="flex items-center gap-2 bg-[#120b06] border border-orange-900/40 px-3.5 py-1.5 rounded-full">
               <span className="text-orange-400 font-bold">✓</span> Verifiable Skill Passport
-            </div>
-          </div>
-        </div>
-
-        {/* Hero Visual Card: Simulated Retro Interactive Journey Preview */}
-        <div className="mt-16 max-w-5xl mx-auto">
-          {/* Border Gradient Container */}
-          <div className="relative p-[1.5px] rounded-3xl bg-gradient-to-r from-orange-500/50 via-amber-500/40 to-orange-600/50 shadow-2xl shadow-orange-950/50">
-            <div className="rounded-[23px] bg-[#0d0906]/95 backdrop-blur-2xl p-6 sm:p-8 space-y-6">
-              
-              {/* Card Header Bar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-orange-950/80 pb-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-600 to-amber-600 p-[1px] flex items-center justify-center shadow-lg shadow-orange-950/50">
-                    <div className="w-full h-full bg-[#120c07] rounded-[11px] flex items-center justify-center text-orange-400 font-pixel text-xs">
-                      XP
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono uppercase text-orange-400 font-bold tracking-widest">
-                        Active Mission Preview
-                      </span>
-                      <span className="text-[10px] bg-orange-950/80 text-orange-300 border border-orange-700/60 px-2 py-0.5 rounded-full font-semibold font-mono">
-                        Gated Progression
-                      </span>
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">Staff AI Systems Architect</h3>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <span className="text-xs text-zinc-400 block font-mono">Overall Mastery</span>
-                    <span className="text-sm font-extrabold text-orange-400 font-mono">67% Complete</span>
-                  </div>
-                  <div className="w-28 sm:w-36 h-3 bg-[#1c120a] rounded-full overflow-hidden border border-orange-900/40 p-[1px]">
-                    <div className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 w-2/3 rounded-full shadow-sm" />
-                  </div>
-                </div>
-              </div>
-
-              {/* 3 Step Sequence Row */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                
-                {/* Level 1 Completed */}
-                <div className="p-4 rounded-2xl bg-[#140e08]/70 border border-amber-500/40 space-y-2.5 relative">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase">LVL 1 • FOUNDATIONS</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950/90 text-amber-300 border border-amber-600/60 flex items-center gap-1 font-mono">
-                      <span>✓</span> Verified
-                    </span>
-                  </div>
-                  <h4 className="text-sm font-bold text-white">Generative AI Core Architectures</h4>
-                  <p className="text-xs text-zinc-400 leading-relaxed">LLM tokenization, transformers & attention mechanism deep-dives.</p>
-                  <div className="pt-1 text-[11px] text-amber-400 font-semibold font-mono flex items-center gap-1">
-                    <span>🏆 3 Modules Verified</span>
-                  </div>
-                </div>
-
-                {/* Level 2 Active */}
-                <div className="p-4 rounded-2xl bg-[#1a1109]/90 border-2 border-orange-500 shadow-lg shadow-orange-950/60 space-y-2.5 relative">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold text-orange-300 uppercase">LVL 2 • CORE PRACTICE</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-950 text-orange-200 border border-orange-600 flex items-center gap-1 font-mono">
-                      <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-                      In Progress
-                    </span>
-                  </div>
-                  <h4 className="text-sm font-bold text-white">Prompt Engineering & System Design</h4>
-                  <p className="text-xs text-zinc-300 leading-relaxed">Few-shot prompting, chain-of-thought, logit sampling & structured outputs.</p>
-                  <div className="pt-1 flex items-center justify-between text-[11px] font-mono">
-                    <span className="text-amber-300 font-semibold">Quiz: 80% (Passed)</span>
-                    <span className="text-orange-400 font-bold">+100 Leaderboard XP</span>
-                  </div>
-                </div>
-
-                {/* Level 3 Gated */}
-                <div className="p-4 rounded-2xl bg-[#0e0a06]/60 border border-orange-950/80 space-y-2.5 opacity-70">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase">LVL 3 • SPECIALIZATION</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#120c08] text-zinc-400 border border-zinc-800 font-mono">
-                      🔒 Gated
-                    </span>
-                  </div>
-                  <h4 className="text-sm font-bold text-zinc-300">Production MLOps & Autonomous Agents</h4>
-                  <p className="text-xs text-zinc-500 leading-relaxed">Unlocks automatically upon completing Level 2 assessments.</p>
-                  <div className="pt-1 text-[11px] text-zinc-500 font-mono">
-                    Prerequisite: 70%+ score on Level 2
-                  </div>
-                </div>
-              </div>
-
             </div>
           </div>
         </div>
