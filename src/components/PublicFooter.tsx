@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function PublicFooter() {
   return (
@@ -8,13 +9,14 @@ export default function PublicFooter() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Col */}
           <div className="col-span-2 md:col-span-1 space-y-4">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 via-orange-500 to-orange-600 p-[1px] shadow-sm shadow-orange-500/20">
-                <div className="w-full h-full bg-[#0c0805] rounded-[7px] flex items-center justify-center">
-                  <span className="font-pixel text-[10px] text-orange-400 font-bold">M</span>
-                </div>
-              </div>
-              <span className="text-lg font-bold text-white tracking-tight">Mentora</span>
+            <Link href="/" className="inline-block group py-0.5">
+              <Image
+                src="/images/mentora-logo.png"
+                alt="Mentora Logo"
+                width={130}
+                height={65}
+                className="h-9 w-auto object-contain drop-shadow-[0_0_10px_rgba(249,115,22,0.3)] group-hover:scale-105 transition-transform duration-300"
+              />
             </Link>
             <p className="text-xs text-zinc-400 leading-relaxed">
               Personalized, level-gated learning ecosystem for software engineers, AI architects, and tech leaders.

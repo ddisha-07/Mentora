@@ -27,6 +27,11 @@ const pressStart2P = Press_Start_2P({
 export const metadata: Metadata = {
   title: 'Mentora — Personalized Learning Ecosystem for Working Professionals',
   description: 'AI-driven personalized learning journeys, skill-gap diagnostics, and verifiable skill passport for professionals.',
+  icons: {
+    icon: '/images/mentora-logo.png',
+    shortcut: '/images/mentora-logo.png',
+    apple: '/images/mentora-logo.png',
+  },
 };
 
 export default function RootLayout({

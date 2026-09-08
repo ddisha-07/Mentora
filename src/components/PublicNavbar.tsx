@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function PublicNavbar() {
@@ -21,22 +22,15 @@ export default function PublicNavbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18 py-3">
           {/* Logo & Brand */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-orange-600 p-[1.5px] shadow-lg shadow-orange-500/25 group-hover:shadow-orange-500/45 transition-all">
-              <div className="w-full h-full bg-[#0d0906] rounded-[10px] flex items-center justify-center">
-                <span className="font-pixel text-xs text-orange-400 font-bold">
-                  M
-                </span>
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-orange-100 to-amber-200 bg-clip-text text-transparent">
-                Mentora
-              </span>
-              <span className="text-[10px] uppercase font-mono tracking-widest text-orange-400 -mt-0.5 font-semibold">
-                Adaptive Learning
-              </span>
-            </div>
+          <Link href="/" className="flex items-center group py-1">
+            <Image
+              src="/images/mentora-logo.png"
+              alt="Mentora Logo"
+              width={140}
+              height={70}
+              priority
+              className="h-10 sm:h-11 w-auto object-contain drop-shadow-[0_0_12px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-transform duration-300"
+            />
           </Link>
 
           {/* Desktop Navigation Links */}

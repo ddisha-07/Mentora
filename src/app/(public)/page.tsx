@@ -17,22 +17,22 @@ export default function HomePage() {
           <div className="relative group my-2">
             <div className="absolute -inset-6 bg-gradient-to-r from-orange-600/30 via-amber-500/30 to-orange-600/30 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition duration-700 -z-10" />
             <div className="flex flex-col items-center justify-center">
-              <h1 className="font-pixel text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-orange-400 to-orange-600 drop-shadow-pixel-bold select-none py-2">
+              <h1 className="font-pixel text-6xl sm:text-8xl md:text-9xl lg:text-[8.5rem] xl:text-[9.5rem] font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-orange-400 to-orange-600 drop-shadow-pixel-bold select-none py-2">
                 MENTORA
               </h1>
-              <div className="h-1 w-32 sm:w-48 bg-gradient-to-r from-transparent via-orange-500 to-transparent mt-3 rounded-full" />
+              <div className="h-1 w-36 sm:w-56 md:w-64 bg-gradient-to-r from-transparent via-orange-500 to-transparent mt-3 rounded-full" />
             </div>
           </div>
 
           {/* Subtitle / Tagline */}
-          <div className="space-y-3 max-w-2xl mx-auto">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white">
+          <div className="space-y-2.5 max-w-2xl mx-auto">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-white">
               Don&apos;t just learn.{' '}
               <span className="bg-gradient-to-r from-amber-300 via-orange-400 to-amber-200 bg-clip-text text-transparent">
                 Evolve!
               </span>
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-zinc-400 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xs sm:text-sm md:text-base text-zinc-400 leading-relaxed max-w-2xl mx-auto">
               Stop guessing what to learn next. Our AI understands your skills, uncovers your gaps, and builds a personalized path to your career goals &mdash; with courses, industry insights, daily challenges, an AI mentor, community, and a Skill Passport to prove your growth.
             </p>
           </div>
