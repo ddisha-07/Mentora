@@ -134,9 +134,9 @@ export default function HomePage() {
           {/* Centered Pixelated Mentora Title */}
           <div className="relative group my-2">
             <div
-              className={`absolute -inset-6 rounded-3xl blur-2xl transition duration-700 -z-10 ${
+              className={`absolute -inset-8 rounded-full blur-3xl pointer-events-none -z-10 transition duration-700 ${
                 isBright
-                  ? 'bg-gradient-to-r from-orange-400/20 via-amber-300/25 to-orange-400/20 opacity-50 group-hover:opacity-75'
+                  ? 'bg-gradient-to-r from-orange-400/35 via-amber-400/45 to-orange-400/35 opacity-75 group-hover:opacity-95'
                   : 'bg-gradient-to-r from-orange-600/30 via-amber-500/30 to-orange-600/30 opacity-80 group-hover:opacity-100'
               }`}
             />
