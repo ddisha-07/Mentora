@@ -1,0 +1,38 @@
+export const mockTasks = [
+  {
+    id: "tsk_1",
+    title: "Complete one lesson",
+    description: "Finish any single lesson in an enrolled course.",
+    points: 20,
+    difficulty: "Easy",
+    date: "2026-09-08",
+    active: true,
+  },
+  {
+    id: "tsk_2",
+    title: "Post in a community",
+    description: "Share a question or win in any community you belong to.",
+    points: 15,
+    difficulty: "Easy",
+    date: "2026-09-08",
+    active: true,
+  },
+  {
+    id: "tsk_3",
+    title: "Finish a module quiz",
+    description: "Score at least 70% on any module quiz.",
+    points: 40,
+    difficulty: "Medium",
+    date: "2026-09-09",
+    active: true,
+  },
+  {
+    id: "tsk_4",
+    title: "Mentor session review",
+    description: "Leave feedback after a completed mentor session.",
+    points: 60,
+    difficulty: "Hard",
+    date: "2026-09-10",
+    active: false,
+  },
+];

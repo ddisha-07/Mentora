@@ -12,6 +12,32 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  --color-base-950: #08090a;
+  --color-base-900: #0c0d0f;
+  --color-base-850: #111214;
+  --color-base-800: #161719;
+  --color-base-700: #1e2023;
+
+  --color-ink-100: #f5f5f4;
+  --color-ink-300: #c8c8cc;
+  --color-ink-500: #8b8b90;
+  --color-ink-700: #5c5c62;
+
+  --color-ember-400: #ff9548;
+  --color-ember-500: #ff7a1a;
+  --color-ember-600: #e8650a;
+  --color-ember-glow: rgba(255, 122, 26, 0.35);
+
+  --color-line-soft: rgba(255, 255, 255, 0.07);
+  --color-line-med: rgba(255, 255, 255, 0.12);
+
+  --shadow-glass: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 8px 30px -12px rgba(0, 0, 0, 0.6);
+  --shadow-ember: 0 8px 24px -8px rgba(255, 122, 26, 0.45);
+
+  --radius-xl2: 1.25rem;
+}
+
 .font-pixel {
   font-family: 'Pixelify Sans', var(--font-pixel), sans-serif;
   font-weight: 700;
@@ -64,4 +90,23 @@
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+.glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-strong {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid rgba(255, 122, 26, 0.6);
+  outline-offset: 2px;
 }

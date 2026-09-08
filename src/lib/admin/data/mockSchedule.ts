@@ -1,0 +1,38 @@
+export const mockEvents = [
+  {
+    id: "evt_1",
+    title: "Live Q&A — Product Thinking",
+    date: "2026-09-10",
+    time: "17:00",
+    type: "Webinar",
+    host: "Diego Fernandez",
+    location: "Online",
+  },
+  {
+    id: "evt_2",
+    title: "Mentor Office Hours",
+    date: "2026-09-12",
+    time: "10:00",
+    type: "Office Hours",
+    host: "Michael Osei",
+    location: "Online",
+  },
+  {
+    id: "evt_3",
+    title: "Community Meetup — SF",
+    date: "2026-09-18",
+    time: "18:30",
+    type: "In Person",
+    host: "Amara Okafor",
+    location: "San Francisco, CA",
+  },
+  {
+    id: "evt_4",
+    title: "Course Launch: Applied DS",
+    date: "2026-09-22",
+    time: "09:00",
+    type: "Milestone",
+    host: "Mentora Team",
+    location: "—",
+  },
+];
