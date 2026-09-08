@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { modules, moduleProgress } from '@/db/schema';
+import { courseModules, courses, userCourses } from '@/db/schema';
 import { and, asc, eq } from 'drizzle-orm';
 import { getSession } from '@/lib/auth';
 
@@ -16,95 +16,55 @@ export async function POST(
     // 1. Locate current module
     const [currentModule] = await db
       .select()
-      .from(modules)
-      .where(eq(modules.id, id))
+      .from(courseModules)
+      .where(eq(courseModules.id, id))
       .limit(1);
 
     if (!currentModule) {
       return NextResponse.json({ error: 'Module not found' }, { status: 404 });
     }
 
-    // 2. Mark current module as completed in moduleProgress
-    const [existingProgress] = await db
-      .select()
-      .from(moduleProgress)
-      .where(
-        userId
-          ? and(eq(moduleProgress.moduleId, currentModule.id), eq(moduleProgress.userId, userId))
-          : eq(moduleProgress.moduleId, currentModule.id)
-      )
-      .limit(1);
-
-    const now = new Date();
-
-    if (existingProgress) {
-      await db
-        .update(moduleProgress)
-        .set({
-          status: 'completed',
-          completedAt: now,
-          updatedAt: now,
-        })
-        .where(eq(moduleProgress.id, existingProgress.id));
-    } else {
-      await db.insert(moduleProgress).values({
-        userId: userId || undefined,
-        moduleId: currentModule.id,
-        status: 'completed',
-        completedAt: now,
-        updatedAt: now,
-      });
-    }
-
-    // 3. Find all modules in this journey in sequence
+    // 2. Find all modules in this course in sequence
     const allModules = await db
       .select()
-      .from(modules)
-      .where(eq(modules.journeyId, currentModule.journeyId))
-      .orderBy(asc(modules.level), asc(modules.order));
+      .from(courseModules)
+      .where(eq(courseModules.courseId, currentModule.courseId))
+      .orderBy(asc(courseModules.displayOrder));
 
     const currentIndex = allModules.findIndex((m) => m.id === currentModule.id);
     const nextModule = currentIndex >= 0 && currentIndex + 1 < allModules.length
       ? allModules[currentIndex + 1]
       : null;
 
-    // 4. Unlock next module in sequence if exists
+    // 3. Update user_courses progress if enrolled
+    if (userId) {
+      const completedCount = currentIndex + 1;
+      const progressPercent = Math.min(100, Math.round((completedCount / allModules.length) * 100));
+
+      await db
+        .update(userCourses)
+        .set({
+          progress: progressPercent.toFixed(2),
+          status: progressPercent >= 100 ? 'completed' : 'in_progress',
+          completedAt: progressPercent >= 100 ? new Date() : null,
+          lastAccessedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(userCourses.userId, userId),
+            eq(userCourses.courseId, currentModule.courseId)
+          )
+        )
+        .catch(() => {});
+    }
+
     let unlockedModule = null;
     if (nextModule) {
-      const [nextProg] = await db
-        .select()
-        .from(moduleProgress)
-        .where(
-          userId
-            ? and(eq(moduleProgress.moduleId, nextModule.id), eq(moduleProgress.userId, userId))
-            : eq(moduleProgress.moduleId, nextModule.id)
-        )
-        .limit(1);
-
-      if (nextProg) {
-        if (nextProg.status === 'locked') {
-          await db
-            .update(moduleProgress)
-            .set({
-              status: 'available',
-              updatedAt: now,
-            })
-            .where(eq(moduleProgress.id, nextProg.id));
-        }
-      } else {
-        await db.insert(moduleProgress).values({
-          userId: userId || undefined,
-          moduleId: nextModule.id,
-          status: 'available',
-          updatedAt: now,
-        });
-      }
-
       unlockedModule = {
         id: nextModule.id,
         title: nextModule.title,
-        order: nextModule.order,
-        level: nextModule.level,
+        order: nextModule.displayOrder,
+        level: nextModule.displayOrder <= 3 ? 1 : nextModule.displayOrder <= 6 ? 2 : 3,
         status: 'available',
       };
     }

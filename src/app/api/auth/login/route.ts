@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { profiles, users } from '@/db/schema';
+import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { createSessionToken, hashPassword, SESSION_COOKIE_NAME, verifyPassword } from '@/lib/auth';
 
@@ -28,32 +28,26 @@ export async function POST(request: NextRequest) {
     let activeUser = existingUser;
 
     if (!activeUser) {
-      // If user does not exist, auto-create them so credentials entered at login are saved in database
+      // Auto-create user if not found
       const passwordHash = await hashPassword(password);
+      const namePart = normalizedEmail.split('@')[0] || 'Learner';
+      const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+
       const [newUser] = await db
         .insert(users)
         .values({
           email: normalizedEmail,
-          passwordHash,
-          role: 'learner',
-          onboardingComplete: false,
+          name: formattedName,
+          password: passwordHash,
+          role: 'employee',
+          status: 'active',
         })
         .returning();
 
       activeUser = newUser;
-
-      // Create linked profile row
-      const namePart = normalizedEmail.split('@')[0] || 'Learner';
-      const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-      await db.insert(profiles).values({
-        userId: newUser.id,
-        fullName: formattedName,
-        targetRole: 'Senior AI Systems Architect',
-        experienceLevel: 'intermediate',
-      });
     } else {
       // Verify password for existing user
-      const isPasswordValid = await verifyPassword(password, activeUser.passwordHash);
+      const isPasswordValid = await verifyPassword(password, activeUser.password || '');
       if (!isPasswordValid) {
         return NextResponse.json(
           { error: 'Invalid password. Please check your credentials.' },
@@ -65,28 +59,12 @@ export async function POST(request: NextRequest) {
       await db
         .update(users)
         .set({ updatedAt: new Date() })
-        .where(eq(users.id, activeUser.id));
-
-      // Ensure profile exists
-      const [userProfile] = await db
-        .select({ id: profiles.id })
-        .from(profiles)
-        .where(eq(profiles.userId, activeUser.id))
-        .limit(1);
-
-      if (!userProfile) {
-        const namePart = normalizedEmail.split('@')[0] || 'Learner';
-        const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-        await db.insert(profiles).values({
-          userId: activeUser.id,
-          fullName: formattedName,
-        });
-      }
+        .where(eq(users.userId, activeUser.userId));
     }
 
     // Generate session JWT
     const token = await createSessionToken({
-      userId: activeUser.id,
+      userId: activeUser.userId,
       email: activeUser.email,
       role: activeUser.role,
     });
@@ -94,10 +72,13 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({
       message: 'Login successful',
       user: {
-        id: activeUser.id,
+        id: activeUser.userId,
+        userId: activeUser.userId,
         email: activeUser.email,
+        name: activeUser.name,
         role: activeUser.role,
-        onboardingComplete: activeUser.onboardingComplete,
+        status: activeUser.status,
+        onboardingComplete: true,
       },
     });
 

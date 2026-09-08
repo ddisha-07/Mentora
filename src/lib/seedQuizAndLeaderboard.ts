@@ -1,10 +1,17 @@
 import { db } from '@/db';
-import { leaderboardPoints, profiles, QuizQuestion, quizzes, users } from '@/db/schema';
+import { quizOptions, quizQuestions, quizzes } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { hashPassword } from '@/lib/auth';
 
 export const DEMO_QUIZ_ID = '11111111-1111-1111-1111-111111111111';
 export const DEMO_USER_ID = '00000000-0000-0000-0000-000000000002';
+
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
+}
 
 export const SAMPLE_QUIZ_QUESTIONS: QuizQuestion[] = [
   {
@@ -70,7 +77,6 @@ export const SAMPLE_QUIZ_QUESTIONS: QuizQuestion[] = [
 ];
 
 export async function ensureQuizAndLeaderboardSeed() {
-  // Only ensure the quiz structure template exists if not present
   const [existingQuiz] = await db
     .select()
     .from(quizzes)
@@ -78,16 +84,40 @@ export async function ensureQuizAndLeaderboardSeed() {
     .limit(1);
 
   if (!existingQuiz) {
-    await db.insert(quizzes).values({
-      id: DEMO_QUIZ_ID,
-      title: 'Prompt Engineering & GenAI Foundations Mastery',
-      description: 'Evaluate your knowledge of sampling parameters, few-shot prompting, embeddings, RAG pipelines, and structured outputs.',
-      passingScore: 70,
-      rewardPoints: 100,
-      questions: SAMPLE_QUIZ_QUESTIONS,
-    });
+    const [quiz] = await db
+      .insert(quizzes)
+      .values({
+        id: DEMO_QUIZ_ID,
+        title: 'Prompt Engineering & GenAI Foundations Mastery',
+        description: 'Evaluate your knowledge of sampling parameters, few-shot prompting, embeddings, RAG pipelines, and structured outputs.',
+        passingScore: 70,
+      })
+      .returning();
+
+    for (let i = 0; i < SAMPLE_QUIZ_QUESTIONS.length; i++) {
+      const q = SAMPLE_QUIZ_QUESTIONS[i];
+      const [insertedQ] = await db
+        .insert(quizQuestions)
+        .values({
+          quizId: quiz.id,
+          question: q.question,
+          questionType: 'mcq',
+          points: 1,
+          displayOrder: i + 1,
+        })
+        .returning();
+
+      for (let j = 0; j < q.options.length; j++) {
+        await db.insert(quizOptions).values({
+          questionId: insertedQ.id,
+          optionText: q.options[j],
+          isCorrect: j === q.correctAnswer,
+          displayOrder: j + 1,
+        });
+      }
+    }
   }
 
-  // DO NOT seed dummy users or dummy leaderboard points until requested
+  // Do NOT seed dummy users or leaderboard points
   return;
 }

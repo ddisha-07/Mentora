@@ -18,13 +18,15 @@ export async function GET() {
     // Retrieve up-to-date user details from database
     const [user] = await db
       .select({
-        id: users.id,
+        id: users.userId,
+        userId: users.userId,
         email: users.email,
+        name: users.name,
         role: users.role,
-        onboardingComplete: users.onboardingComplete,
+        status: users.status,
       })
       .from(users)
-      .where(eq(users.id, session.userId))
+      .where(eq(users.userId, session.userId))
       .limit(1);
 
     if (!user) {
@@ -36,11 +38,14 @@ export async function GET() {
 
     return NextResponse.json({
       user: {
-        id: user.id,
+        id: user.userId,
+        userId: user.userId,
         email: user.email,
+        name: user.name,
         role: user.role,
+        status: user.status,
       },
-      onboardingComplete: user.onboardingComplete,
+      onboardingComplete: true,
     });
   } catch (error) {
     console.error('Session retrieval error:', error);

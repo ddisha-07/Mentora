@@ -1,34 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { leaderboardPoints, profiles, users } from '@/db/schema';
+import { users, xps } from '@/db/schema';
 import { desc, eq, sql } from 'drizzle-orm';
 import { getSession } from '@/lib/auth';
-import { ensureQuizAndLeaderboardSeed } from '@/lib/seedQuizAndLeaderboard';
 
 export async function GET(request: NextRequest) {
   try {
-    await ensureQuizAndLeaderboardSeed();
-
     const session = await getSession();
     const currentUserId = session?.userId || null;
 
-    // Aggregate points per user from leaderboard_points
+    // Aggregate points per user from xps table
     const aggregated = await db
       .select({
-        userId: users.id,
+        userId: users.userId,
         email: users.email,
-        fullName: profiles.fullName,
-        targetRole: profiles.targetRole,
-        experienceLevel: profiles.experienceLevel,
-        totalPoints: sql<number>`coalesce(sum(${leaderboardPoints.points}), 0)::int`,
-        activitiesCount: sql<number>`count(${leaderboardPoints.id})::int`,
-        lastEarnedAt: sql<string | null>`max(${leaderboardPoints.createdAt})`,
+        name: users.name,
+        role: users.role,
+        totalPoints: sql<number>`coalesce(sum(${xps.points}), 0)::int`,
+        activitiesCount: sql<number>`count(${xps.id})::int`,
+        lastEarnedAt: sql<string | null>`max(${xps.createdAt})`,
       })
       .from(users)
-      .leftJoin(profiles, eq(profiles.userId, users.id))
-      .innerJoin(leaderboardPoints, eq(leaderboardPoints.userId, users.id))
-      .groupBy(users.id, users.email, profiles.fullName, profiles.targetRole, profiles.experienceLevel)
-      .orderBy(desc(sql`sum(${leaderboardPoints.points})`));
+      .innerJoin(xps, eq(xps.userId, users.userId))
+      .groupBy(users.userId, users.email, users.name, users.role)
+      .orderBy(desc(sql`sum(${xps.points})`));
 
     // Assign sequential ranks and badges
     const leaderboard = aggregated.map((entry, index) => {
@@ -43,10 +38,10 @@ export async function GET(request: NextRequest) {
       return {
         rank,
         userId: entry.userId,
-        name: entry.fullName || entry.email.split('@')[0],
+        name: entry.name || entry.email.split('@')[0],
         email: entry.email,
-        targetRole: entry.targetRole || 'Professional Learner',
-        experienceLevel: entry.experienceLevel || 'intermediate',
+        targetRole: entry.role || 'Professional Learner',
+        experienceLevel: 'intermediate',
         totalPoints: entry.totalPoints,
         activitiesCount: entry.activitiesCount,
         badge,

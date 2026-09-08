@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { journeys, modules, moduleProgress } from '@/db/schema';
+import { courseModules, courses, lessonProgress, lessons, userCourses } from '@/db/schema';
 import { and, asc, desc, eq, inArray } from 'drizzle-orm';
 import { getSession } from '@/lib/auth';
-import { DEMO_JOURNEY_ID, ensureDemoJourney } from '@/lib/seedJourney';
 
 const LEVEL_NAMES: Record<number, string> = {
   1: 'Foundations',
@@ -20,59 +19,62 @@ export async function GET(
     const session = await getSession();
     const userId = session?.userId || null;
 
-    let targetJourneyId = id;
-    let journey: typeof journeys.$inferSelect | undefined;
+    let targetCourseId = id;
+    let course: typeof courses.$inferSelect | undefined;
 
     if (id === 'active') {
       if (userId) {
-        [journey] = await db
+        [course] = await db
           .select()
-          .from(journeys)
-          .where(eq(journeys.userId, userId))
-          .orderBy(desc(journeys.createdAt))
+          .from(courses)
+          .where(eq(courses.createdBy, userId))
+          .orderBy(desc(courses.createdAt))
           .limit(1);
       }
-      if (!journey) {
-        [journey] = await db
+      if (!course) {
+        [course] = await db
           .select()
-          .from(journeys)
-          .orderBy(desc(journeys.createdAt))
+          .from(courses)
+          .orderBy(desc(courses.createdAt))
           .limit(1);
       }
-      if (journey) {
-        targetJourneyId = journey.id;
+      if (course) {
+        targetCourseId = course.id;
       }
-    } else if (id === 'demo') {
-      const demo = await ensureDemoJourney();
-      targetJourneyId = demo.id;
     }
 
-    // Attempt to locate journey if not already found
-    if (!journey) {
-      [journey] = await db
+    // Attempt to locate course if not active alias
+    if (!course) {
+      [course] = await db
         .select()
-        .from(journeys)
-        .where(eq(journeys.id, targetJourneyId))
+        .from(courses)
+        .where(eq(courses.id, targetCourseId))
         .limit(1);
     }
 
-    if (!journey) {
+    if (!course) {
       return NextResponse.json(
         { error: 'No active journey found. Please complete onboarding first.' },
         { status: 404 }
       );
     }
 
-    // Retrieve modules for this journey ordered by level and order
+    // Retrieve modules for this course ordered by displayOrder
     const moduleList = await db
       .select()
-      .from(modules)
-      .where(eq(modules.journeyId, targetJourneyId))
-      .orderBy(asc(modules.level), asc(modules.order));
+      .from(courseModules)
+      .where(eq(courseModules.courseId, targetCourseId))
+      .orderBy(asc(courseModules.displayOrder));
 
     if (moduleList.length === 0) {
       return NextResponse.json({
-        journey,
+        journey: {
+          id: course.id,
+          title: course.title,
+          role: course.category || 'AI Engineer',
+          level: course.difficulty,
+          totalModules: 0,
+        },
         levels: [
           { level: 1, name: LEVEL_NAMES[1], modules: [] },
           { level: 2, name: LEVEL_NAMES[2], modules: [] },
@@ -81,52 +83,25 @@ export async function GET(
       });
     }
 
-    const moduleIds = moduleList.map((m) => m.id);
-
-    // Retrieve progress records
-    const progressList = await db
-      .select()
-      .from(moduleProgress)
-      .where(
-        userId
-          ? and(inArray(moduleProgress.moduleId, moduleIds), eq(moduleProgress.userId, userId))
-          : inArray(moduleProgress.moduleId, moduleIds)
-      );
-
-    const progressMap = new Map<string, typeof moduleProgress.$inferSelect>();
-    for (const prog of progressList) {
-      progressMap.set(prog.moduleId, prog);
-    }
-
-    // Group modules by level with resolved status
+    // Map modules into 3 progressive tiers
     const levelsMap: Record<number, any[]> = { 1: [], 2: [], 3: [] };
 
     for (let i = 0; i < moduleList.length; i++) {
       const mod = moduleList[i];
-      const prog = progressMap.get(mod.id);
-
-      // Default status logic: if no record, module #1 is available, others locked
-      let status: 'locked' | 'available' | 'in_progress' | 'completed' = 'locked';
-      if (prog) {
-        status = prog.status;
-      } else if (i === 0) {
-        status = 'available';
-      }
-
-      const lvl = mod.level || 1;
-      if (!levelsMap[lvl]) levelsMap[lvl] = [];
+      const lvl = mod.displayOrder <= 3 ? 1 : mod.displayOrder <= 6 ? 2 : 3;
 
       levelsMap[lvl].push({
         id: mod.id,
-        journeyId: mod.journeyId,
+        journeyId: mod.courseId,
+        courseId: mod.courseId,
         title: mod.title,
-        skill: mod.skill,
+        skill: mod.title,
         description: mod.description,
-        level: mod.level,
-        order: mod.order,
-        estimatedHours: mod.estimatedHours,
-        status,
-        completedAt: prog?.completedAt || null,
+        level: lvl,
+        order: mod.displayOrder,
+        estimatedHours: Math.round((mod.estimatedTime || 360) / 60),
+        status: i === 0 ? 'available' : 'locked',
+        completedAt: null,
       });
     }
 
@@ -137,7 +112,13 @@ export async function GET(
     }));
 
     return NextResponse.json({
-      journey,
+      journey: {
+        id: course.id,
+        title: course.title,
+        role: course.category || 'AI Engineer',
+        level: course.difficulty,
+        totalModules: moduleList.length,
+      },
       levels,
     });
   } catch (error) {

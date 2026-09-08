@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { quizzes } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { quizOptions, quizQuestions, quizzes } from '@/db/schema';
+import { asc, eq } from 'drizzle-orm';
 import { DEMO_QUIZ_ID, ensureQuizAndLeaderboardSeed } from '@/lib/seedQuizAndLeaderboard';
 
 export async function GET(
@@ -32,19 +32,43 @@ export async function GET(
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 
-    // Return quiz with questions (omitting correctAnswer so clients cannot cheat before submitting)
-    const sanitizedQuestions = (quiz.questions || []).map((q) => ({
-      id: q.id,
-      question: q.question,
-      options: q.options,
-    }));
+    // Query questions and options from normalized tables
+    const questionsList = await db
+      .select({
+        questionId: quizQuestions.id,
+        questionText: quizQuestions.question,
+        questionOrder: quizQuestions.displayOrder,
+        optionId: quizOptions.id,
+        optionText: quizOptions.optionText,
+        optionOrder: quizOptions.displayOrder,
+      })
+      .from(quizQuestions)
+      .leftJoin(quizOptions, eq(quizOptions.questionId, quizQuestions.id))
+      .where(eq(quizQuestions.quizId, quiz.id))
+      .orderBy(asc(quizQuestions.displayOrder), asc(quizOptions.displayOrder));
+
+    const questionsMap = new Map<string, { id: string; question: string; options: string[] }>();
+    for (const row of questionsList) {
+      if (!questionsMap.has(row.questionId)) {
+        questionsMap.set(row.questionId, {
+          id: row.questionId,
+          question: row.questionText,
+          options: [],
+        });
+      }
+      if (row.optionText) {
+        questionsMap.get(row.questionId)!.options.push(row.optionText);
+      }
+    }
+
+    const sanitizedQuestions = Array.from(questionsMap.values());
 
     return NextResponse.json({
       id: quiz.id,
       title: quiz.title,
       description: quiz.description,
       passingScore: quiz.passingScore,
-      rewardPoints: quiz.rewardPoints,
+      rewardPoints: 100,
       questions: sanitizedQuestions,
       totalQuestions: sanitizedQuestions.length,
     });

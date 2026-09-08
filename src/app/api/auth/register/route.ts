@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { profiles, users } from '@/db/schema';
+import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { hashPassword } from '@/lib/auth';
 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     // Check if user exists
     const [existing] = await db
-      .select({ id: users.id })
+      .select({ userId: users.userId })
       .from(users)
       .where(eq(users.email, normalizedEmail))
       .limit(1);
@@ -37,37 +37,35 @@ export async function POST(request: NextRequest) {
     }
 
     const passwordHash = await hashPassword(password);
+    const resolvedName = fullName?.trim() || normalizedEmail.split('@')[0];
 
-    // Create user
+    // Allowed roles: 'employee', 'admin', 'mentor', 'manager'
+    const allowedRoles = ['employee', 'admin', 'mentor', 'manager'];
+    const resolvedRole = role && allowedRoles.includes(role) ? role : 'employee';
+
+    // Create user in users table
     const [newUser] = await db
       .insert(users)
       .values({
         email: normalizedEmail,
-        passwordHash,
-        role: role || 'learner',
+        name: resolvedName,
+        password: passwordHash,
+        role: resolvedRole,
+        status: 'active',
       })
       .returning({
-        id: users.id,
+        userId: users.userId,
         email: users.email,
+        name: users.name,
         role: users.role,
-        onboardingComplete: users.onboardingComplete,
+        status: users.status,
         createdAt: users.createdAt,
       });
-
-    // Create profile if initial details provided
-    if (fullName || targetRole || experienceLevel) {
-      await db.insert(profiles).values({
-        userId: newUser.id,
-        fullName: fullName || null,
-        targetRole: targetRole || null,
-        experienceLevel: experienceLevel || null,
-      });
-    }
 
     // Generate session JWT
     const { createSessionToken, SESSION_COOKIE_NAME } = await import('@/lib/auth');
     const token = await createSessionToken({
-      userId: newUser.id,
+      userId: newUser.userId,
       email: newUser.email,
       role: newUser.role,
     });
@@ -75,7 +73,15 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json(
       {
         message: 'User registered successfully',
-        user: newUser,
+        user: {
+          id: newUser.userId,
+          userId: newUser.userId,
+          email: newUser.email,
+          name: newUser.name,
+          role: newUser.role,
+          status: newUser.status,
+          onboardingComplete: true,
+        },
       },
       { status: 201 }
     );
