@@ -80,17 +80,14 @@ export default function PublicNavbar() {
               onClick={toggleTheme}
               aria-label={isBright ? 'Switch to Dark Mode' : 'Switch to Bright Mode'}
               title={isBright ? 'Switch to Dark Mode' : 'Switch to Bright Mode'}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
+              className={`p-2 w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-200 cursor-pointer ${
                 isBright
-                  ? 'bg-white text-[#2D241E] hover:text-[#EA580C] border border-[#E3D4C5] hover:border-orange-300 shadow-xs'
-                  : 'bg-[#140e09] text-zinc-300 hover:text-amber-300 border border-orange-900/40 hover:border-amber-500/50 shadow-xs'
+                  ? 'bg-white text-[#2D241E] hover:text-[#EA580C] border border-[#E3D4C5] hover:border-orange-300 shadow-xs active:scale-95'
+                  : 'bg-[#140e09] text-zinc-300 hover:text-amber-300 border border-orange-900/40 hover:border-amber-500/50 shadow-xs active:scale-95'
               }`}
             >
-              <span className="text-sm transition-transform duration-300 group-hover:scale-110">
+              <span className="text-base transition-transform duration-300 hover:scale-110 select-none">
                 {isBright ? '☀️' : '🌙'}
-              </span>
-              <span className="font-mono text-[11px] uppercase tracking-wider font-bold">
-                {isBright ? 'Bright' : 'Dark'}
               </span>
             </button>
 
@@ -128,14 +125,13 @@ export default function PublicNavbar() {
               onClick={toggleTheme}
               aria-label={isBright ? 'Switch to Dark Mode' : 'Switch to Bright Mode'}
               title={isBright ? 'Switch to Dark Mode' : 'Switch to Bright Mode'}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`p-1.5 w-8 h-8 flex items-center justify-center rounded-lg transition-all ${
                 isBright
                   ? 'bg-white text-[#2D241E] border border-[#E3D4C5]'
                   : 'bg-[#140e09] text-zinc-300 border border-orange-900/40'
               }`}
             >
-              <span className="text-xs">{isBright ? '☀️' : '🌙'}</span>
-              <span className="font-mono text-[10px] uppercase font-bold">{isBright ? 'Bright' : 'Dark'}</span>
+              <span className="text-sm select-none">{isBright ? '☀️' : '🌙'}</span>
             </button>
 
             <Link
@@ -219,13 +215,14 @@ export default function PublicNavbar() {
               <button
                 type="button"
                 onClick={toggleTheme}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold ${
+                aria-label={isBright ? 'Switch to Dark Mode' : 'Switch to Bright Mode'}
+                className={`p-2 w-9 h-9 flex items-center justify-center rounded-xl text-base ${
                   isBright
                     ? 'bg-white border border-[#E3D4C5] text-[#2D241E]'
                     : 'bg-[#140e09] border border-orange-900/40 text-zinc-300'
                 }`}
               >
-                <span>{isBright ? '☀️ Bright Mode' : '🌙 Dark Mode'}</span>
+                <span className="select-none">{isBright ? '☀️' : '🌙'}</span>
               </button>
             </div>
 
