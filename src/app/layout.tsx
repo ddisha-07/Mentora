@@ -34,6 +34,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { ThemeProvider } from '@/context/ThemeContext';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -52,8 +54,23 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700;900&family=Press+Start+2P&family=Silkscreen:wght@700&display=swap"
           rel="stylesheet"
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.getItem('mentora_theme') === 'bright') {
+                  document.documentElement.classList.add('bright');
+                  document.documentElement.setAttribute('data-theme', 'bright');
+                  document.documentElement.style.colorScheme = 'light';
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
       </head>
-      <body suppressHydrationWarning className="min-h-full flex flex-col bg-slate-950 text-slate-100">{children}</body>
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-[#080604] bright:bg-[#FAF4EE] text-slate-100 transition-colors duration-200">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

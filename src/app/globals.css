@@ -110,3 +110,33 @@ body {
   outline: 2px solid rgba(255, 122, 26, 0.6);
   outline-offset: 2px;
 }
+
+/* ==========================================================================
+   Mentora Bright Mode Color Scheme (Warm Desert Sand, Cream & Vibrant Orange)
+   ========================================================================== */
+html.bright {
+  --background: #FAF4EE;
+  --foreground: #1C1917;
+  color-scheme: light;
+}
+
+html.bright body {
+  background-color: #FAF4EE !important;
+  color: #1C1917 !important;
+}
+
+html.bright .drop-shadow-pixel-bold {
+  filter: drop-shadow(3px 3px 0px #ea580c) drop-shadow(6px 6px 0px #9a3412) drop-shadow(0 0 25px rgba(249, 115, 22, 0.35));
+}
+
+html.bright .bg-retro-dense-grid {
+  background-image: 
+    linear-gradient(to right, rgba(234, 88, 12, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(234, 88, 12, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+html.bright .bg-retro-grid {
+  background-image: radial-gradient(rgba(234, 88, 12, 0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
