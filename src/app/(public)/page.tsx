@@ -1,8 +1,128 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
+
+const platformFeatures = [
+  {
+    id: 'diagnostics',
+    title: 'Adaptive Diagnostics',
+    category: 'Skill-Gap Predictions',
+    desc: 'Algorithmic set-difference analysis pinpoints the exact competencies missing between your current baseline and target role.',
+    benefit: 'Zero wasted hours on concepts you already know.',
+    cta: 'Run Skill Diagnostic',
+    href: '/onboarding',
+    icon: (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" strokeDasharray="3 3" />
+        <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v3m0 14v3M2 12h3m14 0h3" />
+      </svg>
+    ),
+  },
+  {
+    id: 'roadmap',
+    title: 'Level-Gated Roadmap',
+    category: '3-Tier Prerequisite Gating',
+    desc: 'Structured progression across Foundations, Core Practice, and Specialization tiers. Higher levels unlock strictly after passing assessments.',
+    benefit: 'Eliminates cognitive overwhelm with structured scaffolding.',
+    cta: 'Explore 3-Tier Roadmap',
+    href: '/journeys/demo',
+    icon: (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+        <polygon points="12,7 15,12 12,17 9,12" fill="currentColor" fillOpacity="0.3" stroke="currentColor" strokeWidth="1.5" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="m14 10-4 4m0-4 4 4" />
+      </svg>
+    ),
+  },
+  {
+    id: 'flashcards',
+    title: 'Active Flashcard Drills',
+    category: 'Spaced Cognitive Recall',
+    desc: 'Spaced repetition flashcards targeting syntax, architectural patterns, and algorithmic trade-offs for permanent retention.',
+    benefit: '3x faster recall and zero forgetting curve.',
+    cta: 'Try Flashcard Engine',
+    href: '/register',
+    icon: (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'video-breakdowns',
+    title: 'Curated Video Lessons',
+    category: 'High-Yield Micro-Breakdowns',
+    desc: 'Laser-focused video explanations targeting tough concepts with zero filler, timestamps, and key takeaway cheat sheets.',
+    benefit: 'Concept clarity in 5-8 minute digestible breakdowns.',
+    cta: 'Browse Video Modules',
+    href: '/register',
+    icon: (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <rect x="2" y="4" width="20" height="16" rx="4" stroke="currentColor" strokeWidth="2" />
+        <polygon points="10,8 16,12 10,16" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    id: 'scenario-quizzes',
+    title: 'Scenario-Based Quizzes',
+    category: '70% Strict Mastery Standard',
+    desc: 'Rigorous evaluations where learners solve real engineering trade-offs instead of trivial trivia questions.',
+    benefit: 'Verifiable competence that hiring managers trust.',
+    cta: 'Take Sample Quiz',
+    href: '/register',
+    icon: (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'skill-passport',
+    title: 'Verified Skill Passport',
+    category: 'Cryptographic Credential',
+    desc: 'Shareable, tamper-proof digital artifact documenting your completed modules, quiz mastery scores, and proof of work.',
+    benefit: 'Stand out with indisputable proof of technical skills.',
+    cta: 'View Passport Specs',
+    href: '/about',
+    icon: (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'leaderboard',
+    title: 'Global Leaderboards',
+    category: 'XP & Cohort Rankings',
+    desc: 'Gamified progress tracking with real-time XP accumulation, streak milestones, and competitive cohort rankings.',
+    benefit: 'Dopamine-driven motivation through peer benchmarking.',
+    cta: 'Check Global Rankings',
+    href: '/leaderboard',
+    icon: (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'ai-mentor',
+    title: 'AI Career Co-Pilot',
+    category: 'Contextual Guidance',
+    desc: 'Contextual AI mentor providing real-time code reviews, concept clarifications, and personalized study tips 24/7.',
+    benefit: 'On-demand coaching tailored to your learning pace.',
+    cta: 'Meet Your AI Mentor',
+    href: '/register',
+    icon: (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+      </svg>
+    ),
+  },
+];
 
 const methodologySteps = [
   {
@@ -101,6 +221,7 @@ const methodologySteps = [
 
 export default function HomePage() {
   const { isBright } = useTheme();
+  const [activeFeature, setActiveFeature] = useState(1);
 
   return (
     <div
@@ -366,6 +487,187 @@ export default function HomePage() {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* Features Matrix Section (Highlighted Features Grid referencing User Reference Image) */}
+      <section
+        id="features"
+        className={`py-20 md:py-24 border-t relative overflow-hidden transition-colors duration-200 ${
+          isBright ? 'bg-[#FAF4EE] border-[#E8DACD]' : 'bg-[#080604] border-orange-950/70'
+        }`}
+      >
+        {/* Subtle Ambient Glow */}
+        <div
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] blur-[140px] pointer-events-none -z-10 ${
+            isBright
+              ? 'bg-gradient-to-r from-orange-400/15 via-amber-300/20 to-orange-400/15'
+              : 'bg-gradient-to-r from-orange-600/10 via-amber-500/10 to-orange-600/10'
+          }`}
+        />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          {/* Header Area matching reference image */}
+          <div className="text-center space-y-3.5 max-w-2xl mx-auto">
+            <div
+              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                isBright
+                  ? 'bg-white text-[#EA580C] border border-[#EAE0D5] shadow-xs'
+                  : 'bg-orange-950/70 text-orange-300 border border-orange-500/40 shadow-inner'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+              <span>Platform Features</span>
+            </div>
+
+            <h2
+              className={`text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight ${
+                isBright ? 'text-[#1C1917]' : 'text-white'
+              }`}
+            >
+              Explore Core Features
+              <span
+                className={`block mt-1 ${
+                  isBright
+                    ? 'text-[#EA580C]'
+                    : 'bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 bg-clip-text text-transparent'
+                }`}
+              >
+                That Elevate Your Career
+              </span>
+            </h2>
+
+            <p
+              className={`text-sm sm:text-base leading-relaxed ${
+                isBright ? 'text-[#57534E]' : 'text-zinc-400'
+              }`}
+            >
+              Discover the specialized capabilities and cognitive learning architectures Mentora provides to empower your technical growth.
+            </p>
+          </div>
+
+          {/* 4x2 Feature Cards Grid (Adhering directly to the reference image) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+            {platformFeatures.map((feature, index) => {
+              const isActive = activeFeature === index;
+              return (
+                <button
+                  key={feature.id}
+                  type="button"
+                  onClick={() => setActiveFeature(index)}
+                  className={`group relative text-left p-4 sm:p-5 rounded-2xl flex items-center gap-3.5 transition-all duration-300 cursor-pointer ${
+                    isActive
+                      ? 'bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 text-white shadow-xl shadow-orange-500/30 scale-[1.02] border-transparent ring-2 ring-orange-500/50'
+                      : isBright
+                      ? 'bg-white border border-[#EAE0D5] hover:border-orange-300 hover:shadow-md hover:-translate-y-0.5 shadow-xs'
+                      : 'bg-[#0c0805]/95 border border-orange-950/80 hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-950/30 hover:-translate-y-0.5'
+                  }`}
+                >
+                  {/* Left Icon Container */}
+                  <div
+                    className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                      isActive
+                        ? 'bg-white text-[#EA580C] shadow-sm'
+                        : isBright
+                        ? 'bg-[#F5EFEB] border border-[#EAE0D5] text-[#57534E] group-hover:bg-[#FFF3EB] group-hover:text-[#EA580C] group-hover:border-[#FED7AA]'
+                        : 'bg-orange-950/60 border border-orange-900/50 text-orange-400 group-hover:bg-orange-950 group-hover:text-amber-300'
+                    }`}
+                  >
+                    {feature.icon}
+                  </div>
+
+                  {/* Right Title & Category */}
+                  <div className="flex-1 min-w-0">
+                    <h3
+                      className={`text-xs sm:text-sm font-bold truncate leading-tight transition-colors ${
+                        isActive
+                          ? 'text-white'
+                          : isBright
+                          ? 'text-[#1C1917] group-hover:text-[#EA580C]'
+                          : 'text-white group-hover:text-orange-300'
+                      }`}
+                    >
+                      {feature.title}
+                    </h3>
+                    <p
+                      className={`text-[10px] sm:text-[11px] truncate mt-1 transition-colors ${
+                        isActive
+                          ? 'text-orange-100 font-medium'
+                          : isBright
+                          ? 'text-[#78716C]'
+                          : 'text-zinc-400'
+                      }`}
+                    >
+                      {feature.category}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Active Feature Spotlight Preview Card */}
+          {platformFeatures[activeFeature] && (
+            <div
+              className={`p-6 sm:p-8 rounded-3xl border transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-6 ${
+                isBright
+                  ? 'bg-white border-[#EAE0D5] shadow-lg shadow-orange-950/5'
+                  : 'bg-gradient-to-r from-orange-950/40 via-[#120c08] to-orange-950/40 border-orange-900/50 shadow-xl'
+              }`}
+            >
+              <div className="space-y-2 max-w-2xl">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-xs font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                      isBright
+                        ? 'bg-[#FFF3EB] text-[#EA580C] border-[#FED7AA]'
+                        : 'bg-orange-950/70 text-orange-300 border-orange-800/60'
+                    }`}
+                  >
+                    {platformFeatures[activeFeature].category}
+                  </span>
+                  <span
+                    className={`text-xs font-medium ${
+                      isBright ? 'text-emerald-700' : 'text-emerald-400'
+                    }`}
+                  >
+                    ● Included in Platform
+                  </span>
+                </div>
+                <h4
+                  className={`text-lg sm:text-xl font-bold transition-colors ${
+                    isBright ? 'text-[#1C1917]' : 'text-white'
+                  }`}
+                >
+                  {platformFeatures[activeFeature].title}
+                </h4>
+                <p
+                  className={`text-xs sm:text-sm leading-relaxed transition-colors ${
+                    isBright ? 'text-[#57534E]' : 'text-zinc-300'
+                  }`}
+                >
+                  {platformFeatures[activeFeature].desc}
+                </p>
+                <div
+                  className={`text-xs font-medium flex items-center gap-1.5 pt-1 ${
+                    isBright ? 'text-[#EA580C]' : 'text-amber-400'
+                  }`}
+                >
+                  <span>✓</span>
+                  <span>{platformFeatures[activeFeature].benefit}</span>
+                </div>
+              </div>
+
+              <div className="shrink-0 flex items-center">
+                <Link
+                  href={platformFeatures[activeFeature].href}
+                  className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs uppercase tracking-wider font-mono shadow-lg shadow-orange-500/25 whitespace-nowrap text-center transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  {platformFeatures[activeFeature].cta} →
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
