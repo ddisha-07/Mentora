@@ -536,14 +536,6 @@ export default function HomePage() {
                 That Elevate Your Career
               </span>
             </h2>
-
-            <p
-              className={`text-sm sm:text-base leading-relaxed ${
-                isBright ? 'text-[#57534E]' : 'text-zinc-400'
-              }`}
-            >
-              Discover the specialized capabilities and cognitive learning architectures Mentora provides to empower your technical growth.
-            </p>
           </div>
 
           {/* 4x2 Feature Cards Grid (Adhering directly to the reference image) */}
