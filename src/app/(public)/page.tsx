@@ -9,9 +9,8 @@ const platformFeatures = [
     id: 'diagnostics',
     title: 'Adaptive Diagnostics',
     category: 'Skill-Gap Predictions',
-    desc: 'Algorithmic set-difference analysis pinpoints the exact competencies missing between your current baseline and target role.',
-    benefit: 'Zero wasted hours on concepts you already know.',
-    cta: 'Run Skill Diagnostic',
+    tagline: 'Skip what you already know and target missing competencies.',
+    cta: 'Run Diagnostics Demo',
     href: '/onboarding',
     icon: (
       <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -25,10 +24,9 @@ const platformFeatures = [
     id: 'roadmap',
     title: 'Level-Gated Roadmap',
     category: '3-Tier Prerequisite Gating',
-    desc: 'Structured progression across Foundations, Core Practice, and Specialization tiers. Higher levels unlock strictly after passing assessments.',
-    benefit: 'Eliminates cognitive overwhelm with structured scaffolding.',
-    cta: 'Explore 3-Tier Roadmap',
-    href: '/journeys/demo',
+    tagline: 'Structured progression across Foundations, Core, and Specialization.',
+    cta: 'Explore Roadmap Demo',
+    href: '/onboarding',
     icon: (
       <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
@@ -41,10 +39,9 @@ const platformFeatures = [
     id: 'flashcards',
     title: 'Active Flashcard Drills',
     category: 'Spaced Cognitive Recall',
-    desc: 'Spaced repetition flashcards targeting syntax, architectural patterns, and algorithmic trade-offs for permanent retention.',
-    benefit: '3x faster recall and zero forgetting curve.',
-    cta: 'Try Flashcard Engine',
-    href: '/register',
+    tagline: 'SuperMemo-powered active recall for permanent retention.',
+    cta: 'Try Flashcard Demo',
+    href: '/why-mentora',
     icon: (
       <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -55,10 +52,9 @@ const platformFeatures = [
     id: 'video-breakdowns',
     title: 'Curated Video Lessons',
     category: 'High-Yield Micro-Breakdowns',
-    desc: 'Laser-focused video explanations targeting tough concepts with zero filler, timestamps, and key takeaway cheat sheets.',
-    benefit: 'Concept clarity in 5-8 minute digestible breakdowns.',
-    cta: 'Browse Video Modules',
-    href: '/register',
+    tagline: 'Laser-focused 5–8 minute lessons with downloadable cheat sheets.',
+    cta: 'Browse Video Demo',
+    href: '/why-mentora',
     icon: (
       <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <rect x="2" y="4" width="20" height="16" rx="4" stroke="currentColor" strokeWidth="2" />
@@ -70,10 +66,9 @@ const platformFeatures = [
     id: 'scenario-quizzes',
     title: 'Scenario-Based Quizzes',
     category: '70% Strict Mastery Standard',
-    desc: 'Rigorous evaluations where learners solve real engineering trade-offs instead of trivial trivia questions.',
-    benefit: 'Verifiable competence that hiring managers trust.',
-    cta: 'Take Sample Quiz',
-    href: '/register',
+    tagline: 'Real production dilemma assessments with a strict 70% passing gate.',
+    cta: 'Try Quiz Demo',
+    href: '/leaderboard',
     icon: (
       <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -84,9 +79,8 @@ const platformFeatures = [
     id: 'skill-passport',
     title: 'Verified Skill Passport',
     category: 'Cryptographic Credential',
-    desc: 'Shareable, tamper-proof digital artifact documenting your completed modules, quiz mastery scores, and proof of work.',
-    benefit: 'Stand out with indisputable proof of technical skills.',
-    cta: 'View Passport Specs',
+    tagline: 'Cryptographically verifiable proof-of-work for hiring teams.',
+    cta: 'View Passport Demo',
     href: '/about',
     icon: (
       <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -98,9 +92,8 @@ const platformFeatures = [
     id: 'leaderboard',
     title: 'Global Leaderboards',
     category: 'XP & Cohort Rankings',
-    desc: 'Gamified progress tracking with real-time XP accumulation, streak milestones, and competitive cohort rankings.',
-    benefit: 'Dopamine-driven motivation through peer benchmarking.',
-    cta: 'Check Global Rankings',
+    tagline: 'Real-time cohort benchmarking with streaks and milestones.',
+    cta: 'View Leaderboard Demo',
     href: '/leaderboard',
     icon: (
       <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -112,10 +105,9 @@ const platformFeatures = [
     id: 'ai-mentor',
     title: 'AI Career Co-Pilot',
     category: 'Contextual Guidance',
-    desc: 'Contextual AI mentor providing real-time code reviews, concept clarifications, and personalized study tips 24/7.',
-    benefit: 'On-demand coaching tailored to your learning pace.',
-    cta: 'Meet Your AI Mentor',
-    href: '/register',
+    tagline: '24/7 contextual senior engineer for instant unblocking.',
+    cta: 'Meet AI Mentor Demo',
+    href: '/why-mentora',
     icon: (
       <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
@@ -598,64 +590,73 @@ export default function HomePage() {
             })}
           </div>
 
-          {/* Active Feature Spotlight Preview Card */}
+          {/* Active Feature Action Tile: Minimal, high-impact CTA linking to feature demo */}
           {platformFeatures[activeFeature] && (
             <div
-              className={`p-6 sm:p-8 rounded-3xl border transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-6 ${
+              className={`p-5 sm:p-6 rounded-2xl border transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-5 ${
                 isBright
                   ? 'bg-white border-[#EAE0D5] shadow-lg shadow-orange-950/5'
-                  : 'bg-gradient-to-r from-orange-950/40 via-[#120c08] to-orange-950/40 border-orange-900/50 shadow-xl'
+                  : 'bg-gradient-to-r from-[#140b07] via-[#0d0704] to-[#170c07] border-orange-900/60 shadow-xl'
               }`}
             >
-              <div className="space-y-2 max-w-2xl">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`text-xs font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
-                      isBright
-                        ? 'bg-[#FFF3EB] text-[#EA580C] border-[#FED7AA]'
-                        : 'bg-orange-950/70 text-orange-300 border-orange-800/60'
-                    }`}
-                  >
-                    {platformFeatures[activeFeature].category}
-                  </span>
-                  <span
-                    className={`text-xs font-medium ${
-                      isBright ? 'text-emerald-700' : 'text-emerald-400'
-                    }`}
-                  >
-                    ● Included in Platform
-                  </span>
-                </div>
-                <h4
-                  className={`text-lg sm:text-xl font-bold transition-colors ${
-                    isBright ? 'text-[#1C1917]' : 'text-white'
-                  }`}
-                >
-                  {platformFeatures[activeFeature].title}
-                </h4>
-                <p
-                  className={`text-xs sm:text-sm leading-relaxed transition-colors ${
-                    isBright ? 'text-[#57534E]' : 'text-zinc-300'
-                  }`}
-                >
-                  {platformFeatures[activeFeature].desc}
-                </p>
+              {/* Left Side: Icon badge + Title + Tagline */}
+              <div className="flex items-center gap-4 min-w-0">
                 <div
-                  className={`text-xs font-medium flex items-center gap-1.5 pt-1 ${
-                    isBright ? 'text-[#EA580C]' : 'text-amber-400'
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                    isBright
+                      ? 'bg-[#FFF3EB] border border-[#FED7AA] text-[#EA580C]'
+                      : 'bg-orange-950/80 border border-orange-800/60 text-orange-400'
                   }`}
                 >
-                  <span>✓</span>
-                  <span>{platformFeatures[activeFeature].benefit}</span>
+                  {platformFeatures[activeFeature].icon}
+                </div>
+
+                <div className="space-y-1 min-w-0">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <span
+                      className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${
+                        isBright
+                          ? 'bg-[#FAF4EE] text-[#EA580C] border-[#EAE0D5]'
+                          : 'bg-orange-950/70 text-orange-300 border-orange-800/60'
+                      }`}
+                    >
+                      Feature 0{activeFeature + 1} of 08
+                    </span>
+                    <span
+                      className={`text-xs font-semibold uppercase tracking-wider ${
+                        isBright ? 'text-[#78716C]' : 'text-zinc-400'
+                      }`}
+                    >
+                      • {platformFeatures[activeFeature].category}
+                    </span>
+                  </div>
+
+                  <h3
+                    className={`text-base sm:text-lg font-bold tracking-tight truncate ${
+                      isBright ? 'text-[#1C1917]' : 'text-white'
+                    }`}
+                  >
+                    {platformFeatures[activeFeature].title}
+                  </h3>
+
+                  <p
+                    className={`text-xs sm:text-sm line-clamp-1 ${
+                      isBright ? 'text-[#57534E]' : 'text-zinc-400'
+                    }`}
+                  >
+                    {platformFeatures[activeFeature].tagline}
+                  </p>
                 </div>
               </div>
 
-              <div className="shrink-0 flex items-center">
+              {/* Right Side: Demo CTA Button */}
+              <div className="flex items-center gap-3 shrink-0 self-start md:self-center">
                 <Link
                   href={platformFeatures[activeFeature].href}
-                  className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs uppercase tracking-wider font-mono shadow-lg shadow-orange-500/25 whitespace-nowrap text-center transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs uppercase tracking-wider font-mono shadow-md shadow-orange-500/25 whitespace-nowrap text-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  {platformFeatures[activeFeature].cta} →
+                  <span>{platformFeatures[activeFeature].cta}</span>
+                  <span className="text-sm">→</span>
                 </Link>
               </div>
             </div>
@@ -663,258 +664,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3-Column Feature Section */}
-      <section
-        className={`py-20 border-t transition-colors duration-200 ${
-          isBright ? 'bg-[#FAF4EE] border-[#E8DACD]' : 'bg-[#060403] border-orange-950/70'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-          
-          {/* Section Header */}
-          <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <span
-              className={`text-xs font-mono font-bold uppercase tracking-widest ${
-                isBright ? 'text-[#EA580C]' : 'text-orange-400'
-              }`}
-            >
-              Three Pillars of Mastery
-            </span>
-            <h2
-              className={`text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight ${
-                isBright ? 'text-[#1C1917]' : 'text-white'
-              }`}
-            >
-              Designed for Speed, Retention, and Proof
-            </h2>
-            <p
-              className={`text-sm sm:text-base leading-relaxed ${
-                isBright ? 'text-[#57534E]' : 'text-zinc-400'
-              }`}
-            >
-              Every feature in Mentora is engineered around cognitive science, prerequisite gating, and tangible career credibility.
-            </p>
-          </div>
-
-          {/* 3 Columns Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {/* Feature 1: Personalized Journeys */}
-            <div
-              className={`group relative rounded-3xl p-[1.5px] transition-all duration-300 ${
-                isBright
-                  ? 'bg-gradient-to-b from-orange-400/50 via-[#EAE0D5] to-transparent hover:from-orange-500/80 hover:shadow-md'
-                  : 'bg-gradient-to-b from-orange-500/40 via-orange-900/30 to-amber-950/20 hover:from-orange-500/70'
-              }`}
-            >
-              <div
-                className={`h-full rounded-[23px] backdrop-blur-sm p-7 sm:p-8 flex flex-col justify-between space-y-6 ${
-                  isBright ? 'bg-white shadow-xs' : 'bg-[#0c0805]/90'
-                }`}
-              >
-                <div className="space-y-4">
-                  <div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-sm ${
-                      isBright
-                        ? 'bg-[#FFF0E5] border border-[#FDDAC5]'
-                        : 'bg-orange-950/80 border border-orange-700/60 shadow-orange-950/40'
-                    }`}
-                  >
-                    🧭
-                  </div>
-                  <div className="space-y-1.5">
-                    <span
-                      className={`text-[11px] font-mono font-bold uppercase tracking-wider ${
-                        isBright ? 'text-[#EA580C]' : 'text-orange-400'
-                      }`}
-                    >
-                      Adaptive Curriculum
-                    </span>
-                    <h3
-                      className={`text-xl sm:text-2xl font-bold transition-colors ${
-                        isBright ? 'text-[#1C1917] group-hover:text-[#EA580C]' : 'text-white group-hover:text-orange-300'
-                      }`}
-                    >
-                      Personalized Journeys
-                    </h3>
-                  </div>
-                  <p
-                    className={`text-sm leading-relaxed ${
-                      isBright ? 'text-[#57534E]' : 'text-zinc-400'
-                    }`}
-                  >
-                    Algorithmic gap prediction evaluates your current skills against target industry roles. Our engine sequences missing competencies into 3 progressive, level-gated tiers that unlock sequentially.
-                  </p>
-                </div>
-
-                <ul
-                  className={`space-y-2.5 pt-4 border-t text-xs font-medium ${
-                    isBright
-                      ? 'border-[#F0E6DD] text-[#44403C]'
-                      : 'border-orange-950/80 text-zinc-300'
-                  }`}
-                >
-                  <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                    <span>Automated skill-gap diagnostic</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                    <span>Level-gated unlocking mechanism</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                    <span>Zero fluff: Only modules you need</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Feature 2: Active Learning */}
-            <div
-              className={`group relative rounded-3xl p-[1.5px] transition-all duration-300 ${
-                isBright
-                  ? 'bg-gradient-to-b from-amber-400/50 via-[#EAE0D5] to-transparent hover:from-amber-500/80 hover:shadow-md'
-                  : 'bg-gradient-to-b from-amber-500/40 via-amber-900/30 to-orange-950/20 hover:from-amber-500/70'
-              }`}
-            >
-              <div
-                className={`h-full rounded-[23px] backdrop-blur-sm p-7 sm:p-8 flex flex-col justify-between space-y-6 ${
-                  isBright ? 'bg-white shadow-xs' : 'bg-[#0c0805]/90'
-                }`}
-              >
-                <div className="space-y-4">
-                  <div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-sm ${
-                      isBright
-                        ? 'bg-[#FFF6E5] border border-[#FDE3B8]'
-                        : 'bg-[#201309] border border-amber-700/60 shadow-orange-950/40'
-                    }`}
-                  >
-                    ⚡
-                  </div>
-                  <div className="space-y-1.5">
-                    <span
-                      className={`text-[11px] font-mono font-bold uppercase tracking-wider ${
-                        isBright ? 'text-[#D97706]' : 'text-amber-400'
-                      }`}
-                    >
-                      Flashcards & Video Lessons
-                    </span>
-                    <h3
-                      className={`text-xl sm:text-2xl font-bold transition-colors ${
-                        isBright ? 'text-[#1C1917] group-hover:text-[#D97706]' : 'text-white group-hover:text-amber-300'
-                      }`}
-                    >
-                      Active Learning
-                    </h3>
-                  </div>
-                  <p
-                    className={`text-sm leading-relaxed ${
-                      isBright ? 'text-[#57534E]' : 'text-zinc-400'
-                    }`}
-                  >
-                    Shift from passive scrolling to active recall. Retain complex architectural concepts with interactive flashcard decks, high-yield video breakdowns, and scenario micro-challenges.
-                  </p>
-                </div>
-
-                <ul
-                  className={`space-y-2.5 pt-4 border-t text-xs font-medium ${
-                    isBright
-                      ? 'border-[#F0E6DD] text-[#44403C]'
-                      : 'border-orange-950/80 text-zinc-300'
-                  }`}
-                >
-                  <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    <span>Spaced-repetition concept flashcards</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    <span>High-density production video tutorials</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    <span>Hands-on scenario problem solving</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Feature 3: Skill Verification */}
-            <div
-              className={`group relative rounded-3xl p-[1.5px] transition-all duration-300 ${
-                isBright
-                  ? 'bg-gradient-to-b from-orange-500/50 via-[#EAE0D5] to-transparent hover:from-orange-600/80 hover:shadow-md'
-                  : 'bg-gradient-to-b from-orange-600/40 via-amber-900/30 to-orange-950/20 hover:from-orange-600/70'
-              }`}
-            >
-              <div
-                className={`h-full rounded-[23px] backdrop-blur-sm p-7 sm:p-8 flex flex-col justify-between space-y-6 ${
-                  isBright ? 'bg-white shadow-xs' : 'bg-[#0c0805]/90'
-                }`}
-              >
-                <div className="space-y-4">
-                  <div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-sm ${
-                      isBright
-                        ? 'bg-[#FFF0E5] border border-[#FDDAC5]'
-                        : 'bg-[#241207] border border-orange-600/60 shadow-orange-950/40'
-                    }`}
-                  >
-                    🛡️
-                  </div>
-                  <div className="space-y-1.5">
-                    <span
-                      className={`text-[11px] font-mono font-bold uppercase tracking-wider ${
-                        isBright ? 'text-[#EA580C]' : 'text-orange-400'
-                      }`}
-                    >
-                      70% Passing Threshold & Ranking
-                    </span>
-                    <h3
-                      className={`text-xl sm:text-2xl font-bold transition-colors ${
-                        isBright ? 'text-[#1C1917] group-hover:text-[#EA580C]' : 'text-white group-hover:text-orange-300'
-                      }`}
-                    >
-                      Skill Verification
-                    </h3>
-                  </div>
-                  <p
-                    className={`text-sm leading-relaxed ${
-                      isBright ? 'text-[#57534E]' : 'text-zinc-400'
-                    }`}
-                  >
-                    Verify competencies with rigorous assessments requiring at least 70% to pass. Accumulate points, rank on the competitive global leaderboard, and share your verified Skill Passport.
-                  </p>
-                </div>
-
-                <ul
-                  className={`space-y-2.5 pt-4 border-t text-xs font-medium ${
-                    isBright
-                      ? 'border-[#F0E6DD] text-[#44403C]'
-                      : 'border-orange-950/80 text-zinc-300'
-                  }`}
-                >
-                  <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                    <span>Strict ≥70% score gate to award points</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                    <span>Global real-time competitive leaderboard</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                    <span>Verifiable Skill Passport credentials</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
 
       {/* Key Metrics / Impact Statistics */}
       <section

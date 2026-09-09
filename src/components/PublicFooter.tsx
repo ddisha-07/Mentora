@@ -12,132 +12,196 @@ export default function PublicFooter() {
     <footer
       className={`border-t text-xs transition-colors duration-200 ${
         isBright
-          ? 'bg-[#F0E6DC] border-[#E2D4C5] text-[#57534E]'
-          : 'bg-[#060403] border-orange-950/70 text-zinc-400'
+          ? 'bg-[#F2E8DE] border-[#E5D7C8] text-[#57534E]'
+          : 'bg-[#070503] border-orange-950/70 text-zinc-400'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
-          {/* Brand Col */}
-          <div className="col-span-2 md:col-span-1 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-14 items-start">
+          
+          {/* Brand & Mission Column (6 cols) */}
+          <div className="md:col-span-6 lg:col-span-6 space-y-4 max-w-lg">
             <Link href="/" className="inline-block group py-0.5">
               <Image
                 src="/images/mentora-logo.png"
                 alt="Mentora Logo"
-                width={130}
-                height={65}
-                className="h-9 w-auto object-contain drop-shadow-[0_0_10px_rgba(249,115,22,0.3)] group-hover:scale-105 transition-transform duration-300"
+                width={135}
+                height={68}
+                className="h-9 sm:h-10 w-auto object-contain drop-shadow-[0_0_12px_rgba(249,115,22,0.35)] group-hover:scale-105 transition-transform duration-300"
               />
             </Link>
-            <p className={`text-xs leading-relaxed ${isBright ? 'text-[#57534E]' : 'text-zinc-400'}`}>
-              Personalized, level-gated learning ecosystem for software engineers, AI architects, and tech leaders.
+
+            <p className={`text-xs sm:text-sm leading-relaxed ${isBright ? 'text-[#57534E]' : 'text-zinc-400'}`}>
+              Personalized learning and development built for working professionals. We turn career growth into a guided, continuous journey that moves with your ambitions.
             </p>
-            <div className={`text-[11px] font-mono ${isBright ? 'text-[#EA580C]' : 'text-orange-500/80'}`}>
-              ⚡ Verified skill mastery.
+
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <span
+                className={`inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold px-3 py-1 rounded-full border transition-colors ${
+                  isBright
+                    ? 'bg-[#FAF4EE] text-[#EA580C] border-[#EADAC9]'
+                    : 'bg-orange-950/60 text-orange-300 border-orange-800/50'
+                }`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                <span>Learn. Grow. Evolve.</span>
+              </span>
+
+              <Link
+                href="/onboarding"
+                className={`text-[11px] font-mono font-medium transition-colors flex items-center gap-1 ${
+                  isBright ? 'text-[#EA580C] hover:underline' : 'text-orange-400/90 hover:text-orange-300 hover:underline'
+                }`}
+              >
+                <span>Take Skill Diagnostic</span>
+                <span>→</span>
+              </Link>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-3">
-            <h4 className={`text-xs font-bold uppercase tracking-wider font-mono ${isBright ? 'text-[#EA580C]' : 'text-orange-400'}`}>
+          {/* Quick Links Column (3 cols) */}
+          <div className="md:col-span-3 lg:col-span-3 space-y-3.5">
+            <h4
+              className={`text-xs font-bold uppercase tracking-wider font-mono ${
+                isBright ? 'text-[#EA580C]' : 'text-orange-400'
+              }`}
+            >
               Quick Links
             </h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               <li>
-                <Link href="/" className={`transition-colors flex items-center gap-1.5 ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>
-                  <span className="text-orange-500 text-[10px]">›</span> Home
+                <Link
+                  href="/"
+                  className={`group flex items-center gap-2 transition-colors ${
+                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                  }`}
+                >
+                  <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
+                  <span>Home</span>
                 </Link>
               </li>
               <li>
-                <Link href="/about" className={`transition-colors flex items-center gap-1.5 ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>
-                  <span className="text-orange-500 text-[10px]">›</span> About
+                <Link
+                  href="/about"
+                  className={`group flex items-center gap-2 transition-colors ${
+                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                  }`}
+                >
+                  <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
+                  <span>About Mentora</span>
                 </Link>
               </li>
               <li>
-                <Link href="/blogs" className={`transition-colors flex items-center gap-1.5 ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>
-                  <span className="text-orange-500 text-[10px]">›</span> Blogs
+                <Link
+                  href="/why-mentora"
+                  className={`group flex items-center gap-2 transition-colors ${
+                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                  }`}
+                >
+                  <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
+                  <span>Why Mentora</span>
                 </Link>
               </li>
               <li>
-                <Link href="/faqs" className={`transition-colors flex items-center gap-1.5 ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>
-                  <span className="text-orange-500 text-[10px]">›</span> FAQs
+                <Link
+                  href="/blogs"
+                  className={`group flex items-center gap-2 transition-colors ${
+                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                  }`}
+                >
+                  <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
+                  <span>Blogs & Insights</span>
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className={`transition-colors flex items-center gap-1.5 ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>
-                  <span className="text-orange-500 text-[10px]">›</span> Contact Us
+                <Link
+                  href="/faqs"
+                  className={`group flex items-center gap-2 transition-colors ${
+                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                  }`}
+                >
+                  <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
+                  <span>Platform FAQs</span>
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Platform & Features */}
-          <div className="space-y-3">
-            <h4 className={`text-xs font-bold uppercase tracking-wider ${isBright ? 'text-[#1C1917]' : 'text-zinc-200'}`}>
-              Platform
+          {/* Resources & Support Column (3 cols) */}
+          <div className="md:col-span-3 lg:col-span-3 space-y-3.5">
+            <h4
+              className={`text-xs font-bold uppercase tracking-wider font-mono ${
+                isBright ? 'text-[#EA580C]' : 'text-orange-400'
+              }`}
+            >
+              Support & Connect
             </h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               <li>
-                <Link href="/register" className={`transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>Join Now Free</Link>
+                <Link
+                  href="/contact"
+                  className={`group flex items-center gap-2 transition-colors ${
+                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                  }`}
+                >
+                  <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
+                  <span>Contact Support</span>
+                </Link>
               </li>
               <li>
-                <Link href="/login" className={`transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>Learner Login</Link>
+                <Link
+                  href="/onboarding"
+                  className={`group flex items-center gap-2 transition-colors ${
+                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                  }`}
+                >
+                  <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
+                  <span>Skill Diagnostic</span>
+                </Link>
               </li>
               <li>
-                <Link href="/leaderboard" className={`transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>Global Leaderboard</Link>
+                <Link
+                  href="/faqs"
+                  className={`group flex items-center gap-2 transition-colors ${
+                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                  }`}
+                >
+                  <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
+                  <span>Help Center</span>
+                </Link>
               </li>
               <li>
-                <Link href="/journeys/demo" className={`transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>Interactive Roadmap</Link>
+                <span
+                  className={`group flex items-center gap-2 transition-colors cursor-pointer ${
+                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                  }`}
+                >
+                  <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
+                  <span>Privacy Policy</span>
+                </span>
               </li>
               <li>
-                <Link href="/onboarding" className={`transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>Skill Diagnostic</Link>
+                <span
+                  className={`group flex items-center gap-2 transition-colors cursor-pointer ${
+                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                  }`}
+                >
+                  <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
+                  <span>Terms of Service</span>
+                </span>
               </li>
             </ul>
           </div>
 
-          {/* Resources & Support */}
-          <div className="space-y-3">
-            <h4 className={`text-xs font-bold uppercase tracking-wider ${isBright ? 'text-[#1C1917]' : 'text-zinc-200'}`}>
-              Resources
-            </h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/about" className={`transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>About Us</Link>
-              </li>
-              <li>
-                <Link href="/blogs" className={`transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>Engineering Insights</Link>
-              </li>
-              <li>
-                <Link href="/why-mentora" className={`transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>Why Mentora</Link>
-              </li>
-              <li>
-                <Link href="/faqs" className={`transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>Platform FAQs</Link>
-              </li>
-              <li>
-                <Link href="/contact" className={`transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400'}`}>Contact Support</Link>
-              </li>
-            </ul>
-          </div>
         </div>
 
+        {/* Bottom Bar */}
         <div
           className={`mt-12 pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4 ${
-            isBright ? 'border-[#E2D4C5] text-[#78716C]' : 'border-orange-950/40 text-zinc-500'
+            isBright ? 'border-[#E5D7C8] text-[#78716C]' : 'border-orange-950/60 text-zinc-500'
           }`}
         >
           <p suppressHydrationWarning>© {new Date().getFullYear()} Mentora AI. All rights reserved.</p>
-          <div className="flex items-center gap-6 text-[11px]">
-            <span className={`cursor-pointer transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400/80'}`}>
-              Privacy Policy
-            </span>
-            <span className={`cursor-pointer transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-400/80'}`}>
-              Terms of Service
-            </span>
-            <span className="text-emerald-600 dark:text-emerald-400/90 flex items-center gap-1.5 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Systems Online
-            </span>
-          </div>
         </div>
       </div>
     </footer>
