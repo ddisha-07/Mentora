@@ -327,9 +327,9 @@ export default function AboutPage() {
               </button>
 
               {/* Viewport for all 5 tiles in a perspective line */}
-              <div className="overflow-hidden flex-1 py-4">
+              <div className="overflow-hidden min-w-0 flex-1 py-5 sm:py-6">
                 <div
-                  className="flex w-[300%]"
+                  className="flex items-center w-[300%] shrink-0"
                   style={{
                     transform: `translateX(-${(currentIndex - 2) * (100 / extendedCapabilities.length)}%)`,
                     transition: enableTransition
@@ -358,7 +358,7 @@ export default function AboutPage() {
                           }
                         }}
                         style={{ width: `${100 / extendedCapabilities.length}%` }}
-                        className={`shrink-0 px-1 sm:px-1.5 lg:px-2 transition-all duration-500 ease-out ${
+                        className={`shrink-0 px-1 sm:px-1.5 lg:px-2 transition-[transform,opacity] duration-500 ease-out ${
                           isCenter
                             ? 'scale-105 sm:scale-108 opacity-100 z-20 cursor-default'
                             : isNear
@@ -369,7 +369,7 @@ export default function AboutPage() {
                         }`}
                       >
                         <div
-                          className={`h-full min-h-[190px] sm:min-h-[210px] p-4 sm:p-5 rounded-2xl border transition-all duration-500 ease-out flex flex-col justify-start select-none ${
+                          className={`w-full h-[220px] sm:h-[240px] p-4 sm:p-5 rounded-2xl border transition-all duration-500 ease-out flex flex-col justify-start select-none ${
                             isCenter
                               ? isBright
                                 ? 'bg-white border-orange-500 shadow-xl shadow-orange-500/20 ring-2 ring-orange-400/40'
@@ -385,7 +385,7 @@ export default function AboutPage() {
                         >
                           <div className="space-y-2.5 sm:space-y-3">
                             <div
-                              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl border flex items-center justify-center text-lg sm:text-xl shadow-xs transition-all duration-500 ${
+                              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center text-lg sm:text-xl shadow-xs transition-all duration-500 ${
                                 isCenter
                                   ? isBright
                                     ? 'bg-[#FFE8D6] border-orange-300 text-orange-600 shadow-sm shadow-orange-500/20 scale-105'
@@ -399,9 +399,7 @@ export default function AboutPage() {
                             </div>
 
                             <h3
-                              className={`font-bold transition-all duration-500 leading-snug ${
-                                isCenter ? 'text-sm sm:text-base lg:text-lg' : 'text-xs sm:text-sm'
-                              } ${
+                              className={`font-bold text-xs sm:text-sm transition-colors duration-500 leading-snug ${
                                 isBright
                                   ? isCenter ? 'text-[#EA580C]' : 'text-[#1C1917]'
                                   : isCenter ? 'text-orange-300' : 'text-white'
@@ -411,9 +409,7 @@ export default function AboutPage() {
                             </h3>
 
                             <p
-                              className={`leading-relaxed transition-all duration-500 ${
-                                isCenter ? 'text-xs sm:text-sm' : 'text-[11px] sm:text-xs'
-                              } ${
+                              className={`text-[11px] sm:text-xs leading-relaxed transition-colors duration-500 ${
                                 isBright ? 'text-[#57534E]' : 'text-zinc-400'
                               }`}
                             >
