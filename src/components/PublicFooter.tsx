@@ -21,14 +21,19 @@ export default function PublicFooter() {
           
           {/* Brand & Mission Column (6 cols) */}
           <div className="md:col-span-6 lg:col-span-6 space-y-4 max-w-lg">
-            <Link href="/" className="inline-block group py-0.5">
-              <Image
-                src="/images/mentora-logo.png"
-                alt="Mentora Logo"
-                width={135}
-                height={68}
-                className="h-9 sm:h-10 w-auto object-contain drop-shadow-[0_0_12px_rgba(249,115,22,0.35)] group-hover:scale-105 transition-transform duration-300"
-              />
+            <Link href="/" className="relative inline-flex items-center group py-0.5 select-none">
+              <div className="relative animate-mentora-logo transition-transform duration-300 ease-out group-hover:scale-105 group-active:scale-95">
+                <Image
+                  src="/images/mentora-logo.png"
+                  alt="Mentora Logo"
+                  width={135}
+                  height={68}
+                  className="h-9 sm:h-10 w-auto object-contain select-none transition-transform duration-300"
+                />
+                <div className="absolute inset-0 pointer-events-none logo-shine-mask overflow-hidden">
+                  <div className="w-1/2 h-full bg-gradient-to-r from-transparent via-white/70 to-transparent skew-x-[-25deg] animate-mentora-shine" />
+                </div>
+              </div>
             </Link>
 
             <p className={`text-xs sm:text-sm leading-relaxed ${isBright ? 'text-[#57534E]' : 'text-zinc-400'}`}>

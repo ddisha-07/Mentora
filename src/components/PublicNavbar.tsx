@@ -31,15 +31,23 @@ export default function PublicNavbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18 py-3">
           {/* Logo & Brand */}
-          <Link href="/" className="flex items-center group py-1">
-            <Image
-              src="/images/mentora-logo.png"
-              alt="Mentora Logo"
-              width={140}
-              height={70}
-              priority
-              className="h-10 sm:h-11 w-auto object-contain drop-shadow-[0_0_12px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-transform duration-300"
-            />
+          <Link href="/" className="relative flex items-center group py-1 select-none">
+            {/* Logo Container with Floating Animation & Interactive Hover Tilt */}
+            <div className="relative animate-mentora-logo transition-transform duration-300 ease-out group-hover:scale-108 group-hover:-rotate-1 group-active:scale-95">
+              <Image
+                src="/images/mentora-logo.png"
+                alt="Mentora Logo"
+                width={140}
+                height={70}
+                priority
+                className="h-10 sm:h-11 w-auto object-contain select-none transition-transform duration-300"
+              />
+
+              {/* Gleam/Shine Sweep Effect masked to exact logo shape */}
+              <div className="absolute inset-0 pointer-events-none logo-shine-mask overflow-hidden">
+                <div className="w-1/2 h-full bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-25deg] animate-mentora-shine" />
+              </div>
+            </div>
           </Link>
 
           {/* Desktop Navigation Links */}

@@ -71,7 +71,7 @@ export default function RegisterPage() {
               alt="Mentora"
               width={160}
               height={90}
-              className="h-14 w-auto mx-auto object-contain drop-shadow-[0_0_18px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-transform duration-300"
+              className="h-14 w-auto mx-auto object-contain group-hover:scale-105 transition-transform duration-300"
               priority
             />
           </Link>

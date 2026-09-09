@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 
 export default function AboutPage() {
@@ -34,6 +35,79 @@ export default function AboutPage() {
       desc: 'High-density 5–8 minute micro-drills engineered to fit seamlessly into demanding workdays.',
     },
   ];
+
+  // Carousel state: start at middle replica (index 5) for seamless circular rotation
+  const [currentIndex, setCurrentIndex] = useState(coreCapabilities.length);
+  const [enableTransition, setEnableTransition] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // 3 replicas of the 5 capabilities for seamless infinite circular sliding (15 items)
+  const extendedCapabilities = [
+    ...coreCapabilities,
+    ...coreCapabilities,
+    ...coreCapabilities,
+  ];
+
+  // Auto-normalize index after transition completes to maintain infinite loop
+  useEffect(() => {
+    if (currentIndex >= coreCapabilities.length * 2) {
+      const timer = setTimeout(() => {
+        setEnableTransition(false);
+        setCurrentIndex((prev) =>
+          prev >= coreCapabilities.length * 2 ? prev - coreCapabilities.length : prev
+        );
+      }, 500);
+      return () => clearTimeout(timer);
+    } else if (currentIndex < coreCapabilities.length) {
+      const timer = setTimeout(() => {
+        setEnableTransition(false);
+        setCurrentIndex((prev) =>
+          prev < coreCapabilities.length ? prev + coreCapabilities.length : prev
+        );
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, coreCapabilities.length]);
+
+  // Re-enable transition quickly after seamless snap
+  useEffect(() => {
+    if (!enableTransition) {
+      const timer = setTimeout(() => {
+        setEnableTransition(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [enableTransition]);
+
+  const nextSlide = () => {
+    setEnableTransition(true);
+    setCurrentIndex((prev) => prev + 1);
+  };
+
+  const prevSlide = () => {
+    setEnableTransition(true);
+    setCurrentIndex((prev) => prev - 1);
+  };
+
+  const goToSlide = (targetIndex: number) => {
+    setEnableTransition(true);
+    setCurrentIndex(coreCapabilities.length + targetIndex);
+  };
+
+  // Auto-rotate every 2 seconds (2000ms) with pause-on-hover and background-tab safeguard
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.hidden) return;
+      setEnableTransition(true);
+      setCurrentIndex((prev) => prev + 1);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [isPaused]);
+
+  const activeDot =
+    ((currentIndex % coreCapabilities.length) + coreCapabilities.length) % coreCapabilities.length;
 
   const personalizationVectors = [
     { label: 'Your Role', detail: 'What you currently do', icon: '💼' },
@@ -230,46 +304,165 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {coreCapabilities.map((item, idx) => {
-              const isLast = idx === coreCapabilities.length - 1;
-              return (
+          {/* Single-line Auto-Rotating Carousel with Manual Arrows on Both Ends */}
+          <div
+            className="relative -mx-2 sm:-mx-6 lg:-mx-12 xl:-mx-16"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            {/* Flex Container: Left Arrow + Viewport + Right Arrow */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Left Arrow */}
+              <button
+                type="button"
+                onClick={prevSlide}
+                aria-label="Previous capability"
+                className={`group w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer shadow-md z-30 ${
+                  isBright
+                    ? 'bg-[#FFF3EB] border-2 border-[#FED7AA] text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:scale-105 shadow-orange-500/10'
+                    : 'bg-gradient-to-br from-orange-950/90 to-[#180c07] border border-orange-700/60 text-orange-400 hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:scale-105 shadow-orange-950/50'
+                }`}
+              >
+                <ChevronLeft className={`w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5] transition-colors ${isBright ? 'text-orange-600 group-hover:text-white' : 'text-orange-400 group-hover:text-white'}`} />
+              </button>
+
+              {/* Viewport for all 5 tiles in a perspective line */}
+              <div className="overflow-hidden flex-1 py-4">
                 <div
-                  key={idx}
-                  className={`p-6 rounded-2xl border transition-all duration-300 space-y-3 group hover:-translate-y-1 ${
-                    isLast ? 'sm:col-span-2 lg:col-span-1' : ''
-                  } ${
-                    isBright
-                      ? 'bg-white border-[#EAE0D5] hover:border-orange-300 hover:shadow-md'
-                      : 'bg-[#0c0805]/90 border-orange-950/80 hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-950/30'
-                  }`}
+                  className="flex w-[300%]"
+                  style={{
+                    transform: `translateX(-${(currentIndex - 2) * (100 / extendedCapabilities.length)}%)`,
+                    transition: enableTransition
+                      ? 'transform 500ms cubic-bezier(0.25, 1, 0.5, 1)'
+                      : 'none',
+                  }}
                 >
-                  <div
-                    className={`w-11 h-11 rounded-xl border flex items-center justify-center text-xl shadow-xs transition-colors ${
-                      isBright
-                        ? 'bg-[#FFF3EB] border-[#FED7AA]'
-                        : 'bg-orange-950/80 border-orange-800/60 text-orange-300'
-                    }`}
-                  >
-                    {item.icon}
-                  </div>
-                  <h3
-                    className={`text-base sm:text-lg font-bold transition-colors ${
-                      isBright ? 'text-[#1C1917] group-hover:text-[#EA580C]' : 'text-white group-hover:text-orange-300'
-                    }`}
-                  >
-                    {item.title}
-                  </h3>
-                  <p
-                    className={`text-xs sm:text-sm leading-relaxed ${
-                      isBright ? 'text-[#57534E]' : 'text-zinc-400'
-                    }`}
-                  >
-                    {item.desc}
-                  </p>
+                  {extendedCapabilities.map((item, idx) => {
+                    const distance = idx - currentIndex;
+                    const isCenter = distance === 0;
+                    const isNear = Math.abs(distance) === 1;
+                    const isFar = Math.abs(distance) === 2;
+
+                    return (
+                      <div
+                        key={idx}
+                        onClick={() => {
+                          if (distance === 1) nextSlide();
+                          else if (distance === -1) prevSlide();
+                          else if (distance === 2) {
+                            setEnableTransition(true);
+                            setCurrentIndex((prev) => prev + 2);
+                          } else if (distance === -2) {
+                            setEnableTransition(true);
+                            setCurrentIndex((prev) => prev - 2);
+                          }
+                        }}
+                        style={{ width: `${100 / extendedCapabilities.length}%` }}
+                        className={`shrink-0 px-1 sm:px-1.5 lg:px-2 transition-all duration-500 ease-out ${
+                          isCenter
+                            ? 'scale-105 sm:scale-108 opacity-100 z-20 cursor-default'
+                            : isNear
+                            ? 'scale-95 sm:scale-95 opacity-75 sm:opacity-80 z-10 cursor-pointer hover:opacity-95'
+                            : isFar
+                            ? 'scale-85 sm:scale-85 opacity-35 sm:opacity-45 z-0 cursor-pointer hover:opacity-65'
+                            : 'scale-75 opacity-0 pointer-events-none'
+                        }`}
+                      >
+                        <div
+                          className={`h-full min-h-[190px] sm:min-h-[210px] p-4 sm:p-5 rounded-2xl border transition-all duration-500 ease-out flex flex-col justify-start select-none ${
+                            isCenter
+                              ? isBright
+                                ? 'bg-white border-orange-500 shadow-xl shadow-orange-500/20 ring-2 ring-orange-400/40'
+                                : 'bg-gradient-to-b from-[#221209] to-[#0c0805] border-orange-500 shadow-2xl shadow-orange-950/80 ring-2 ring-orange-500/50'
+                              : isNear
+                              ? isBright
+                                ? 'bg-white/90 border-[#EAE0D5] shadow-xs hover:border-orange-300'
+                                : 'bg-[#0d0906]/90 border-orange-950/80 hover:border-orange-800/80'
+                              : isBright
+                              ? 'bg-white/60 border-[#EAE0D5]/60 shadow-none'
+                              : 'bg-[#0a0705]/60 border-orange-950/40 shadow-none'
+                          }`}
+                        >
+                          <div className="space-y-2.5 sm:space-y-3">
+                            <div
+                              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl border flex items-center justify-center text-lg sm:text-xl shadow-xs transition-all duration-500 ${
+                                isCenter
+                                  ? isBright
+                                    ? 'bg-[#FFE8D6] border-orange-300 text-orange-600 shadow-sm shadow-orange-500/20 scale-105'
+                                    : 'bg-orange-900/70 border-orange-500/80 text-orange-200 shadow-sm shadow-orange-950/60 scale-105'
+                                  : isBright
+                                  ? 'bg-[#FFF3EB] border-[#FED7AA] text-[#EA580C]'
+                                  : 'bg-orange-950/80 border-orange-800/60 text-orange-300'
+                              }`}
+                            >
+                              {item.icon}
+                            </div>
+
+                            <h3
+                              className={`font-bold transition-all duration-500 leading-snug ${
+                                isCenter ? 'text-sm sm:text-base lg:text-lg' : 'text-xs sm:text-sm'
+                              } ${
+                                isBright
+                                  ? isCenter ? 'text-[#EA580C]' : 'text-[#1C1917]'
+                                  : isCenter ? 'text-orange-300' : 'text-white'
+                              }`}
+                            >
+                              {item.title}
+                            </h3>
+
+                            <p
+                              className={`leading-relaxed transition-all duration-500 ${
+                                isCenter ? 'text-xs sm:text-sm' : 'text-[11px] sm:text-xs'
+                              } ${
+                                isBright ? 'text-[#57534E]' : 'text-zinc-400'
+                              }`}
+                            >
+                              {item.desc}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
+              </div>
+
+              {/* Right Arrow */}
+              <button
+                type="button"
+                onClick={nextSlide}
+                aria-label="Next capability"
+                className={`group w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer shadow-md z-30 ${
+                  isBright
+                    ? 'bg-[#FFF3EB] border-2 border-[#FED7AA] text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:scale-105 shadow-orange-500/10'
+                    : 'bg-gradient-to-br from-orange-950/90 to-[#180c07] border border-orange-700/60 text-orange-400 hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:scale-105 shadow-orange-950/50'
+                }`}
+              >
+                <ChevronRight className={`w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5] transition-colors ${isBright ? 'text-orange-600 group-hover:text-white' : 'text-orange-400 group-hover:text-white'}`} />
+              </button>
+            </div>
+
+            {/* Pagination Indicators */}
+            <div className="flex items-center justify-center gap-2 pt-4">
+              {coreCapabilities.map((_, i) => {
+                const isActive = i === activeDot;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => goToSlide(i)}
+                    aria-label={`Go to slide ${i + 1}`}
+                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                      isActive
+                        ? 'w-7 bg-gradient-to-r from-orange-500 to-amber-500 shadow-xs'
+                        : isBright
+                        ? 'w-2 bg-[#E2D4C5] hover:bg-[#FED7AA]'
+                        : 'w-2 bg-orange-950/90 hover:bg-orange-800/80'
+                    }`}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
 
