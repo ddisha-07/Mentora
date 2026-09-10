@@ -17,6 +17,7 @@ export default function PublicNavbar() {
     { name: 'Blogs', href: '/blogs' },
     { name: 'FAQs', href: '/faqs' },
     { name: 'Contact Us', href: '/contact' },
+    { name: 'Kai', href: '/dashboard/kai' },
     { name: 'Admin', href: '/admin' },
   ];
 

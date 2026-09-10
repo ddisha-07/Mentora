@@ -93,14 +93,22 @@ const MoonIcon = () => (
   </svg>
 );
 
+const KaiIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M12 3c0 4.5-3.5 8-8 8 4.5 0 8 3.5 8 8 0-4.5 3.5-8 8-8-4.5 0-8-3.5-8-8z" />
+    <path d="M19 3c0 2-1.5 3.5-3.5 3.5 2 0 3.5 1.5 3.5 3.5 0-2 1.5-3.5 3.5-3.5-2 0-3.5-1.5-3.5-3.5z" />
+  </svg>
+);
+
 const navItems: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: <DashIcon /> },
   { id: 'journeys', label: 'Journeys', href: '/dashboard/journeys', icon: <JourneyIcon /> },
-  { id: 'courses', label: 'Courses', href: '/dashboard/quizzes', icon: <CoursesIcon /> },
+  { id: 'courses', label: 'Courses', href: '/dashboard/courses', icon: <CoursesIcon /> },
   { id: 'community', label: 'Community', href: '/dashboard/community', icon: <CommunityIcon /> },
   { id: 'leaderboard', label: 'Leaderboard', href: '/dashboard/leaderboard', icon: <LeaderboardIcon /> },
   { id: 'passport', label: 'Skill Passport', href: '/dashboard/passport', icon: <PassportIcon /> },
   { id: 'mentorship', label: 'Mentorship', href: '/dashboard/mentorship', icon: <MentorshipIcon /> },
+  { id: 'kai', label: 'Kai', href: '/dashboard/kai', icon: <KaiIcon /> },
 ];
 
 export default function DashboardSidebar() {
