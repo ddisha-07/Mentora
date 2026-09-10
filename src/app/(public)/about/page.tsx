@@ -94,6 +94,25 @@ export default function AboutPage() {
     setCurrentIndex(coreCapabilities.length + targetIndex);
   };
 
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPaused(true);
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    setIsPaused(false);
+    if (touchStartX === null) return;
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (diff > 35) {
+      nextSlide();
+    } else if (diff < -35) {
+      prevSlide();
+    }
+    setTouchStartX(null);
+  };
+
   // Auto-rotate every 2 seconds (2000ms) with pause-on-hover and background-tab safeguard
   useEffect(() => {
     if (isPaused) return;
@@ -310,8 +329,152 @@ export default function AboutPage() {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            {/* Flex Container: Left Arrow + Viewport + Right Arrow */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            {/* MOBILE VIEW (< sm): Stacked Card Deck Carousel (Single-Tile Fit) */}
+            <div className="block sm:hidden px-1">
+              <div
+                className="flex items-center justify-between gap-1"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              >
+                {/* Left Arrow */}
+                <button
+                  type="button"
+                  onClick={prevSlide}
+                  aria-label="Previous capability"
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer shadow-md z-40 ${
+                    isBright
+                      ? 'bg-[#FFF3EB] border-2 border-[#FED7AA] text-orange-600 hover:bg-orange-500 hover:text-white active:scale-95'
+                      : 'bg-gradient-to-br from-orange-950/90 to-[#180c07] border border-orange-700/60 text-orange-400 hover:bg-orange-500 hover:text-white active:scale-95'
+                  }`}
+                >
+                  <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+                </button>
+
+                {/* Stacked Cards Stage */}
+                <div className="relative flex-1 h-[255px] flex items-center justify-center">
+                  {extendedCapabilities.map((item, idx) => {
+                    const distance = idx - currentIndex;
+                    if (Math.abs(distance) > 2) return null;
+
+                    const isCenter = distance === 0;
+                    const isRightNear = distance === 1;
+                    const isRightFar = distance === 2;
+                    const isLeftNear = distance === -1;
+                    const isLeftFar = distance === -2;
+
+                    let xOffset = 0;
+                    let scale = 1;
+                    let zIndex = 30;
+                    let opacity = 1;
+
+                    if (isCenter) {
+                      xOffset = 0;
+                      scale = 1;
+                      zIndex = 30;
+                      opacity = 1;
+                    } else if (isRightNear) {
+                      xOffset = 18;
+                      scale = 0.92;
+                      zIndex = 20;
+                      opacity = 0.65;
+                    } else if (isRightFar) {
+                      xOffset = 32;
+                      scale = 0.85;
+                      zIndex = 10;
+                      opacity = 0.35;
+                    } else if (isLeftNear) {
+                      xOffset = -18;
+                      scale = 0.92;
+                      zIndex = 20;
+                      opacity = 0.65;
+                    } else if (isLeftFar) {
+                      xOffset = -32;
+                      scale = 0.85;
+                      zIndex = 10;
+                      opacity = 0.35;
+                    }
+
+                    return (
+                      <div
+                        key={idx}
+                        onClick={() => {
+                          if (distance === 1) nextSlide();
+                          else if (distance === -1) prevSlide();
+                        }}
+                        style={{
+                          transform: `translateX(${xOffset}px) scale(${scale})`,
+                          zIndex,
+                          opacity,
+                          transition: enableTransition
+                            ? 'transform 400ms cubic-bezier(0.25, 1, 0.5, 1), opacity 400ms cubic-bezier(0.25, 1, 0.5, 1)'
+                            : 'none',
+                        }}
+                        className={`absolute w-[220px] h-[240px] p-4 rounded-2xl border transition-colors duration-300 flex flex-col justify-start select-none shadow-xl ${
+                          isCenter
+                            ? isBright
+                              ? 'bg-white border-2 border-orange-500 shadow-xl shadow-orange-500/20 ring-2 ring-orange-400/30 cursor-default'
+                              : 'bg-[#180e08] border-2 border-orange-500 shadow-2xl shadow-orange-950/80 ring-2 ring-orange-500/40 cursor-default'
+                            : isBright
+                            ? 'bg-[#FFF8F2] border border-[#FED7AA]/80 shadow-md cursor-pointer'
+                            : 'bg-[#130b06] border border-orange-900/60 shadow-md cursor-pointer'
+                        }`}
+                      >
+                        <div className="space-y-2.5">
+                          <div
+                            className={`w-9 h-9 rounded-xl border flex items-center justify-center text-lg shadow-xs ${
+                              isCenter
+                                ? isBright
+                                  ? 'bg-[#FFE8D6] border-orange-300 text-orange-600 shadow-sm'
+                                  : 'bg-orange-900/70 border-orange-500/80 text-orange-200'
+                                : isBright
+                                ? 'bg-[#FFF3EB] border-[#FED7AA] text-[#EA580C]'
+                                : 'bg-orange-950/80 border-orange-800/60 text-orange-300'
+                            }`}
+                          >
+                            {item.icon}
+                          </div>
+
+                          <h3
+                            className={`font-bold text-sm leading-snug transition-colors duration-300 ${
+                              isBright
+                                ? isCenter ? 'text-[#EA580C]' : 'text-[#1C1917]'
+                                : isCenter ? 'text-orange-300' : 'text-white'
+                            }`}
+                          >
+                            {item.title}
+                          </h3>
+
+                          <p
+                            className={`text-xs leading-relaxed transition-colors duration-300 ${
+                              isBright ? 'text-[#57534E]' : 'text-zinc-400'
+                            }`}
+                          >
+                            {item.desc}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Right Arrow */}
+                <button
+                  type="button"
+                  onClick={nextSlide}
+                  aria-label="Next capability"
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer shadow-md z-40 ${
+                    isBright
+                      ? 'bg-[#FFF3EB] border-2 border-[#FED7AA] text-orange-600 hover:bg-orange-500 hover:text-white active:scale-95'
+                      : 'bg-gradient-to-br from-orange-950/90 to-[#180c07] border border-orange-700/60 text-orange-400 hover:bg-orange-500 hover:text-white active:scale-95'
+                  }`}
+                >
+                  <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+                </button>
+              </div>
+            </div>
+
+            {/* DESKTOP/TABLET VIEW (>= sm): Perspective Multi-Tile Line */}
+            <div className="hidden sm:flex items-center gap-2 sm:gap-3">
               {/* Left Arrow */}
               <button
                 type="button"
