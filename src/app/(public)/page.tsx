@@ -748,72 +748,55 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Bottom Conversion Banner */}
-      <section className="py-20 bg-retro-dense-grid">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div
-            className={`relative rounded-3xl p-[1.5px] shadow-2xl overflow-hidden ${
-              isBright
-                ? 'bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500 shadow-orange-500/20'
-                : 'bg-gradient-to-r from-orange-500/70 via-amber-500/50 to-orange-600/70 shadow-orange-950/60'
-            }`}
-          >
-            <div
-              className={`rounded-[23px] p-8 sm:p-14 text-center space-y-7 ${
-                isBright ? 'bg-white' : 'bg-[#0c0805]/95'
-              }`}
-            >
-              
-              <div
-                className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-mono font-semibold border ${
-                  isBright
-                    ? 'bg-[#FFF0E5] text-[#EA580C] border-[#FDDAC5]'
-                    : 'bg-orange-950/80 text-orange-300 border-orange-700/60'
-                }`}
-              >
-                🚀 QUEST AWAITS • START YOUR PROGRESSION
-              </div>
+      {/* Bottom Conversion Banner - Redesigned to match attached image layout */}
+      <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#FF5500] via-[#FF6000] to-[#FF4500] shadow-[0_20px_50px_rgba(255,85,0,0.35)] border border-orange-400/30 min-h-[220px] sm:min-h-[260px] flex items-center justify-between px-6 sm:px-12 py-8 lg:py-10">
+            {/* Subtle Voxel Grid Background Overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[250px] bg-amber-300/20 rounded-full blur-3xl pointer-events-none" />
 
-              <h2
-                className={`text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight ${
-                  isBright ? 'text-[#1C1917]' : 'text-white'
-                }`}
-              >
-                Ready to bridge your skill gap?
+            {/* Left Side: 3D Voxel Boy Character Asset */}
+            <div className="hidden sm:block absolute left-0 bottom-0 h-full w-48 sm:w-64 lg:w-72 pointer-events-none z-10">
+              <img
+                src="/images/banner-character.png"
+                alt="Mentora Student Avatar"
+                className="w-full h-full object-contain object-bottom drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)] transform hover:scale-105 transition-transform duration-300 select-none"
+              />
+            </div>
+
+            {/* Center Text & CTA Content */}
+            <div className="relative z-20 flex-1 max-w-xl mx-auto text-center space-y-3 sm:space-y-4">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.15] drop-shadow-md">
+                Start your learning journey today
               </h2>
 
-              <p
-                className={`text-sm sm:text-base max-w-xl mx-auto leading-relaxed ${
-                  isBright ? 'text-[#57534E]' : 'text-zinc-400'
-                }`}
-              >
-                Complete your 2-minute diagnostic, generate your personalized 3-level journey, and earn your first 100 leaderboard points today.
+              <p className="text-xs sm:text-base text-white/95 font-medium leading-relaxed max-w-lg mx-auto">
+                Join 10,000+ professionals building skills with Mentora.
               </p>
 
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="pt-1 sm:pt-2 flex items-center justify-center">
                 <Link
                   href="/register"
-                  className={`w-full sm:w-auto px-8 py-4 text-sm font-bold rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all font-mono uppercase tracking-wider ${
-                    isBright
-                      ? 'text-white bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 shadow-orange-500/35 hover:shadow-orange-500/50'
-                      : 'text-black bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 hover:from-amber-300 hover:to-orange-400 shadow-orange-600/35 hover:shadow-orange-600/60'
-                  }`}
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 sm:px-8 sm:py-4 bg-white hover:bg-orange-50 text-[#EA580C] font-extrabold text-sm sm:text-base rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 group tracking-wide"
                 >
-                  Start Learning Free →
-                </Link>
-                <Link
-                  href="/leaderboard"
-                  className={`w-full sm:w-auto px-7 py-4 text-sm font-semibold rounded-2xl transition-all font-mono ${
-                    isBright
-                      ? 'bg-white text-[#1C1917] hover:text-[#EA580C] border border-[#E0D1C3] hover:border-orange-400 shadow-xs'
-                      : 'text-zinc-300 hover:text-white bg-[#140e08] border border-orange-900/60 hover:border-orange-600/60'
-                  }`}
-                >
-                  View Global Leaderboard
+                  <span>Get Started Now</span>
+                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </Link>
               </div>
-
             </div>
+
+            {/* Right Side: 3D Voxel Mountain Asset */}
+            <div className="hidden sm:block absolute right-0 bottom-0 h-full w-48 sm:w-64 lg:w-72 pointer-events-none z-10">
+              <img
+                src="/images/banner-mountain.png"
+                alt="Mentora Skill Mountain"
+                className="w-full h-full object-contain object-bottom drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)] transform hover:scale-105 transition-transform duration-300 select-none"
+              />
+            </div>
+
           </div>
         </div>
       </section>

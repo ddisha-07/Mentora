@@ -203,7 +203,7 @@ export default function DashboardPage() {
           <div
             className="relative rounded-3xl"
             style={{
-              paddingTop: '45px',
+              paddingTop: '180px',
             }}
           >
 
@@ -224,8 +224,8 @@ export default function DashboardPage() {
                   bottom: '8px',
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  width: '130px',
-                  height: '18px',
+                  width: '140px',
+                  height: '20px',
                   background: 'rgba(0,0,0,0.2)',
                   borderRadius: '50%',
                   filter: 'blur(10px)',
@@ -299,20 +299,7 @@ export default function DashboardPage() {
                         color: '#fff',
                       }}
                     >
-                      🔥 {streakDays} day streak
                     </span>
-                    <Link
-                      href="/admin"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all hover:scale-105"
-                      style={{
-                        background: 'rgba(255,255,255,0.15)',
-                        backdropFilter: 'blur(8px)',
-                        border: '1px solid rgba(255,255,255,0.25)',
-                        color: '#fff',
-                      }}
-                    >
-                      ⚙️ Admin Panel
-                    </Link>
                   </div>
                 </div>
               </div>
