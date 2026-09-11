@@ -1,8 +1,11 @@
 'use client';
 
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import VerticalDock from '@/components/ui/VerticalDock';
 
 interface NavItem {
   id: string;
@@ -100,6 +103,14 @@ const KaiIcon = () => (
   </svg>
 );
 
+const HamburgerIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth={2}>
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="18" x2="21" y2="18" />
+  </svg>
+);
+
 const navItems: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: <DashIcon /> },
   { id: 'journeys', label: 'Journeys', href: '/dashboard/journeys', icon: <JourneyIcon /> },
@@ -113,12 +124,28 @@ const navItems: NavItem[] = [
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { isBright, toggleTheme } = useTheme();
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard';
     return pathname.startsWith(href);
   };
+
+  const dockNavItems = [
+    {
+      icon: <HamburgerIcon />,
+      label: 'Expand Sidebar',
+      onClick: () => setIsExpanded(true),
+      className: '!bg-[#FF6B35]/20 !border-[#FF6B35]/50 !text-[#FF6B35]',
+    },
+    ...navItems.map((item) => ({
+      icon: item.icon,
+      label: item.label,
+      onClick: () => router.push(item.href),
+    })),
+  ];
 
   const sidebarBg = isBright
     ? 'linear-gradient(180deg, #1C1410 0%, #231a10 100%)'
@@ -128,133 +155,175 @@ export default function DashboardSidebar() {
   const labelColor = 'rgba(255,248,240,0.65)';
 
   return (
-    <aside
-      id="dashboard-sidebar"
-      className="fixed left-0 top-0 bottom-0 w-[72px] xl:w-[240px] z-40 flex flex-col transition-all duration-300"
-      style={{ background: sidebarBg, borderRight: `1px solid ${borderColor}` }}
-    >
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-4 xl:px-5 pt-6 pb-5 flex-shrink-0">
-        <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{
-            background: 'linear-gradient(135deg, #FF6B35 0%, #E85D2C 100%)',
-            boxShadow: '0 4px 14px rgba(255,107,53,0.45)',
-          }}
+    <AnimatePresence mode="wait">
+      {isExpanded ? (
+        <motion.aside
+          key="full-sidebar"
+          initial={{ x: -240, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: -240, opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+          id="dashboard-sidebar"
+          className="fixed left-0 top-0 bottom-0 w-[240px] z-40 flex flex-col shadow-2xl"
+          style={{ background: sidebarBg, borderRight: `1px solid ${borderColor}` }}
         >
-          <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
-            <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z" />
-          </svg>
-        </div>
-        <span
-          className="hidden xl:block text-lg font-bold tracking-tight"
-          style={{ color: '#FFF8F0', fontFamily: 'var(--font-geist-sans), sans-serif' }}
-        >
-          Mentora
-        </span>
-      </div>
-
-      <div className="mx-3 xl:mx-5 mb-3 h-px flex-shrink-0" style={{ background: borderColor }} />
-
-      {/* Main Nav */}
-      <nav className="flex-1 px-2 xl:px-3 space-y-0.5 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-        {navItems.map((item) => {
-          const active = isActive(item.href);
-          return (
-            <Link
-              key={item.id}
-              href={item.href}
-              id={`sidebar-${item.id}`}
-              className="group relative flex items-center gap-3 px-2.5 xl:px-3.5 py-2.5 rounded-xl transition-all duration-200 hover:bg-white/5"
-              style={{
-                background: active
-                  ? 'linear-gradient(135deg, rgba(255,107,53,0.2) 0%, rgba(232,93,44,0.12) 100%)'
-                  : undefined,
-                color: active ? '#FF6B35' : mutedColor,
-              }}
-            >
-              {active && (
-                <span
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full"
-                  style={{ background: '#FF6B35' }}
-                />
-              )}
-              <span
-                className="flex-shrink-0 transition-transform duration-200 group-hover:scale-105"
-                style={{ color: active ? '#FF6B35' : mutedColor }}
+          {/* Logo & Hamburger Toggle Header */}
+          <div className="flex items-center justify-between px-4 pt-6 pb-5 flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{
+                  background: 'linear-gradient(135deg, #FF6B35 0%, #E85D2C 100%)',
+                  boxShadow: '0 4px 14px rgba(255,107,53,0.45)',
+                }}
               >
-                {item.icon}
+                <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
+                  <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z" />
+                </svg>
+              </div>
+              <span
+                className="text-lg font-bold tracking-tight"
+                style={{ color: '#FFF8F0', fontFamily: 'var(--font-geist-sans), sans-serif' }}
+              >
+                Mentora
               </span>
-              <span
-                className="hidden xl:block text-sm font-medium truncate"
-                style={{ color: active ? '#FF6B35' : labelColor }}
-              >
-                {item.label}
+            </div>
+
+            {/* Hamburger Button inside the Sidebar Header */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsExpanded(false)}
+              aria-label="Collapse to Vertical Dock"
+              title="Collapse to Vertical Dock"
+              className="w-9 h-9 rounded-xl flex flex-col items-center justify-center gap-1 bg-white/5 hover:bg-[#FF6B35]/20 text-slate-300 hover:text-[#FF6B35] border border-white/10 hover:border-[#FF6B35]/40 transition-colors duration-200 focus:outline-none"
+            >
+              <span className="w-4 h-[2px] bg-current rounded-full" />
+              <span className="w-4 h-[2px] bg-current rounded-full" />
+              <span className="w-4 h-[2px] bg-current rounded-full" />
+            </motion.button>
+          </div>
+
+          <div className="mx-4 mb-3 h-px flex-shrink-0" style={{ background: borderColor }} />
+
+          {/* Main Nav */}
+          <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+            {navItems.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  id={`sidebar-${item.id}`}
+                  className="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 hover:bg-white/5"
+                  style={{
+                    background: active
+                      ? 'linear-gradient(135deg, rgba(255,107,53,0.2) 0%, rgba(232,93,44,0.12) 100%)'
+                      : undefined,
+                    color: active ? '#FF6B35' : mutedColor,
+                  }}
+                >
+                  {active && (
+                    <span
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full"
+                      style={{ background: '#FF6B35' }}
+                    />
+                  )}
+                  <span
+                    className="flex-shrink-0 transition-transform duration-200 group-hover:scale-105"
+                    style={{ color: active ? '#FF6B35' : mutedColor }}
+                  >
+                    {item.icon}
+                  </span>
+                  <span
+                    className="text-sm font-medium truncate"
+                    style={{ color: active ? '#FF6B35' : labelColor }}
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Bottom Controls */}
+          <div className="px-3 pb-3 space-y-0.5 flex-shrink-0">
+            <div className="mx-2 mb-2 h-px" style={{ background: borderColor }} />
+
+            {/* Theme toggle */}
+            <button
+              id="sidebar-theme-toggle"
+              onClick={toggleTheme}
+              className="group w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 hover:bg-white/5"
+            >
+              <span className="flex-shrink-0 transition-transform duration-200 group-hover:scale-105" style={{ color: mutedColor }}>
+                {isBright ? <MoonIcon /> : <SunIcon />}
+              </span>
+              <span className="text-sm font-medium" style={{ color: labelColor }}>
+                {isBright ? 'Dark Mode' : 'Light Mode'}
+              </span>
+            </button>
+
+            {/* Settings */}
+            <Link
+              href="/dashboard/settings"
+              id="sidebar-settings"
+              className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 hover:bg-white/5"
+            >
+              <span className="flex-shrink-0 transition-transform duration-200 group-hover:rotate-45 group-hover:scale-105" style={{ color: mutedColor }}>
+                <SettingsIcon />
+              </span>
+              <span className="text-sm font-medium" style={{ color: labelColor }}>Settings</span>
+            </Link>
+
+            {/* Logout */}
+            <Link
+              href="/"
+              id="sidebar-logout"
+              className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 hover:bg-red-500/10"
+            >
+              <span className="flex-shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" style={{ color: mutedColor }}>
+                <LogoutIcon />
+              </span>
+              <span className="text-sm font-medium group-hover:text-red-400 transition-colors" style={{ color: labelColor }}>
+                Logout
               </span>
             </Link>
-          );
-        })}
-      </nav>
 
-      {/* Bottom Controls */}
-      <div className="px-2 xl:px-3 pb-3 space-y-0.5 flex-shrink-0">
-        <div className="mx-1 xl:mx-2 mb-2 h-px" style={{ background: borderColor }} />
-
-        {/* Theme toggle */}
-        <button
-          id="sidebar-theme-toggle"
-          onClick={toggleTheme}
-          className="group w-full flex items-center gap-3 px-2.5 xl:px-3.5 py-2.5 rounded-xl transition-all duration-200 hover:bg-white/5"
-        >
-          <span className="flex-shrink-0 transition-transform duration-200 group-hover:scale-105" style={{ color: mutedColor }}>
-            {isBright ? <MoonIcon /> : <SunIcon />}
-          </span>
-          <span className="hidden xl:block text-sm font-medium" style={{ color: labelColor }}>
-            {isBright ? 'Dark Mode' : 'Light Mode'}
-          </span>
-        </button>
-
-        {/* Settings */}
-        <Link
-          href="/dashboard/settings"
-          id="sidebar-settings"
-          className="group flex items-center gap-3 px-2.5 xl:px-3.5 py-2.5 rounded-xl transition-all duration-200 hover:bg-white/5"
-        >
-          <span className="flex-shrink-0 transition-transform duration-200 group-hover:rotate-45 group-hover:scale-105" style={{ color: mutedColor }}>
-            <SettingsIcon />
-          </span>
-          <span className="hidden xl:block text-sm font-medium" style={{ color: labelColor }}>Settings</span>
-        </Link>
-
-        {/* Logout */}
-        <Link
-          href="/"
-          id="sidebar-logout"
-          className="group flex items-center gap-3 px-2.5 xl:px-3.5 py-2.5 rounded-xl transition-all duration-200 hover:bg-red-500/10"
-        >
-          <span className="flex-shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" style={{ color: mutedColor }}>
-            <LogoutIcon />
-          </span>
-          <span className="hidden xl:block text-sm font-medium group-hover:text-red-400 transition-colors" style={{ color: labelColor }}>
-            Logout
-          </span>
-        </Link>
-
-        {/* User profile */}
-        <div className="mx-1 xl:mx-2 mt-2 mb-1 h-px" style={{ background: borderColor }} />
-        <div className="flex items-center gap-3 px-2.5 xl:px-3.5 py-2">
-          <div
-            className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold"
-            style={{ background: 'linear-gradient(135deg, #FF6B35, #E85D2C)', color: '#fff' }}
-          >
-            AJ
+            {/* User profile */}
+            <div className="mx-2 mt-2 mb-1 h-px" style={{ background: borderColor }} />
+            <div className="flex items-center gap-3 px-3.5 py-2">
+              <div
+                className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold"
+                style={{ background: 'linear-gradient(135deg, #FF6B35, #E85D2C)', color: '#fff' }}
+              >
+                AJ
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold truncate" style={{ color: '#FFF8F0' }}>Alex Johnson</p>
+                <p className="text-xs truncate" style={{ color: 'rgba(255,248,240,0.38)' }}>Pro Learner · Lvl 7</p>
+              </div>
+            </div>
           </div>
-          <div className="hidden xl:block min-w-0">
-            <p className="text-xs font-semibold truncate" style={{ color: '#FFF8F0' }}>Alex Johnson</p>
-            <p className="text-xs truncate" style={{ color: 'rgba(255,248,240,0.38)' }}>Pro Learner · Lvl 7</p>
-          </div>
-        </div>
-      </div>
-    </aside>
+        </motion.aside>
+      ) : (
+        /* Collapsed Mode: Only Vertical Dock with Magnification & Hamburger Action Button is visible! */
+        <motion.div
+          key="compact-dock"
+          initial={{ x: -80, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: -80, opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+          className="fixed left-3 top-6 z-50"
+        >
+          <VerticalDock
+            items={dockNavItems}
+            baseItemSize={48}
+            magnification={68}
+            distance={180}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
