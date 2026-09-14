@@ -154,17 +154,6 @@ export default function AboutPage() {
         
         {/* Hero Section */}
         <div className="space-y-4 text-center max-w-3xl mx-auto">
-          <div
-            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold transition-colors ${
-              isBright
-                ? 'bg-[#FFF3EB] text-[#EA580C] border border-[#FED7AA]'
-                : 'bg-orange-950/70 text-orange-300 border border-orange-500/40 shadow-inner'
-            }`}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-            <span>ABOUT MENTORA</span>
-          </div>
-
           <h1
             className={`text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight transition-colors ${
               isBright ? 'text-[#1C1917]' : 'text-white'
@@ -304,13 +293,6 @@ export default function AboutPage() {
         {/* What Mentora Helps You Do */}
         <div className="space-y-8">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <span
-              className={`text-xs font-mono font-bold uppercase tracking-wider ${
-                isBright ? 'text-[#EA580C]' : 'text-orange-400'
-              }`}
-            >
-              Core Capabilities
-            </span>
             <h2
               className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${
                 isBright ? 'text-[#1C1917]' : 'text-white'
@@ -634,13 +616,6 @@ export default function AboutPage() {
           }`}
         >
           <div className="text-center space-y-2 max-w-2xl mx-auto mb-8">
-            <span
-              className={`text-xs font-mono font-bold uppercase tracking-wider ${
-                isBright ? 'text-[#EA580C]' : 'text-orange-400'
-              }`}
-            >
-              Adaptive Engine
-            </span>
             <h2
               className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${
                 isBright ? 'text-[#1C1917]' : 'text-white'
@@ -709,13 +684,6 @@ export default function AboutPage() {
               : 'bg-gradient-to-b from-[#140b07] to-[#0a0604] border-orange-900/60 shadow-xl'
           }`}
         >
-          <span
-            className={`text-xs font-mono font-bold uppercase tracking-widest ${
-              isBright ? 'text-[#EA580C]' : 'text-orange-400'
-            }`}
-          >
-            Our Vision
-          </span>
           <h2
             className={`text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight max-w-2xl mx-auto leading-snug ${
               isBright ? 'text-[#1C1917]' : 'text-white'

@@ -34,16 +34,6 @@ export default function ContactPage() {
       <div className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <div className="space-y-4 max-w-2xl">
-          <div
-            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold transition-colors ${
-              isBright
-                ? 'bg-[#FFF3EB] text-[#EA580C] border border-[#FED7AA]'
-                : 'bg-orange-950/70 text-orange-300 border border-orange-500/40 shadow-inner'
-            }`}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-            <span>[ DIRECT CHANNEL // TRANSMISSION STATION ]</span>
-          </div>
           <h1
             className={`text-4xl sm:text-6xl font-extrabold tracking-tight transition-colors ${
               isBright ? 'text-[#1C1917]' : 'text-white'

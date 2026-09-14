@@ -16,6 +16,7 @@ import {
   GraduationCap,
   X,
   ArrowLeft,
+  Newspaper,
 } from "lucide-react";
 
 const nav = [
@@ -23,6 +24,7 @@ const nav = [
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/skills", label: "Skills", icon: Sparkles },
   { to: "/admin/courses", label: "Courses", icon: BookOpen },
+  { to: "/admin/blogs", label: "Blogs", icon: Newspaper },
   { to: "/admin/schedule", label: "Schedule", icon: CalendarDays },
   { to: "/admin/community", label: "Community", icon: MessagesSquare },
   { to: "/admin/tasks", label: "Daily Tasks", icon: ListChecks },

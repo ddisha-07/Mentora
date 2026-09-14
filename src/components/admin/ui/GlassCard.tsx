@@ -14,7 +14,7 @@ export default function GlassCard({ children, className, strong = false, as: Tag
     <Tag
       className={classNames(
         strong ? "glass-strong" : "glass",
-        "rounded-xl2 shadow-glass",
+        "rounded-xl2 shadow-glass bg-[#0d0f15]/90 border border-white/10",
         className
       )}
       {...rest}

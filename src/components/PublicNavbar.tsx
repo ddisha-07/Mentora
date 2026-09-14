@@ -54,13 +54,13 @@ export default function PublicNavbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-xs font-mono font-bold tracking-widest uppercase transition-opacity ${
+                  className={`text-[11px] font-mono font-bold tracking-widest uppercase transition-all ${
                     isBright
                       ? isActive
-                        ? 'text-black font-extrabold underline underline-offset-8 decoration-2'
+                        ? 'text-black font-black border border-black/40 px-2 py-0.5 rounded-md'
                         : 'text-black/80 hover:text-black hover:opacity-100'
                       : isActive
-                      ? 'text-[#FF5500] font-extrabold underline underline-offset-8 decoration-2'
+                      ? 'text-[#FF5500] font-black border border-[#FF5500] px-2 py-0.5 rounded-md'
                       : 'text-zinc-300 hover:text-white'
                   }`}
                 >
@@ -102,7 +102,7 @@ export default function PublicNavbar() {
             {/* Login Link */}
             <Link
               href="/login"
-              className={`text-xs font-mono font-bold tracking-widest uppercase transition-opacity ${
+              className={`text-[11px] font-mono font-bold tracking-widest uppercase transition-opacity ${
                 isBright ? 'text-black hover:opacity-75' : 'text-zinc-300 hover:text-white'
               }`}
             >
@@ -112,7 +112,7 @@ export default function PublicNavbar() {
             {/* Motion.dev style Sharp Black Rectangular CTA Button */}
             <Link
               href="/register"
-              className={`px-5 py-2.5 text-xs font-mono font-black tracking-widest uppercase transition-all duration-150 active:scale-95 ${
+              className={`px-4.5 py-2 text-[11px] font-mono font-black tracking-widest uppercase transition-all duration-150 active:scale-95 ${
                 isBright
                   ? 'bg-black text-white hover:bg-zinc-900 shadow-md'
                   : 'bg-[#FF5500] text-black hover:bg-[#ff6514] font-black shadow-lg shadow-orange-600/30'
@@ -169,7 +169,7 @@ export default function PublicNavbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`text-xs font-mono font-bold tracking-widest uppercase ${
+                  className={`text-[11px] font-mono font-bold tracking-widest uppercase ${
                     isActive ? (isBright ? 'text-black font-black underline' : 'text-[#FF5500] font-black underline') : ''
                   }`}
                 >
@@ -183,14 +183,14 @@ export default function PublicNavbar() {
             <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-xs font-mono font-bold tracking-widest uppercase"
+              className="text-[11px] font-mono font-bold tracking-widest uppercase"
             >
               LOGIN
             </Link>
             <Link
               href="/register"
               onClick={() => setMobileMenuOpen(false)}
-              className={`text-center py-3 text-xs font-mono font-black tracking-widest uppercase ${
+              className={`text-center py-2.5 text-[11px] font-mono font-black tracking-widest uppercase ${
                 isBright ? 'bg-black text-white' : 'bg-[#FF5500] text-black'
               }`}
             >

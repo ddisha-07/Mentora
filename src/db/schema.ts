@@ -583,6 +583,33 @@ export const communitiesRelations = relations(communities, ({ one, many }) => ({
   members: many(communityMembers),
 }));
 
+// ==============================================================================
+// 30. blogs
+// ==============================================================================
+export const blogs = pgTable('blogs', {
+  id: varchar('id', { length: 100 }).primaryKey(),
+  num: varchar('num', { length: 20 }),
+  category: varchar('category', { length: 100 }).notNull().default('General'),
+  tabLabel: varchar('tab_label', { length: 100 }),
+  subTabLabel: varchar('sub_tab_label', { length: 100 }),
+  tabPosition: varchar('tab_position', { length: 20 }).default('left'),
+  theme: varchar('theme', { length: 50 }).default('dark-charcoal'),
+  primaryTabColor: varchar('primary_tab_color', { length: 50 }).default('#EA580C'),
+  date: varchar('date', { length: 50 }),
+  readTime: varchar('read_time', { length: 50 }),
+  title: text('title').notNull(),
+  kicker: text('kicker'),
+  synopsis: text('synopsis'),
+  tags: jsonb('tags').notNull().default([]),
+  takeaways: jsonb('takeaways').notNull().default([]),
+  fullBody: jsonb('full_body').notNull().default([]),
+  imageUrl: text('image_url'),
+  status: varchar('status', { length: 50 }).notNull().default('Published'),
+  author: varchar('author', { length: 255 }).default('Mentora Editorial'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
 // Type exports
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -593,3 +620,5 @@ export type Lesson = typeof lessons.$inferSelect;
 export type Quiz = typeof quizzes.$inferSelect;
 export type UserStreak = typeof userStreaks.$inferSelect;
 export type XpTransaction = typeof xps.$inferSelect;
+export type Blog = typeof blogs.$inferSelect;
+export type NewBlog = typeof blogs.$inferInsert;

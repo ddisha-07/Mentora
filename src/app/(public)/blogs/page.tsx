@@ -1,185 +1,79 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTheme } from '@/context/ThemeContext';
+import { getBlogs, sortBlogsNumerically } from '@/lib/admin/services/blogService';
+import { mockBlogs, BlogArticle } from '@/lib/admin/data/mockBlogs';
 import {
   Search,
   X,
-  ArrowUpRight,
   BookOpen,
-  Clock,
-  Calendar,
   Sparkles,
   Share2,
   CheckCircle2,
-  Filter,
-  Layers,
-  Terminal,
-  ShieldCheck,
-  TrendingUp,
-  Cpu,
-  Bookmark,
-  ChevronRight
+  Lock,
+  Flame,
+  ArrowUpRight
 } from 'lucide-react';
-
-interface Article {
-  id: number;
-  num: string;
-  category: 'Pedagogy' | 'Algorithms' | 'Credentials' | 'AI Systems';
-  tabLabel: string;
-  subTabLabel: string;
-  tabPosition: 'left' | 'right';
-  theme: 'dark-charcoal' | 'warm-amber' | 'deep-espresso' | 'warm-parchment';
-  primaryTabColor: string;
-  date: string;
-  readTime: string;
-  title: string;
-  kicker: string;
-  synopsis: string;
-  tags: string[];
-  takeaways: string[];
-  fullBody: string[];
-}
 
 export default function BlogsPage() {
   const { isBright } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeArticle, setActiveArticle] = useState<Article | null>(null);
-  const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [activeArticle, setActiveArticle] = useState<BlogArticle | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [articles, setArticles] = useState<BlogArticle[]>(sortBlogsNumerically(mockBlogs));
 
-  const articles: Article[] = [
-    {
-      id: 1,
-      num: '01',
-      category: 'Pedagogy',
-      tabLabel: 'ARTICLE 01',
-      subTabLabel: 'PEDAGOGY & SYSTEMS',
-      tabPosition: 'left',
-      theme: 'dark-charcoal',
-      primaryTabColor: '#2563EB', // Cobalt Blue like in reference Card 1
-      date: 'SEP 14, 2026',
-      readTime: '6 MIN READ',
-      title: 'Level-Gated Progression',
-      kicker: 'COGNITIVE SCAFFOLDING & PEDAGOGY',
-      synopsis:
-        'Why structured prerequisite gates beat infinite, unguided video libraries every single time. Scaffolding knowledge eliminates cognitive fatigue and accelerates retention.',
-      tags: ['#Pedagogy', '#CognitiveLoad', '#ActiveRecall', '#Gamification'],
-      takeaways: [
-        'Unguided libraries lead to passive bingeing without durable memory formation.',
-        'Prerequisite gating forces mastery of fundamental mental models before unlocking abstractions.',
-        'Immediate diagnostic feedback creates rapid dopamine loops that build consistency.'
-      ],
-      fullBody: [
-        'Modern professionals are drowning in course catalogs. When given a library with 8,000 video lectures, the paradox of choice creates immediate cognitive friction. Learners skip fundamentals to watch trendy topics, accumulate fragmented understanding, and abandon the roadmap after two weeks.',
-        'At Mentora, we adopted a level-gated progression architecture inspired by game loop design and Vygotsky’s Zone of Proximal Development. You cannot unlock distributed consensus until you have proven active recall mastery of local concurrency primitives.',
-        'By enforcing strict prerequisite gates, we reduce cognitive overwhelm to zero. Every session has exactly one next step, calibrated to your current edge of competence.'
-      ]
-    },
-    {
-      id: 2,
-      num: '02',
-      category: 'Algorithms',
-      tabLabel: 'ARTICLE 02',
-      subTabLabel: 'ALGORITHMIC ENGINE',
-      tabPosition: 'right',
-      theme: 'warm-amber',
-      primaryTabColor: '#F59E0B', // Warm Golden Amber like in reference Card 2
-      date: 'AUG 28, 2026',
-      readTime: '8 MIN READ',
-      title: 'Skill-Gap Diagnostics',
-      kicker: 'VECTOR EMBEDDINGS & MARKET DIFFING',
-      synopsis:
-        'Getting a new engineer from day one to shipping without the panic. Computing real-time weighted set differences between your current competency matrix and production standards.',
-      tags: ['#VectorEmbeddings', '#SkillMatrix', '#CareerMapping', '#Algorithms'],
-      takeaways: [
-        'Skills are not binary keywords; they are high-dimensional competency vectors.',
-        'Weighted set differences reveal the high-leverage 20% of skills that unlock 80% of job requirements.',
-        'Continuous calibration prevents engineers from wasting time over-learning commoditized skills.'
-      ],
-      fullBody: [
-        'Traditional job descriptions list 30 disconnected bullet points. An engineer sees "Kubernetes, Go, Kafka, React" and assumes they must master everything simultaneously.',
-        'Our diagnostic engine parses live engineering hiring bars, production incident post-mortems, and codebase archetypes into a multi-dimensional graph. When you complete a diagnostic drill, Mentora plots your vectors against target role archetypes.',
-        'The output is a surgical delta: instead of telling you to "learn backend", it prescribes three 6-minute drills on idempotency keys and retry storms.'
-      ]
-    },
-    {
-      id: 3,
-      num: '03',
-      category: 'Credentials',
-      tabLabel: 'ARTICLE 03',
-      subTabLabel: 'PROOF-OF-WORK',
-      tabPosition: 'left',
-      theme: 'deep-espresso',
-      primaryTabColor: '#EA580C', // Mentora Signature Flame Orange
-      date: 'AUG 12, 2026',
-      readTime: '5 MIN READ',
-      title: 'The 70% Mastery Standard',
-      kicker: 'VERIFIABLE SKILL CREDENTIALING',
-      synopsis:
-        'Eliminating participation trophies in favor of verifiable skill passports. Why genuine professional advancement requires non-trivial scenario assessments and peer-audited proof.',
-      tags: ['#ProofOfWork', '#SkillPassport', '#Assessments', '#Mastery'],
-      takeaways: [
-        'Video completion certificates have zero hiring credibility in technical markets.',
-        'A 70% evaluation threshold on randomized failure scenarios validates actual problem-solving intuition.',
-        'Skill Passports are cryptographically signed, verifiable by hiring leads with one click.'
-      ],
-      fullBody: [
-        'If everyone gets a certificate simply by playing a video at 2x speed in a background tab, the certificate becomes worthless. Engineering teams know this, which is why resumes covered in course badges are routinely ignored.',
-        'Mentora credentials operate on a strict proof-of-work principle. To earn a verified passport stamp in Kafka Architecture, you must troubleshoot a simulated broker partition under memory pressure.',
-        'Only when you score above 70% in execution correctness is the cryptographic credential issued to your public portfolio.'
-      ]
-    },
-    {
-      id: 4,
-      num: '04',
-      category: 'AI Systems',
-      tabLabel: 'ARTICLE 04',
-      subTabLabel: 'AI ARCHITECTURE',
-      tabPosition: 'right',
-      theme: 'warm-parchment',
-      primaryTabColor: '#D97706', // Ochre / Deep Amber
-      date: 'JUL 30, 2026',
-      readTime: '7 MIN READ',
-      title: 'Contextual AI Companion',
-      kicker: 'SOCRATIC PROMPTING & DEEP RECALL',
-      synopsis:
-        'How fine-tuned LLMs analyze code bottlenecks in real-time without giving away the answer. Teaching engineers how to think, unblock themselves, and build lasting intuition.',
-      tags: ['#ArtificialIntelligence', '#LLMs', '#SocraticTutoring', '#CodeReview'],
-      takeaways: [
-        'Copilots that give away answers cripple long-term problem-solving ability.',
-        'Socratic prompting guides the learner to discover the root cause themselves.',
-        'Inline contextual diffs train the brain to spot architectural smells before running code.'
-      ],
-      fullBody: [
-        'AI coding assistants that automatically paste the solution have created an illusion of competence. When the model goes away or an unprecedented production bug appears, engineers find themselves helpless.',
-        'Mentora’s AI companion is deliberately constrained by Socratic heuristics. If your database query causes an N+1 cascade, it doesn’t rewrite your query. It highlights the execution plan and asks: "Notice the query count in the inner loop. How could a single batch join change the latency curve?"',
-        'This shifts the mental model from mindless copy-pasting to deep, intuitive understanding.'
-      ]
-    }
-  ];
+  // Dynamically load from database / service
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const stored = await getBlogs();
+        if (isMounted && stored && stored.length > 0) {
+          const published = stored.filter((b) => b.status !== 'Draft');
+          setArticles(sortBlogsNumerically(published));
+        }
+      } catch (err) {
+        console.error('Error loading blogs:', err);
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
-  const categories = ['All', 'Pedagogy', 'Algorithms', 'Credentials', 'AI Systems'];
+  // Compute available categories dynamically
+  const categories = useMemo(() => {
+    const set = new Set<string>(['All']);
+    articles.forEach((a) => {
+      if (a.category) set.add(a.category);
+    });
+    return Array.from(set);
+  }, [articles]);
 
+  // Filter and enforce strict numerical ordering (#01, #02, #03, #04, #05, ...)
   const filteredArticles = useMemo(() => {
-    return articles.filter((article) => {
+    const list = articles.filter((article) => {
       const matchesCategory =
-        selectedCategory === 'All' || article.category === selectedCategory;
+        selectedCategory === 'All' ||
+        article.category?.toLowerCase() === selectedCategory.toLowerCase();
       const matchesSearch =
         searchQuery.trim() === '' ||
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.synopsis.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+        (article.tags && article.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())));
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
 
-  const handleShare = (article: Article) => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(
-        `${window.location.origin}/blogs#article-${article.id}`
-      );
+    return sortBlogsNumerically(list);
+  }, [articles, selectedCategory, searchQuery]);
+
+  const handleShare = (article: BlogArticle) => {
+    if (typeof window !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(`${window.location.origin}/blogs#article-${article.id}`);
       setCopiedId(article.id);
       setTimeout(() => setCopiedId(null), 2000);
     }
@@ -198,11 +92,10 @@ export default function BlogsPage() {
       <div className="absolute top-1/3 -left-40 w-96 h-96 bg-orange-600/10 rounded-full blur-[110px] pointer-events-none -z-10" />
       <div className="absolute bottom-1/4 -right-40 w-96 h-96 bg-amber-500/10 rounded-full blur-[110px] pointer-events-none -z-10" />
 
-      <div className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-12 sm:space-y-14">
+      <div className="py-10 sm:py-14 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-10 sm:space-y-12">
         
         {/* Header Section */}
         <div className="space-y-4 text-center max-w-3xl mx-auto">
-
           <h1
             className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight transition-colors ${
               isBright ? 'text-[#1C1917]' : 'text-white'
@@ -229,7 +122,7 @@ export default function BlogsPage() {
           </p>
 
           {/* Search & Category Filter Navigation */}
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-4xl mx-auto">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-4xl mx-auto">
             {/* Category Filter Pills */}
             <div className="flex flex-wrap items-center justify-center gap-1.5 p-1 rounded-2xl border backdrop-blur-md transition-colors w-full sm:w-auto bg-black/10 border-orange-950/20">
               {categories.map((cat) => (
@@ -270,7 +163,7 @@ export default function BlogsPage() {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -279,16 +172,65 @@ export default function BlogsPage() {
           </div>
         </div>
 
-        {/* Industrial Chamfered Folder Dossier Cards */}
+        {/* Industrial Chamfered Folder Dossier Cards strictly numerical */}
         <div className="space-y-10 sm:space-y-12">
-          {filteredArticles.map((article) => {
-            const isLeftTab = article.tabPosition === 'left';
-            const isWarmAmber = article.theme === 'warm-amber';
-            const isDarkCharcoal = article.theme === 'dark-charcoal';
-            const isDeepEspresso = article.theme === 'deep-espresso';
-            const isWarmParchment = article.theme === 'warm-parchment';
+          {filteredArticles.map((article, index) => {
+            const numInt =
+              parseInt(String(article.num || index + 1).replace(/\D/g, ''), 10) ||
+              index + 1;
+            const isLeftTab =
+              article.tabPosition !== undefined
+                ? article.tabPosition === 'left'
+                : numInt % 2 === 1;
 
-            // Background & typography styling matching reference image
+            // Resolve theme
+            const theme =
+              article.theme ||
+              (numInt === 1
+                ? 'dark-charcoal'
+                : numInt === 2
+                ? 'warm-amber'
+                : numInt === 3
+                ? 'deep-espresso'
+                : numInt === 4
+                ? 'warm-parchment'
+                : numInt === 5
+                ? 'dark-charcoal'
+                : numInt % 2 === 0
+                ? 'warm-amber'
+                : 'dark-charcoal');
+
+            const isWarmAmber = theme === 'warm-amber';
+            const isDeepEspresso = theme === 'deep-espresso';
+            const isWarmParchment = theme === 'warm-parchment';
+
+            // Tab colors
+            const primaryTabColor =
+              article.primaryTabColor ||
+              (numInt === 1
+                ? '#2563EB' // Cobalt Blue like reference
+                : numInt === 2
+                ? '#F59E0B' // Warm Golden Amber like reference
+                : numInt === 3
+                ? '#EA580C' // Flame Orange
+                : numInt === 4
+                ? '#10B981' // Emerald
+                : numInt === 5
+                ? '#3B82F6' // Electric Blue
+                : '#EA580C');
+
+            // Format tab labels cleanly (+ ARTICLE 01, + PEDAGOGY & SYSTEMS)
+            const formatTabLabel = (raw?: string, fallback = `ARTICLE ${String(numInt).padStart(2, '0')}`) => {
+              const text = (raw && raw.trim()) || fallback;
+              return text.startsWith('+') ? text : `+ ${text}`;
+            };
+            const primaryTabLabel = formatTabLabel(article.tabLabel, `ARTICLE ${String(numInt).padStart(2, '0')}`);
+            const subTabLabel = formatTabLabel(
+              article.subTabLabel,
+              (article.category || 'SYSTEMS').toUpperCase()
+            );
+
+            // Dossier folder styling
             let cardBg = '#0e0a07';
             let cardBorder = 'rgba(234, 88, 12, 0.25)';
             let titleColor = '#FFFFFF';
@@ -332,19 +274,18 @@ export default function BlogsPage() {
                 {/* Chamfered Top Tab Notch */}
                 {isLeftTab ? (
                   <div className="flex items-end -mb-[1px] relative z-10 pl-3 sm:pl-8 select-none">
-                    {/* Primary Tab (e.g. Cobalt Blue or Flame Orange) */}
+                    {/* Primary Tab (e.g. Cobalt Blue + ARTICLE 01) */}
                     <div
                       className="px-5 sm:px-7 py-2 text-[11px] sm:text-xs font-mono font-black uppercase tracking-wider text-white flex items-center gap-1.5 shadow-sm"
                       style={{
-                        backgroundColor: article.primaryTabColor,
+                        backgroundColor: primaryTabColor,
                         clipPath: 'polygon(0 0, calc(100% - 14px) 0, 100% 100%, 0 100%)',
                       }}
                     >
-                      <span className="text-[10px]">✦</span>
-                      <span>{article.tabLabel}</span>
+                      <span>{primaryTabLabel}</span>
                     </div>
 
-                    {/* Secondary Chamfered Tab */}
+                    {/* Secondary Chamfered Tab (+ PEDAGOGY & SYSTEMS) */}
                     <div
                       className="px-5 sm:px-7 py-2 text-[11px] sm:text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 border-t border-l"
                       style={{
@@ -354,13 +295,12 @@ export default function BlogsPage() {
                         clipPath: 'polygon(0 0, calc(100% - 18px) 0, 100% 100%, 0 100%)',
                       }}
                     >
-                      <span className="text-[10px]">✦</span>
-                      <span>{article.subTabLabel}</span>
+                      <span>{subTabLabel}</span>
                     </div>
                   </div>
                 ) : (
                   <div className="flex items-end justify-end -mb-[1px] relative z-10 pr-6 sm:pr-16 select-none">
-                    {/* Offset Chamfered Tab on Right (e.g. Card 2 in reference image) */}
+                    {/* Offset Chamfered Tab on Right (e.g. Card 2 + ARTICLE 02 in reference) */}
                     <div
                       className="px-6 sm:px-8 py-2 text-[11px] sm:text-xs font-mono font-black uppercase tracking-wider flex items-center gap-1.5 border-t border-l border-r shadow-xs"
                       style={{
@@ -370,8 +310,7 @@ export default function BlogsPage() {
                         clipPath: 'polygon(16px 0, calc(100% - 16px) 0, 100% 100%, 0 100%)',
                       }}
                     >
-                      <span className="text-[10px]">✦</span>
-                      <span>{article.tabLabel}</span>
+                      <span>{primaryTabLabel}</span>
                     </div>
                   </div>
                 )}
@@ -388,10 +327,10 @@ export default function BlogsPage() {
                 >
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-center">
                     
-                    {/* Left Column: Metadata, Headline, Description, and CTA */}
+                    {/* Left Column: Metadata, Headline, Description, Tags, and CTA */}
                     <div className="md:col-span-6 lg:col-span-5 space-y-4 sm:space-y-5">
                       
-                      {/* Date & Sub-Category Marker */}
+                      {/* Date & Read Time */}
                       <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider uppercase">
                         <span
                           className="inline-block w-2.5 h-2.5 rounded-[2px]"
@@ -421,22 +360,27 @@ export default function BlogsPage() {
 
                       {/* Tags */}
                       <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                        {article.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-[10px] font-mono font-bold px-2 py-0.5 rounded border"
-                            style={{
-                              backgroundColor: isWarmAmber ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)',
-                              color: isWarmAmber ? '#180E07' : '#CBD5E1',
-                              borderColor: isWarmAmber ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.15)',
-                            }}
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                        {article.tags &&
+                          article.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="text-[10px] font-mono font-bold px-2 py-0.5 rounded border"
+                              style={{
+                                backgroundColor: isWarmAmber
+                                  ? 'rgba(0,0,0,0.08)'
+                                  : 'rgba(255,255,255,0.08)',
+                                color: isWarmAmber ? '#180E07' : '#CBD5E1',
+                                borderColor: isWarmAmber
+                                  ? 'rgba(0,0,0,0.15)'
+                                  : 'rgba(255,255,255,0.15)',
+                              }}
+                            >
+                              {tag.startsWith('#') ? tag : `#${tag}`}
+                            </span>
+                          ))}
                       </div>
 
-                      {/* Read Article CTA Link (Exactly styled like VIEW PROJECT ↗) */}
+                      {/* Read Article CTA Link */}
                       <div className="pt-2">
                         <button
                           type="button"
@@ -464,12 +408,12 @@ export default function BlogsPage() {
                           className="absolute -top-3 sm:-top-3.5 -left-3 sm:-left-3.5 w-14 sm:w-16 h-5 sm:h-6 pointer-events-none z-20 select-none"
                           style={{
                             background:
-                              'linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.35) 100%)',
+                              'linear-gradient(135deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.38) 100%)',
                             backdropFilter: 'blur(3px)',
                             WebkitBackdropFilter: 'blur(3px)',
-                            border: '1px solid rgba(255,255,255,0.65)',
+                            border: '1px solid rgba(255,255,255,0.70)',
                             transform: 'rotate(-32deg)',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.18)',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.20)',
                           }}
                         />
 
@@ -478,12 +422,12 @@ export default function BlogsPage() {
                           className="absolute -top-3 sm:-top-3.5 -right-3 sm:-right-3.5 w-14 sm:w-16 h-5 sm:h-6 pointer-events-none z-20 select-none"
                           style={{
                             background:
-                              'linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.35) 100%)',
+                              'linear-gradient(135deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.38) 100%)',
                             backdropFilter: 'blur(3px)',
                             WebkitBackdropFilter: 'blur(3px)',
-                            border: '1px solid rgba(255,255,255,0.65)',
+                            border: '1px solid rgba(255,255,255,0.70)',
                             transform: 'rotate(32deg)',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.18)',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.20)',
                           }}
                         />
 
@@ -496,9 +440,9 @@ export default function BlogsPage() {
                             borderColor: isWarmAmber ? '#D97706' : 'rgba(255,255,255,0.12)',
                           }}
                         >
-                          {/* Rich Visual Content Based on Article Theme */}
-                          {article.id === 1 && (
-                            /* Mobile App UI Screen with Skill Progression (Matching Card 1 Phone in reference!) */
+                          {/* Rich Visual Mockups Based on Article Number */}
+                          {numInt === 1 && (
+                            /* Mobile App UI Screen with Skill Progression (Matching Card 1 in reference!) */
                             <div className="p-4 sm:p-6 bg-gradient-to-br from-[#120d09] via-[#090604] to-[#150e08] text-white">
                               {/* Device Header */}
                               <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10 text-[10px] font-mono text-zinc-400">
@@ -559,15 +503,14 @@ export default function BlogsPage() {
                             </div>
                           )}
 
-                          {article.id === 2 && (
-                            /* Engineering Team Workspace Mockup (Matching Card 2 Photo in reference!) */
+                          {numInt === 2 && (
+                            /* Engineering Team Workspace Mockup (Matching Card 2 in reference!) */
                             <div className="relative p-5 sm:p-7 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black text-white">
                               <div className="flex items-center justify-between pb-3 mb-3 border-b border-zinc-800 text-[10px] font-mono text-zinc-400">
                                 <span>VECTOR DIFFERENTIAL DIAGNOSTICS</span>
                                 <span className="text-amber-400 font-bold">TARGET: STAFF PLATFORM</span>
                               </div>
 
-                              {/* Workspace Terminal / Multi-monitor Simulation */}
                               <div className="space-y-3 font-mono text-[10px]">
                                 <div className="p-3 rounded-lg bg-black/80 border border-zinc-800 space-y-1.5">
                                   <div className="flex items-center gap-2 text-zinc-400">
@@ -599,7 +542,7 @@ export default function BlogsPage() {
                             </div>
                           )}
 
-                          {article.id === 3 && (
+                          {numInt === 3 && (
                             /* Cryptographic Skill Passport Badge */
                             <div className="p-5 sm:p-7 bg-gradient-to-br from-[#1c0f07] via-[#0f0905] to-[#1a0e08] text-white">
                               <div className="flex items-center justify-between pb-3 mb-4 border-b border-orange-500/20 text-[10px] font-mono text-orange-400">
@@ -639,7 +582,7 @@ export default function BlogsPage() {
                             </div>
                           )}
 
-                          {article.id === 4 && (
+                          {numInt === 4 && (
                             /* Interactive Code Terminal with Socratic AI Hints */
                             <div className="p-5 sm:p-7 bg-gradient-to-br from-[#0c0906] via-[#140e0a] to-[#080604] text-white font-mono">
                               <div className="flex items-center justify-between pb-3 mb-3 border-b border-amber-500/20 text-[10px] text-zinc-400">
@@ -660,9 +603,87 @@ export default function BlogsPage() {
                             </div>
                           )}
 
-                          {/* Hover Overlay Hint */}
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/mockup:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                            <span className="px-4 py-1.5 rounded-full bg-orange-600 text-white font-mono font-bold text-xs uppercase tracking-wider shadow-lg">
+                          {numInt === 5 && (
+                            /* Agentic AI Autonomous Reasoning Loop */
+                            <div className="p-5 sm:p-7 bg-gradient-to-br from-[#0a0d14] via-[#06090e] to-[#0d121c] text-white font-mono">
+                              <div className="flex items-center justify-between pb-3 mb-3 border-b border-blue-500/20 text-[10px] text-zinc-400">
+                                <span className="text-blue-400 font-bold">
+                                  AGENTIC REASONING // RECURSIVE REFLECTION
+                                </span>
+                                <span className="flex items-center gap-1.5 text-emerald-400">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                                  ACTIVE LOOP
+                                </span>
+                              </div>
+
+                              <div className="space-y-2.5 text-[9px]">
+                                <div className="p-3 rounded-lg bg-black/80 border border-blue-500/30 space-y-1.5">
+                                  <div className="flex items-center justify-between text-zinc-400">
+                                    <span className="text-blue-400">
+                                      λ agent.executeTask(goal: &quot;Fix distributed deadlock in Raft&quot;)
+                                    </span>
+                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">
+                                      STEP 03/04
+                                    </span>
+                                  </div>
+                                  <div className="text-zinc-300 text-[8.5px] leading-relaxed">
+                                    <span className="text-zinc-500">[THOUGHT]</span> Inspecting mutex acquisition order across heartbeat goroutines.<br />
+                                    <span className="text-amber-400">[TOOL_CALL]</span> <span className="text-zinc-200">run_profiler(&quot;--detect-deadlocks&quot;, timeout=&quot;500ms&quot;)</span><br />
+                                    <span className="text-emerald-400">[VERIFY]</span> 0 circular locks detected. Invariant satisfied.
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-2 text-center text-[9px]">
+                                  <div className="p-2 rounded bg-blue-950/40 border border-blue-900/40">
+                                    <div className="text-zinc-400">Test-Time Compute</div>
+                                    <div className="text-blue-400 font-bold text-xs">4.2 kFLOPs</div>
+                                  </div>
+                                  <div className="p-2 rounded bg-blue-950/40 border border-blue-900/40">
+                                    <div className="text-zinc-400">Self-Correction</div>
+                                    <div className="text-emerald-400 font-bold text-xs">2 Passes</div>
+                                  </div>
+                                  <div className="p-2 rounded bg-blue-950/40 border border-blue-900/40">
+                                    <div className="text-zinc-400">Deterministic Score</div>
+                                    <div className="text-white font-bold text-xs">98.5%</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {numInt > 5 && (
+                            /* Fallback for dynamically created admin blogs */
+                            article.imageUrl ? (
+                              <div className="relative h-48 sm:h-56 w-full overflow-hidden">
+                                <Image
+                                  src={article.imageUrl}
+                                  alt={article.title}
+                                  fill
+                                  className="object-cover transition-transform duration-500 group-hover/mockup:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[10px] font-mono text-zinc-300">
+                                  <span>{article.category}</span>
+                                  <span>{article.readTime}</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="p-5 sm:p-7 bg-gradient-to-br from-[#120d09] via-[#090604] to-[#150e08] text-white font-mono space-y-3">
+                                <div className="flex items-center justify-between pb-2 border-b border-white/10 text-[10px] text-orange-400">
+                                  <span>MENTORA // RESEARCH DOSSIER</span>
+                                  <span>{article.category}</span>
+                                </div>
+                                <div className="p-3 rounded-lg bg-black/60 border border-white/10 text-[9px] text-zinc-300 space-y-1">
+                                  <div className="text-orange-300 font-bold">{article.title}</div>
+                                  <div className="text-zinc-400 line-clamp-2">{article.synopsis}</div>
+                                </div>
+                              </div>
+                            )
+                          )}
+
+                          {/* Hover Overlay Hint (Matching screenshot with prominent full dossier badge) */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/mockup:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-10">
+                            <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-orange-600 to-amber-500 text-white font-mono font-bold text-xs uppercase tracking-wider shadow-xl border border-white/20">
                               CLICK TO READ FULL DOSSIER ↗
                             </span>
                           </div>
@@ -690,68 +711,14 @@ export default function BlogsPage() {
                 setSelectedCategory('All');
                 setSearchQuery('');
               }}
-              className="px-4 py-2 rounded-xl bg-orange-500 text-white font-mono text-xs font-bold"
+              className="px-4 py-2 rounded-xl bg-orange-500 text-white font-mono text-xs font-bold cursor-pointer"
             >
               Reset Filters
             </button>
           </div>
         )}
 
-        {/* Newsletter Dossier Card */}
-        <div
-          className={`relative rounded-3xl border p-8 sm:p-12 shadow-2xl transition-all ${
-            isBright
-              ? 'bg-gradient-to-r from-white via-[#FFF7ED] to-white border-orange-200'
-              : 'bg-gradient-to-r from-[#120a06] via-[#180e08] to-[#120a06] border-orange-900/50'
-          }`}
-        >
-          {/* Top Chamfered Folder Accent */}
-          <div className="absolute -top-3.5 left-8 px-4 py-1 text-[10px] font-mono font-bold uppercase tracking-wider bg-orange-600 text-white rounded-t-md">
-            ✦ DISPATCHES ARCHIVE // SUBSCRIBE
-          </div>
 
-          <div className="max-w-2xl mx-auto text-center space-y-4">
-            <h3
-              className={`text-2xl sm:text-3xl font-black tracking-tight ${
-                isBright ? 'text-[#1C1917]' : 'text-white'
-              }`}
-            >
-              Receive Engineering Dispatches
-            </h3>
-            <p
-              className={`text-xs sm:text-sm leading-relaxed ${
-                isBright ? 'text-[#57534E]' : 'text-zinc-400'
-              }`}
-            >
-              Bi-weekly deep dives into cognitive scaffolding, verifiable skill credentialing, and developer velocity. Zero spam, strictly technical.
-            </p>
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                alert('Thank you for subscribing to Mentora Dispatches!');
-              }}
-              className="flex flex-col sm:flex-row items-center gap-3 pt-2 max-w-md mx-auto"
-            >
-              <input
-                type="email"
-                required
-                placeholder="engineer@company.com"
-                className={`w-full px-4 py-3 rounded-xl border text-xs font-mono focus:outline-none transition-colors ${
-                  isBright
-                    ? 'bg-white border-[#E3D4C5] text-[#1C1917] placeholder-zinc-400 focus:border-orange-500'
-                    : 'bg-black/60 border-orange-950/80 text-white placeholder-zinc-500 focus:border-orange-500'
-                }`}
-              />
-              <button
-                type="submit"
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-mono font-bold text-xs uppercase tracking-wider shadow-lg whitespace-nowrap transition-transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-              >
-                Subscribe
-              </button>
-            </form>
-          </div>
-        </div>
 
       </div>
 
@@ -773,7 +740,10 @@ export default function BlogsPage() {
             >
               <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase text-orange-500">
                 <span>✦</span>
-                <span>{activeArticle.tabLabel} // {activeArticle.category}</span>
+                <span>
+                  {activeArticle.tabLabel || `ARTICLE ${activeArticle.num}`} //{' '}
+                  {activeArticle.category}
+                </span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -809,7 +779,7 @@ export default function BlogsPage() {
               
               <div className="space-y-3">
                 <div className="text-xs font-mono font-bold text-orange-500 uppercase">
-                  {activeArticle.kicker} • {activeArticle.date} • {activeArticle.readTime}
+                  {activeArticle.kicker || (activeArticle.category?.toUpperCase() || 'SYSTEMS')} • {activeArticle.date} • {activeArticle.readTime}
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
                   {activeArticle.title}
@@ -824,35 +794,39 @@ export default function BlogsPage() {
               </div>
 
               {/* Key Takeaways Box */}
-              <div
-                className={`p-5 rounded-2xl border space-y-2.5 ${
-                  isBright
-                    ? 'bg-[#FFF7ED] border-[#FED7AA]'
-                    : 'bg-orange-950/40 border-orange-800/40'
-                }`}
-              >
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-orange-500 uppercase">
-                  <Sparkles className="w-4 h-4" />
-                  <span>Key Architectural Insights</span>
+              {activeArticle.takeaways && activeArticle.takeaways.length > 0 && (
+                <div
+                  className={`p-5 rounded-2xl border space-y-2.5 ${
+                    isBright
+                      ? 'bg-[#FFF7ED] border-[#FED7AA]'
+                      : 'bg-orange-950/40 border-orange-800/40'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 text-xs font-mono font-bold text-orange-500 uppercase">
+                    <Sparkles className="w-4 h-4" />
+                    <span>Key Architectural Insights</span>
+                  </div>
+                  <ul className="space-y-1.5 text-xs sm:text-sm leading-relaxed">
+                    {activeArticle.takeaways.map((t, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+                        <span>{t}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-1.5 text-xs sm:text-sm leading-relaxed">
-                  {activeArticle.takeaways.map((t, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
-                      <span>{t}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              )}
 
               {/* Full Article Paragraphs */}
-              <div className="space-y-4 text-xs sm:text-sm leading-relaxed">
-                {activeArticle.fullBody.map((paragraph, idx) => (
-                  <p key={idx} className={isBright ? 'text-[#44403C]' : 'text-zinc-300'}>
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
+              {activeArticle.fullBody && activeArticle.fullBody.length > 0 && (
+                <div className="space-y-4 text-xs sm:text-sm leading-relaxed">
+                  {activeArticle.fullBody.map((paragraph, idx) => (
+                    <p key={idx} className={isBright ? 'text-[#44403C]' : 'text-zinc-300'}>
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              )}
 
               {/* Tags & Author Stamp */}
               <div
@@ -861,17 +835,18 @@ export default function BlogsPage() {
                 }`}
               >
                 <div className="flex flex-wrap gap-1.5">
-                  {activeArticle.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2.5 py-1 rounded-md bg-orange-500/10 text-orange-500 border border-orange-500/20 font-bold"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                  {activeArticle.tags &&
+                    activeArticle.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2.5 py-1 rounded-md bg-orange-500/10 text-orange-500 border border-orange-500/20 font-bold"
+                      >
+                        {tag.startsWith('#') ? tag : `#${tag}`}
+                      </span>
+                    ))}
                 </div>
 
-                <span>PUBLISHED BY MENTORA RESEARCH LABS</span>
+                <span>PUBLISHED BY {activeArticle.author?.toUpperCase() || 'MENTORA RESEARCH LABS'}</span>
               </div>
             </div>
           </div>

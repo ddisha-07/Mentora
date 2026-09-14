@@ -215,6 +215,7 @@ export default function HomePage() {
   const { isBright } = useTheme();
   const [activeFeature, setActiveFeature] = useState(1);
 
+
   return (
     <div
       className={`relative overflow-hidden bg-retro-dense-grid transition-colors duration-200 ${
@@ -277,7 +278,13 @@ export default function HomePage() {
               }`}
             >
               Don&apos;t just learn.{' '}
-              <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 bg-clip-text text-transparent">
+              <span
+                className={`bg-clip-text text-transparent font-extrabold ${
+                  isBright
+                    ? 'bg-gradient-to-r from-[#EA580C] via-orange-600 to-[#C2410C] drop-shadow-[0_1px_1px_rgba(234,88,12,0.25)]'
+                    : 'bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400'
+                }`}
+              >
                 Evolve!
               </span>
             </h2>
@@ -388,20 +395,19 @@ export default function HomePage() {
           
           {/* Section Header */}
           <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <span
-              className={`text-xs font-mono font-bold uppercase tracking-widest ${
-                isBright ? 'text-[#EA580C]' : 'text-orange-400'
-              }`}
-            >
-              Methodology
-            </span>
             <h2
               className={`text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight ${
                 isBright ? 'text-[#1C1917]' : 'text-white'
               }`}
             >
               How Mentora{' '}
-              <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 bg-clip-text text-transparent">
+              <span
+                className={`bg-clip-text text-transparent ${
+                  isBright
+                    ? 'bg-gradient-to-r from-[#EA580C] via-orange-600 to-[#C2410C]'
+                    : 'bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400'
+                }`}
+              >
                 Works
               </span>
             </h2>
@@ -501,17 +507,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           {/* Header Area matching reference image */}
           <div className="text-center space-y-3.5 max-w-2xl mx-auto">
-            <div
-              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                isBright
-                  ? 'bg-white text-[#EA580C] border border-[#EAE0D5] shadow-xs'
-                  : 'bg-orange-950/70 text-orange-300 border border-orange-500/40 shadow-inner'
-              }`}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-              <span>Platform Features</span>
-            </div>
-
             <h2
               className={`text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight ${
                 isBright ? 'text-[#1C1917]' : 'text-white'
@@ -748,6 +743,8 @@ export default function HomePage() {
         </div>
       </section>
 
+
+
       {/* Bottom Conversion Banner - Redesigned to match attached image layout */}
       <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
@@ -800,6 +797,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+
     </div>
   );
 }

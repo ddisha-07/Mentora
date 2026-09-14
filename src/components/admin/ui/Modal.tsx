@@ -35,7 +35,7 @@ export default function Modal({ open, onClose, title, subtitle, children, footer
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/80 backdrop-blur-md"
             onClick={onClose}
           />
           <motion.div
@@ -44,28 +44,28 @@ export default function Modal({ open, onClose, title, subtitle, children, footer
             exit={{ opacity: 0, y: 10, scale: 0.97 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className={classNames(
-              "relative w-full glass-strong rounded-xl2 shadow-glass max-h-[88vh] flex flex-col",
+              "relative w-full bg-[#101217] border border-white/12 rounded-2xl shadow-2xl max-h-[88vh] flex flex-col z-10 overflow-hidden",
               widths[size] || widths.md
             )}
             role="dialog"
             aria-modal="true"
           >
-            <div className="flex items-start justify-between px-6 py-5 border-b border-line-soft shrink-0">
+            <div className="flex items-start justify-between px-6 py-5 border-b border-white/10 bg-[#13151c] shrink-0">
               <div>
                 <h2 className="text-lg font-semibold text-ink-100 tracking-tight">{title}</h2>
                 {subtitle && <p className="text-sm text-ink-500 mt-0.5">{subtitle}</p>}
               </div>
               <button
                 onClick={onClose}
-                className="text-ink-500 hover:text-ink-100 transition-colors p-1 rounded-lg hover:bg-white/5 focus-ring"
+                className="text-ink-500 hover:text-ink-100 transition-colors p-1.5 rounded-lg hover:bg-white/10 focus-ring"
                 aria-label="Close"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 overflow-y-auto">{children}</div>
+            <div className="px-6 py-5 overflow-y-auto bg-[#0d0f14] flex-1">{children}</div>
             {footer && (
-              <div className="px-6 py-4 border-t border-line-soft flex items-center justify-end gap-2 shrink-0">
+              <div className="px-6 py-4 border-t border-white/10 bg-[#13151c] flex items-center justify-end gap-2 shrink-0">
                 {footer}
               </div>
             )}

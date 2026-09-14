@@ -8,6 +8,7 @@ import * as scheduleService from "@/lib/admin/services/scheduleService";
 import * as communityService from "@/lib/admin/services/communityService";
 import * as taskService from "@/lib/admin/services/taskService";
 import * as leaderboardService from "@/lib/admin/services/leaderboardService";
+import * as blogService from "@/lib/admin/services/blogService";
 import { useToast } from "./ToastContext";
 
 const AdminDataContext = createContext<any>(null);
@@ -22,11 +23,12 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
   const [communities, setCommunities] = useState<any[]>([]);
   const [tasks, setTasks] = useState<any[]>([]);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const [u, sk, c, ev, com, t, lb] = await Promise.all([
+      const [u, sk, c, ev, com, t, lb, blg] = await Promise.all([
         userService.getUsers(),
         skillService.getSkills(),
         courseService.getCourses(),
@@ -34,6 +36,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
         communityService.getCommunities(),
         taskService.getTasks(),
         leaderboardService.getLeaderboard(),
+        blogService.getBlogs(),
       ]);
       setUsers(u);
       setSkills(sk);
@@ -42,6 +45,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       setCommunities(com);
       setTasks(t);
       setLeaderboard(lb);
+      setBlogs(blg);
       setLoading(false);
     })();
   }, []);
@@ -238,6 +242,38 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     toast.success("Points updated");
   }, [toast]);
 
+  // ---- Blogs ----
+  const addBlog = useCallback(async (draft: any) => {
+    const created = await blogService.addBlog(draft);
+    setBlogs((prev) => [created, ...prev]);
+    toast.success(`Blog "${created.title}" published`);
+    return created;
+  }, [toast]);
+
+  const editBlog = useCallback(async (id: string, patch: any) => {
+    const updated = await blogService.updateBlog(id, patch);
+    if (updated) {
+      setBlogs((prev) => prev.map((b) => (b.id === id ? updated : b)));
+      toast.success("Blog updated");
+    }
+    return updated;
+  }, [toast]);
+
+  const removeBlog = useCallback(async (id: string) => {
+    await blogService.deleteBlog(id);
+    setBlogs((prev) => prev.filter((b) => b.id !== id));
+    toast.success("Blog removed");
+  }, [toast]);
+
+  const setBlogStatus = useCallback(async (id: string, status: "Published" | "Draft") => {
+    const updated = await blogService.setBlogStatus(id, status);
+    if (updated) {
+      setBlogs((prev) => prev.map((b) => (b.id === id ? updated : b)));
+      toast.success(`Blog marked as ${status}`);
+    }
+    return updated;
+  }, [toast]);
+
   const value = useMemo(
     () => ({
       loading,
@@ -249,12 +285,14 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       communities, addCommunity, editCommunity, removeCommunity, addMember, removeMember,
       tasks, addTask, editTask, removeTask,
       leaderboard, addPoints, removePoints, setPoints,
+      blogs, addBlog, editBlog, removeBlog, setBlogStatus,
     }),
-    [loading, users, skills, courses, events, communities, tasks, leaderboard,
+    [loading, users, skills, courses, events, communities, tasks, leaderboard, blogs,
       addUser, editUser, removeUser, addSkill, editSkill, removeSkill,
       addCourse, editCourse, removeCourse, setCourseStatus, addModule, deleteModule, addLesson, deleteLesson,
       addEvent, editEvent, removeEvent, addCommunity, editCommunity, removeCommunity, addMember, removeMember,
-      addTask, editTask, removeTask, addPoints, removePoints, setPoints]
+      addTask, editTask, removeTask, addPoints, removePoints, setPoints,
+      addBlog, editBlog, removeBlog, setBlogStatus]
   );
 
   return <AdminDataContext.Provider value={value}>{children}</AdminDataContext.Provider>;

@@ -13,8 +13,7 @@ import {
   HelpCircle,
   ArrowRight,
   Search,
-  Check,
-  Flame
+  Check
 } from 'lucide-react';
 
 interface FAQItem {
@@ -173,12 +172,6 @@ export default function FAQsPage() {
           
           {/* Left Title & Lead Content */}
           <div className="md:col-span-8 space-y-3 sm:space-y-4">
-            {/* Bold FAQ Brand Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black font-mono text-xs tracking-wider shadow-sm">
-              <Flame className="w-3.5 h-3.5 fill-white" />
-              <span>FAQ</span>
-            </div>
-
             {/* Editorial Headline matching reference design */}
             <h1
               className={`text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.15] transition-colors ${

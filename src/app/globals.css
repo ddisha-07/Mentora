@@ -93,15 +93,15 @@ body {
 }
 
 .glass {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(180deg, rgba(18, 20, 26, 0.88), rgba(12, 14, 18, 0.94));
   border: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
 .glass-strong {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(22, 24, 31, 0.96), rgba(14, 16, 21, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
 }
@@ -187,13 +187,13 @@ html.bright div.text-white:not([class*="bg-"]):not([class*="from-"]) {
 }
 
 /* Buttons and Pills on Vibrant Backgrounds MUST ALWAYS RETAIN CRISP WHITE TEXT */
-html.bright [class*="bg-orange-500"],
-html.bright [class*="bg-orange-600"],
-html.bright [class*="bg-[#EA580C]"],
-html.bright [class*="from-orange-500"],
-html.bright [class*="from-orange-600"],
-html.bright [class*="from-amber-400"],
-html.bright [class*="from-amber-500"],
+html.bright [class*="bg-orange-500"]:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
+html.bright [class*="bg-orange-600"]:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
+html.bright [class*="bg-[#EA580C]"]:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
+html.bright [class*="from-orange-500"]:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
+html.bright [class*="from-orange-600"]:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
+html.bright [class*="from-amber-400"]:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
+html.bright [class*="from-amber-500"]:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
 html.bright button[class*="from-orange"],
 html.bright button[class*="from-amber"],
 html.bright a[class*="from-orange"],
@@ -202,6 +202,14 @@ html.bright button.text-white,
 html.bright a.text-white,
 html.bright .btn-white-text {
   color: #FFFFFF !important;
+}
+
+/* Ensure gradient text elements always keep transparent text fill so gradients show through */
+html.bright [class*="bg-clip-text"],
+html.bright [class*="text-transparent"],
+[class*="bg-clip-text"],
+[class*="text-transparent"] {
+  -webkit-text-fill-color: transparent !important;
 }
 
 /* Cards & Surface Containers in Bright Mode */
