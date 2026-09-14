@@ -19,6 +19,7 @@ interface FannedCourse {
   progressPercent: number;
   quizzesCount: number;
   totalModules: number;
+  duration: string;
   xpPoints: number;
   cardColor: string;
   accentGradient: string;
@@ -43,6 +44,7 @@ const fannedCourses: FannedCourse[] = [
     progressPercent: 72,
     quizzesCount: 8,
     totalModules: 14,
+    duration: '8.5 hrs',
     xpPoints: 2450,
     cardColor: 'from-[#321c10] via-[#22140b] to-[#140c06]',
     accentGradient: 'from-orange-500 via-amber-500 to-yellow-500',
@@ -71,6 +73,7 @@ const fannedCourses: FannedCourse[] = [
     progressPercent: 58,
     quizzesCount: 6,
     totalModules: 12,
+    duration: '6.0 hrs',
     xpPoints: 1850,
     cardColor: 'from-[#1a2336] via-[#121927] to-[#0c101a]',
     accentGradient: 'from-blue-500 via-indigo-500 to-cyan-400',
@@ -98,6 +101,7 @@ const fannedCourses: FannedCourse[] = [
     progressPercent: 45,
     quizzesCount: 5,
     totalModules: 10,
+    duration: '5.5 hrs',
     xpPoints: 1620,
     cardColor: 'from-[#102b20] via-[#0c1e16] to-[#07130e]',
     accentGradient: 'from-emerald-500 via-teal-500 to-green-400',
@@ -124,6 +128,7 @@ const fannedCourses: FannedCourse[] = [
     progressPercent: 30,
     quizzesCount: 4,
     totalModules: 8,
+    duration: '4.0 hrs',
     xpPoints: 1400,
     cardColor: 'from-[#302416] via-[#21180e] to-[#140e08]',
     accentGradient: 'from-amber-600 via-orange-600 to-yellow-500',
@@ -205,15 +210,20 @@ const historyItems: HistoryItem[] = [
 export default function CoursesPage() {
   const { isBright } = useTheme();
   const [selectedCourseIndex, setSelectedCourseIndex] = useState<number>(0);
-  const [viewMode, setViewMode] = useState<'creator' | 'collector'>('creator'); // Creator / Collector equivalent: Enrolled / Catalog
+  const [hoveredCourseIndex, setHoveredCourseIndex] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<'recommended' | 'saved'>('recommended');
+  const [savedCourseIds, setSavedCourseIds] = useState<string[]>(['postgres-opt', 'cloud-architect']);
   const [historyFilter, setHistoryFilter] = useState<'all' | 'eval' | 'milestone'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [syllabusModalOpen, setSyllabusModalOpen] = useState(false);
   const [enrollModalOpen, setEnrollModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const activeCourse = fannedCourses[selectedCourseIndex] || fannedCourses[0];
+  const displayedCourses = viewMode === 'saved'
+    ? fannedCourses.filter((c) => savedCourseIds.includes(c.id))
+    : fannedCourses;
+
+  const activeCourse = displayedCourses[selectedCourseIndex] || displayedCourses[0] || fannedCourses[0];
 
   const bgPage = isBright ? '#FAF4EE' : '#120D09';
   const cardBg = isBright ? '#FFFFFF' : '#1A130D';
@@ -235,7 +245,7 @@ export default function CoursesPage() {
     >
       <DashboardSidebar />
 
-      <main className="flex-1 ml-[72px] xl:ml-[240px] min-h-screen overflow-y-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 ml-[76px] lg:ml-[84px] min-h-screen overflow-y-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="max-w-7xl mx-auto space-y-6">
 
           {/* Toast Alert */}
@@ -276,33 +286,39 @@ export default function CoursesPage() {
               >
                 <button
                   type="button"
-                  onClick={() => setViewMode('creator')}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                    viewMode === 'creator'
+                  onClick={() => {
+                    setViewMode('recommended');
+                    setSelectedCourseIndex(0);
+                  }}
+                  className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
+                    viewMode === 'recommended'
                       ? 'bg-white text-zinc-900 shadow-sm'
                       : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                   style={{
-                    background: viewMode === 'creator' ? (isBright ? '#1C1917' : '#FFFFFF') : 'transparent',
-                    color: viewMode === 'creator' ? (isBright ? '#FFFFFF' : '#1C1917') : undefined,
+                    background: viewMode === 'recommended' ? (isBright ? '#1C1917' : '#FFFFFF') : 'transparent',
+                    color: viewMode === 'recommended' ? (isBright ? '#FFFFFF' : '#1C1917') : undefined,
                   }}
                 >
-                  Enrolled
+                  Recommended Courses
                 </button>
                 <button
                   type="button"
-                  onClick={() => setViewMode('collector')}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                    viewMode === 'collector'
+                  onClick={() => {
+                    setViewMode('saved');
+                    setSelectedCourseIndex(0);
+                  }}
+                  className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
+                    viewMode === 'saved'
                       ? 'bg-white text-zinc-900 shadow-sm'
                       : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                   style={{
-                    background: viewMode === 'collector' ? (isBright ? '#1C1917' : '#FFFFFF') : 'transparent',
-                    color: viewMode === 'collector' ? (isBright ? '#FFFFFF' : '#1C1917') : undefined,
+                    background: viewMode === 'saved' ? (isBright ? '#1C1917' : '#FFFFFF') : 'transparent',
+                    color: viewMode === 'saved' ? (isBright ? '#FFFFFF' : '#1C1917') : undefined,
                   }}
                 >
-                  Catalog
+                  Saved Courses
                 </button>
               </div>
             </div>
@@ -354,115 +370,184 @@ export default function CoursesPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl sm:text-2xl font-black tracking-tight" style={{ color: textPrimary }}>
-                    Recent Courses
+                    {viewMode === 'saved' ? 'Saved Courses' : 'Recommended Courses'}
                   </h2>
                   <span className="text-xs font-mono font-bold text-orange-500">
-                    {fannedCourses.length} IN PROGRESS
+                    {displayedCourses.length} {viewMode === 'saved' ? 'SAVED' : 'FOR YOU'}
                   </span>
                 </div>
 
                 {/* FANNED CARD DECK (Overlapping phone-proportioned vertical cards) */}
-                <div className="relative h-[320px] sm:h-[340px] w-full overflow-x-auto overflow-y-visible flex items-center py-4 px-2" style={{ scrollbarWidth: 'none' }}>
-                  <div className="relative flex items-center min-w-[560px] sm:min-w-[620px] h-full">
-                    {fannedCourses.map((course, idx) => {
-                      const isSelected = idx === selectedCourseIndex;
-                      // Dynamic cascading horizontal offset
-                      const leftOffset = idx * 115;
-                      const zIndex = isSelected ? 40 : 10 + (fannedCourses.length - idx);
+                <div className="relative h-[340px] sm:h-[360px] w-full overflow-x-auto overflow-y-visible flex items-center py-4 px-2" style={{ scrollbarWidth: 'none' }}>
+                  {displayedCourses.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center w-full h-[280px] rounded-3xl border border-dashed border-orange-500/30 p-8 text-center bg-black/20">
+                      <span className="text-4xl mb-3">🔖</span>
+                      <h3 className="font-bold text-base" style={{ color: textPrimary }}>No saved courses yet</h3>
+                      <p className="text-xs text-zinc-400 mt-1 max-w-sm">Bookmark courses from the Recommended Courses tab to save them here for quick access.</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setViewMode('recommended');
+                          setSelectedCourseIndex(0);
+                        }}
+                        className="mt-4 px-4 py-1.5 rounded-full bg-orange-500 text-white text-xs font-bold hover:bg-orange-600 transition-colors"
+                      >
+                        Browse Recommended Courses
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="relative flex items-center min-w-[620px] sm:min-w-[700px] h-full">
+                      {displayedCourses.map((course, idx) => {
+                        const isSelected = idx === selectedCourseIndex;
+                        const isHovered = hoveredCourseIndex === idx && !isSelected;
+                        const isCardSaved = savedCourseIds.includes(course.id);
 
-                      return (
-                        <div
-                          key={course.id}
-                          onClick={() => setSelectedCourseIndex(idx)}
-                          style={{
-                            left: `${leftOffset}px`,
-                            zIndex,
-                            transform: isSelected
-                              ? 'scale(1.04) translateY(-10px)'
-                              : `rotate(${idx % 2 === 0 ? '-1.5deg' : '1.5deg'})`,
-                            transition: 'all 350ms cubic-bezier(0.25, 1, 0.5, 1)',
-                          }}
-                          className={`absolute w-[205px] sm:w-[220px] h-[290px] sm:h-[310px] rounded-[28px] p-4 flex flex-col justify-between border cursor-pointer select-none shadow-2xl ${
-                            isSelected
-                              ? 'ring-4 ring-orange-500/50 shadow-orange-500/25'
-                              : 'hover:translate-y-[-6px] hover:shadow-xl'
-                          }`}
-                        >
-                          {/* Inner Card Background Gradient */}
+                        // Selected card is always slot 0 (left-most position).
+                        // The remaining cards move towards the right in slots 1, 2, 3...
+                        const otherIndices = displayedCourses
+                          .map((_, i) => i)
+                          .filter((i) => i !== selectedCourseIndex);
+                        const slot = isSelected ? 0 : otherIndices.indexOf(idx) + 1;
+
+                        // Slot-based offset: slot 0 is at 0px, each subsequent slot moves 125px to the right
+                        const leftOffset = slot * 125;
+
+                        // Stacking order: selected card has highest z-index (40).
+                        // Each card to the right is stacked below the one to its left.
+                        const zIndex = 40 - slot;
+
+                        return (
                           <div
-                            className={`absolute inset-0 rounded-[28px] bg-gradient-to-b ${course.cardColor} -z-10`}
-                            style={{ opacity: 0.95 }}
-                          />
+                            key={course.id}
+                            onClick={() => setSelectedCourseIndex(idx)}
+                            onMouseEnter={() => setHoveredCourseIndex(idx)}
+                            onMouseLeave={() => setHoveredCourseIndex(null)}
+                            style={{
+                              left: `${leftOffset}px`,
+                              zIndex,
+                              transform: isSelected
+                                ? 'translateY(-8px) scale(1.02)'
+                                : isHovered
+                                ? 'translateY(-5px) scale(1.005)'
+                                : 'translateY(0px) scale(1)',
+                              transition: 'all 450ms cubic-bezier(0.22, 1, 0.36, 1)',
+                            }}
+                            className={`absolute w-[220px] sm:w-[235px] h-[310px] sm:h-[325px] rounded-[28px] p-4 flex flex-col justify-between border cursor-pointer select-none shadow-2xl backdrop-blur-md transition-all duration-300 ${
+                              isSelected
+                                ? 'ring-2 ring-orange-500/70 shadow-2xl shadow-orange-500/25 border-orange-400/50'
+                                : isHovered
+                                ? 'border-white/30 shadow-2xl'
+                                : 'border-white/10 shadow-lg'
+                            }`}
+                          >
+                            {/* Stacking depth overlay: soft shading for cards tucked underneath */}
+                            {!isSelected && (
+                              <div
+                                className="absolute inset-0 rounded-[28px] bg-black pointer-events-none transition-opacity duration-300"
+                                style={{
+                                  opacity: isHovered ? 0 : Math.min(0.12 + (slot - 1) * 0.08, 0.3),
+                                }}
+                              />
+                            )}
 
-                          {/* Top Notch: Creator Chip & Lock Status */}
-                          <div className="flex items-center justify-between gap-1.5 p-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <div className="w-5 h-5 rounded-full bg-gradient-to-r from-orange-500 to-amber-400 text-[10px] font-bold text-white flex items-center justify-center shrink-0">
-                                {course.instructor.avatar}
+                            {/* Inner Card Background Gradient */}
+                            <div
+                              className={`absolute inset-0 rounded-[28px] bg-gradient-to-b ${course.cardColor} -z-10`}
+                              style={{ opacity: 0.95 }}
+                            />
+
+                            {/* Top Header: Creator Chip & Level Badge */}
+                            <div className="flex items-center justify-between gap-1.5 p-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span className="text-base shrink-0">{course.artworkIcon}</span>
+                                <span className="text-[11px] font-bold text-white truncate">
+                                  {course.instructor.name}
+                                </span>
+                                {course.instructor.verified && (
+                                  <span className="text-[10px] text-sky-400 shrink-0">✓</span>
+                                )}
                               </div>
-                              <span className="text-[11px] font-bold text-white truncate">
-                                {course.instructor.name}
+                              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-white/10 text-orange-400 border border-orange-500/20 shrink-0">
+                                LVL {course.level}
                               </span>
-                              {course.instructor.verified && (
-                                <span className="text-[10px] text-sky-400 shrink-0">✓</span>
-                              )}
                             </div>
-                            <span className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-[10px] text-zinc-300 shrink-0">
-                              🔒
-                            </span>
+
+                            {/* Course Name Title Section */}
+                            <div className="space-y-1 my-1">
+                              <span className="text-[10px] font-mono font-bold text-orange-400 uppercase tracking-wider block">
+                                {course.tag}
+                              </span>
+                              <h3 className="text-sm sm:text-base font-black text-white leading-tight line-clamp-2 tracking-tight">
+                                {course.title}
+                              </h3>
+
+                              {/* Progress bar */}
+                              <div className="pt-1.5 space-y-1">
+                                <div className="flex justify-between text-[10px] font-mono">
+                                  <span className="text-zinc-400">Progress</span>
+                                  <span className="text-white font-bold">{course.progressPercent}%</span>
+                                </div>
+                                <div className="w-full h-1.5 bg-black/50 rounded-full overflow-hidden border border-white/5">
+                                  <div
+                                    className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 rounded-full"
+                                    style={{ width: `${course.progressPercent}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Key Specs: Number of Modules & Time Duration */}
+                            <div className="grid grid-cols-2 gap-1.5 py-1.5 px-2 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 text-left">
+                              <div className="space-y-0.5">
+                                <span className="text-[9px] uppercase tracking-wider text-zinc-400 font-mono block">Modules</span>
+                                <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-white">
+                                  <span>📚</span>
+                                  <span>{course.totalModules} Modules</span>
+                                </div>
+                              </div>
+                              <div className="space-y-0.5 border-l border-white/10 pl-2">
+                                <span className="text-[9px] uppercase tracking-wider text-zinc-400 font-mono block">Duration</span>
+                                <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-amber-300">
+                                  <span>⏱️</span>
+                                  <span>{course.duration}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Bottom Row: XP Count Badge & Bookmark Button */}
+                            <div className="flex items-center justify-between gap-2 pt-0.5">
+                              <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[11px] font-mono font-black shadow-md shadow-orange-500/25">
+                                <span>⚡</span>
+                                <span>{course.xpPoints.toLocaleString()} XP</span>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (isCardSaved) {
+                                    setSavedCourseIds((prev) => prev.filter((id) => id !== course.id));
+                                    setToastMessage(`Removed "${course.title}" from saved courses`);
+                                  } else {
+                                    setSavedCourseIds((prev) => [...prev, course.id]);
+                                    setToastMessage(`Saved "${course.title}" to bookmarks!`);
+                                  }
+                                }}
+                                className={`w-7 h-7 rounded-full border flex items-center justify-center text-xs transition-all cursor-pointer ${
+                                  isCardSaved
+                                    ? 'bg-orange-500 text-white border-orange-400 shadow-sm'
+                                    : 'bg-black/50 border-white/10 text-white hover:bg-orange-500/40'
+                                }`}
+                                title={isCardSaved ? "Remove from saved" : "Bookmark Course"}
+                              >
+                                {isCardSaved ? '★' : '🔖'}
+                              </button>
+                            </div>
                           </div>
-
-                          {/* 3 Circular Metrics Ring / Badges */}
-                          <div className="flex items-center justify-around py-1 px-2 rounded-2xl bg-black/30 border border-white/5 text-center">
-                            <div>
-                              <div className="text-[11px] font-mono font-bold text-orange-400">{course.level}</div>
-                              <div className="text-[9px] uppercase tracking-wider text-zinc-400 font-mono">LVL</div>
-                            </div>
-                            <div className="h-4 w-px bg-white/10" />
-                            <div>
-                              <div className="text-[11px] font-mono font-bold text-white">{course.progressPercent}%</div>
-                              <div className="text-[9px] uppercase tracking-wider text-zinc-400 font-mono">PROG</div>
-                            </div>
-                            <div className="h-4 w-px bg-white/10" />
-                            <div>
-                              <div className="text-[11px] font-mono font-bold text-amber-400">{course.quizzesCount}</div>
-                              <div className="text-[9px] uppercase tracking-wider text-zinc-400 font-mono">QUIZ</div>
-                            </div>
-                          </div>
-
-                          {/* Center Artwork / 3D Character Illustration */}
-                          <div className="flex-1 flex items-center justify-center relative py-1">
-                            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-white/10 to-transparent flex items-center justify-center text-4xl filter drop-shadow(0 6px 12px rgba(0,0,0,0.5))">
-                              {course.artworkIcon}
-                            </div>
-                          </div>
-
-                          {/* Bottom Pill Action Bar */}
-                          <div className="flex items-center justify-between gap-2 pt-1">
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white text-[11px] font-mono font-bold">
-                              <span>📚</span>
-                              <span>{course.totalModules}</span>
-                            </div>
-
-                            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-500/80 to-amber-500/80 text-white text-[11px] font-mono font-bold shadow-xs">
-                              <span>{course.xpPoints} XP</span>
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setToastMessage(`Bookmarked "${course.title}"!`);
-                              }}
-                              className="w-7 h-7 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-xs text-white hover:bg-orange-500 transition-colors"
-                            >
-                              🔖
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -615,13 +700,23 @@ export default function CoursesPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setIsBookmarked(!isBookmarked);
-                        setToastMessage(isBookmarked ? 'Removed from bookmarks' : 'Course saved to bookmarks!');
+                        const isSaved = savedCourseIds.includes(activeCourse.id);
+                        if (isSaved) {
+                          setSavedCourseIds((prev) => prev.filter((id) => id !== activeCourse.id));
+                          setToastMessage(`Removed "${activeCourse.title}" from saved courses`);
+                        } else {
+                          setSavedCourseIds((prev) => [...prev, activeCourse.id]);
+                          setToastMessage(`Saved "${activeCourse.title}" to bookmarks!`);
+                        }
                       }}
-                      className="w-9 h-9 rounded-full bg-black/30 border border-white/10 flex items-center justify-center text-sm transition-all hover:scale-105 active:scale-95"
-                      style={{ color: isBookmarked ? '#FF6B35' : textPrimary }}
+                      className={`w-9 h-9 rounded-full border flex items-center justify-center text-sm transition-all hover:scale-105 active:scale-95 ${
+                        savedCourseIds.includes(activeCourse.id)
+                          ? 'bg-orange-500 text-white border-orange-400 shadow-md'
+                          : 'bg-black/30 border-white/10 text-zinc-300 hover:text-white'
+                      }`}
+                      title={savedCourseIds.includes(activeCourse.id) ? "Remove from saved" : "Save course"}
                     >
-                      {isBookmarked ? '★' : '☆'}
+                      {savedCourseIds.includes(activeCourse.id) ? '★' : '☆'}
                     </button>
                     <button
                       type="button"
@@ -697,17 +792,26 @@ export default function CoursesPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setIsBookmarked(!isBookmarked);
-                        setToastMessage(isBookmarked ? 'Unsaved' : 'Saved to favorites!');
+                        const isSaved = savedCourseIds.includes(activeCourse.id);
+                        if (isSaved) {
+                          setSavedCourseIds((prev) => prev.filter((id) => id !== activeCourse.id));
+                          setToastMessage(`Removed "${activeCourse.title}" from saved courses`);
+                        } else {
+                          setSavedCourseIds((prev) => [...prev, activeCourse.id]);
+                          setToastMessage(`Saved "${activeCourse.title}" to bookmarks!`);
+                        }
                       }}
                       className="w-11 h-11 rounded-full flex items-center justify-center text-sm transition-all shadow-md active:scale-95 shrink-0"
                       style={{
-                        background: isBright ? '#FFFFFF' : '#261911',
+                        background: savedCourseIds.includes(activeCourse.id)
+                          ? '#FF6B35'
+                          : isBright ? '#FFFFFF' : '#261911',
                         border: `1px solid ${cardBorder}`,
-                        color: isBookmarked ? '#FF6B35' : textPrimary,
+                        color: savedCourseIds.includes(activeCourse.id) ? '#FFFFFF' : textPrimary,
                       }}
+                      title={savedCourseIds.includes(activeCourse.id) ? "Remove from saved" : "Save to bookmarks"}
                     >
-                      {isBookmarked ? '🔖' : '📑'}
+                      {savedCourseIds.includes(activeCourse.id) ? '🔖' : '📑'}
                     </button>
                   </div>
                 </div>

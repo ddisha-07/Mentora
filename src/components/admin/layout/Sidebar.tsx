@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -55,14 +56,18 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
       >
         <div className="h-full glass-strong lg:rounded-none lg:border-y-0 lg:border-l-0 border-line-soft flex flex-col">
           <div className="flex items-center justify-between px-5 pt-6 pb-5">
-            <Link href="/admin" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-ember-500 flex items-center justify-center shadow-ember">
-                <GraduationCap size={17} className="text-base-950" strokeWidth={2.5} />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-ink-100 tracking-tight leading-none">Mentora</p>
-                <p className="text-[11px] text-ink-500 mt-0.5">Admin Panel</p>
-              </div>
+            <Link href="/admin" className="flex items-center gap-2.5 select-none group">
+              <Image
+                src="/images/mentora-logo.png"
+                alt="Mentora Logo"
+                width={125}
+                height={50}
+                priority
+                className="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105 drop-shadow-[0_2px_10px_rgba(255,107,53,0.35)]"
+              />
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/30">
+                Admin
+              </span>
             </Link>
             <button
               onClick={onClose}

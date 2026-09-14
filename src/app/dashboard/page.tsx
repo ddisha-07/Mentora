@@ -192,7 +192,7 @@ export default function DashboardPage() {
       {/* Center scrollable column */}
       <main
         id="dashboard-main"
-        className="flex-1 ml-[72px] xl:ml-[240px] mr-[340px] min-h-screen overflow-y-auto px-6 py-6"
+        className="flex-1 ml-[76px] lg:ml-[84px] mr-[340px] min-h-screen overflow-y-auto px-6 py-6"
         style={{ scrollbarWidth: 'none' }}
       >
         <div className="max-w-[860px] mx-auto space-y-6">

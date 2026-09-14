@@ -190,7 +190,7 @@ export default function CommunityPage() {
     >
       <DashboardSidebar />
 
-      <main className="flex-1 ml-[72px] xl:ml-[240px] min-h-screen overflow-y-auto px-4 sm:px-6 lg:px-10 py-8">
+      <main className="flex-1 ml-[76px] lg:ml-[84px] min-h-screen overflow-y-auto px-4 sm:px-6 lg:px-10 py-8">
         <div className="max-w-6xl mx-auto space-y-8">
 
           {/* Toast Alert */}

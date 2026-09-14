@@ -10,15 +10,14 @@ export default function PublicFooter() {
 
   return (
     <footer
-      className={`border-t text-xs transition-colors duration-200 ${
-        isBright
+      className={`border-t text-xs transition-colors duration-200 ${isBright
           ? 'bg-[#F2E8DE] border-[#E5D7C8] text-[#57534E]'
           : 'bg-[#070503] border-orange-950/70 text-zinc-400'
-      }`}
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-14 items-start">
-          
+
           {/* Brand & Mission Column (6 cols) */}
           <div className="md:col-span-6 lg:col-span-6 space-y-4 max-w-lg">
             <Link href="/" className="relative inline-flex items-center group py-0.5 select-none">
@@ -42,11 +41,10 @@ export default function PublicFooter() {
 
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <span
-                className={`inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold px-3 py-1 rounded-full border transition-colors ${
-                  isBright
+                className={`inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold px-3 py-1 rounded-full border transition-colors ${isBright
                     ? 'bg-[#FAF4EE] text-[#EA580C] border-[#EADAC9]'
                     : 'bg-orange-950/60 text-orange-300 border-orange-800/50'
-                }`}
+                  }`}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
                 <span>Learn. Grow. Evolve.</span>
@@ -54,9 +52,8 @@ export default function PublicFooter() {
 
               <Link
                 href="/onboarding"
-                className={`text-[11px] font-mono font-medium transition-colors flex items-center gap-1 ${
-                  isBright ? 'text-[#EA580C] hover:underline' : 'text-orange-400/90 hover:text-orange-300 hover:underline'
-                }`}
+                className={`text-[11px] font-mono font-medium transition-colors flex items-center gap-1 ${isBright ? 'text-[#EA580C] hover:underline' : 'text-orange-400/90 hover:text-orange-300 hover:underline'
+                  }`}
               >
                 <span>Take Skill Diagnostic</span>
                 <span>→</span>
@@ -67,9 +64,8 @@ export default function PublicFooter() {
           {/* Quick Links Column (3 cols) */}
           <div className="md:col-span-3 lg:col-span-3 space-y-3.5">
             <h4
-              className={`text-xs font-bold uppercase tracking-wider font-mono ${
-                isBright ? 'text-[#EA580C]' : 'text-orange-400'
-              }`}
+              className={`text-xs font-bold uppercase tracking-wider font-mono ${isBright ? 'text-[#EA580C]' : 'text-orange-400'
+                }`}
             >
               Quick Links
             </h4>
@@ -77,9 +73,8 @@ export default function PublicFooter() {
               <li>
                 <Link
                   href="/"
-                  className={`group flex items-center gap-2 transition-colors ${
-                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
-                  }`}
+                  className={`group flex items-center gap-2 transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                    }`}
                 >
                   <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
                   <span>Home</span>
@@ -88,9 +83,8 @@ export default function PublicFooter() {
               <li>
                 <Link
                   href="/about"
-                  className={`group flex items-center gap-2 transition-colors ${
-                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
-                  }`}
+                  className={`group flex items-center gap-2 transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                    }`}
                 >
                   <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
                   <span>About Mentora</span>
@@ -99,9 +93,8 @@ export default function PublicFooter() {
               <li>
                 <Link
                   href="/why-mentora"
-                  className={`group flex items-center gap-2 transition-colors ${
-                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
-                  }`}
+                  className={`group flex items-center gap-2 transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                    }`}
                 >
                   <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
                   <span>Why Mentora</span>
@@ -110,9 +103,8 @@ export default function PublicFooter() {
               <li>
                 <Link
                   href="/blogs"
-                  className={`group flex items-center gap-2 transition-colors ${
-                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
-                  }`}
+                  className={`group flex items-center gap-2 transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                    }`}
                 >
                   <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
                   <span>Blogs & Insights</span>
@@ -121,9 +113,8 @@ export default function PublicFooter() {
               <li>
                 <Link
                   href="/faqs"
-                  className={`group flex items-center gap-2 transition-colors ${
-                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
-                  }`}
+                  className={`group flex items-center gap-2 transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                    }`}
                 >
                   <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
                   <span>Platform FAQs</span>
@@ -135,9 +126,8 @@ export default function PublicFooter() {
           {/* Resources & Support Column (3 cols) */}
           <div className="md:col-span-3 lg:col-span-3 space-y-3.5">
             <h4
-              className={`text-xs font-bold uppercase tracking-wider font-mono ${
-                isBright ? 'text-[#EA580C]' : 'text-orange-400'
-              }`}
+              className={`text-xs font-bold uppercase tracking-wider font-mono ${isBright ? 'text-[#EA580C]' : 'text-orange-400'
+                }`}
             >
               Support & Connect
             </h4>
@@ -145,9 +135,8 @@ export default function PublicFooter() {
               <li>
                 <Link
                   href="/contact"
-                  className={`group flex items-center gap-2 transition-colors ${
-                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
-                  }`}
+                  className={`group flex items-center gap-2 transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                    }`}
                 >
                   <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
                   <span>Contact Support</span>
@@ -156,9 +145,8 @@ export default function PublicFooter() {
               <li>
                 <Link
                   href="/onboarding"
-                  className={`group flex items-center gap-2 transition-colors ${
-                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
-                  }`}
+                  className={`group flex items-center gap-2 transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                    }`}
                 >
                   <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
                   <span>Skill Diagnostic</span>
@@ -167,9 +155,8 @@ export default function PublicFooter() {
               <li>
                 <Link
                   href="/faqs"
-                  className={`group flex items-center gap-2 transition-colors ${
-                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
-                  }`}
+                  className={`group flex items-center gap-2 transition-colors ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                    }`}
                 >
                   <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
                   <span>Help Center</span>
@@ -177,9 +164,8 @@ export default function PublicFooter() {
               </li>
               <li>
                 <span
-                  className={`group flex items-center gap-2 transition-colors cursor-pointer ${
-                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
-                  }`}
+                  className={`group flex items-center gap-2 transition-colors cursor-pointer ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                    }`}
                 >
                   <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
                   <span>Privacy Policy</span>
@@ -187,9 +173,8 @@ export default function PublicFooter() {
               </li>
               <li>
                 <span
-                  className={`group flex items-center gap-2 transition-colors cursor-pointer ${
-                    isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
-                  }`}
+                  className={`group flex items-center gap-2 transition-colors cursor-pointer ${isBright ? 'hover:text-[#EA580C]' : 'hover:text-orange-300'
+                    }`}
                 >
                   <span className="text-orange-500 text-[10px] transition-transform group-hover:translate-x-0.5">›</span>
                   <span>Terms of Service</span>
@@ -202,9 +187,8 @@ export default function PublicFooter() {
 
         {/* Bottom Bar */}
         <div
-          className={`mt-12 pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4 ${
-            isBright ? 'border-[#E5D7C8] text-[#78716C]' : 'border-orange-950/60 text-zinc-500'
-          }`}
+          className={`mt-12 pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4 ${isBright ? 'border-[#E5D7C8] text-[#78716C]' : 'border-orange-950/60 text-zinc-500'
+            }`}
         >
           <p suppressHydrationWarning>© {new Date().getFullYear()} Mentora AI. All rights reserved.</p>
         </div>
