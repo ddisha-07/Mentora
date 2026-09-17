@@ -198,158 +198,305 @@ export default function DashboardPage() {
         <div className="max-w-[860px] mx-auto space-y-6">
 
           {/* ── 1. Welcome Header Banner ──────────────────────────────────── */}
-          {/* Outer wrapper gets the same orange bg so mix-blend-mode:multiply
-              removes the character's white bg even in the overflow zone above the card */}
           <div
-            className="relative rounded-3xl"
+            id="welcome-header"
+            className="relative rounded-3xl overflow-hidden shadow-2xl"
             style={{
-              paddingTop: '180px',
+              background: isBright
+                ? 'linear-gradient(135deg, #FF6B35 0%, #E85D2C 40%, #FF8C5A 100%)'
+                : 'linear-gradient(135deg, #FF6B35 0%, #C94E20 40%, #FF7A45 100%)',
+              boxShadow: '0 8px 36px rgba(255,107,53,0.35), 0 2px 8px rgba(0,0,0,0.15)',
             }}
           >
-
-            {/* ── Character: pops OUT above the card ── */}
+            {/* Background decorative radial overlay */}
             <div
-              className="absolute z-20 pointer-events-none"
+              className="absolute inset-0 rounded-3xl pointer-events-none overflow-hidden"
               style={{
-                bottom: '-2px',
-                right: '16px',
-                width: '280px',
-                height: '315px',
+                background: 'radial-gradient(circle at 75% 50%, rgba(255,255,255,0.13) 0%, transparent 55%), radial-gradient(circle at 15% 85%, rgba(0,0,0,0.08) 0%, transparent 50%)',
               }}
+            />
+
+            {/* Floating dots decoration */}
+            <div className="absolute top-4 right-[255px] w-2 h-2 rounded-full bg-white opacity-30" />
+            <div className="absolute top-10 right-[240px] w-1 h-1 rounded-full bg-white opacity-20" />
+            <div className="absolute bottom-5 left-[42%] w-1.5 h-1.5 rounded-full bg-white opacity-25" />
+
+            {/* Right Character Image Container */}
+            <div
+              className="absolute right-4 bottom-0 top-0 w-[240px] xl:w-[270px] pointer-events-none z-10 flex items-end justify-end"
             >
-              {/* Shadow beneath character feet */}
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: '8px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '140px',
-                  height: '20px',
-                  background: 'rgba(0,0,0,0.2)',
-                  borderRadius: '50%',
-                  filter: 'blur(10px)',
-                  zIndex: 0,
-                }}
-              />
               <img
                 src="/dashboard-character.png"
                 alt="Mentora student character"
                 style={{
-                  width: '280px',
-                  height: '315px',
+                  maxHeight: '175px',
+                  width: 'auto',
                   objectFit: 'contain',
-                  objectPosition: 'bottom',
-                  filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.28))',
-                  position: 'relative',
-                  zIndex: 1,
+                  objectPosition: 'bottom right',
+                  filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.3))',
                 }}
               />
             </div>
 
-            {/* ── Inner card: decorative overlay + content ── */}
+            {/* Banner Text Content */}
             <div
-              id="welcome-header"
-              className="relative rounded-3xl overflow-hidden"
-              style={{
-                background: isBright
-                  ? 'linear-gradient(135deg, #FF6B35 0%, #E85D2C 40%, #FF8C5A 100%)'
-                  : 'linear-gradient(135deg, #FF6B35 0%, #C94E20 40%, #FF7A45 100%)',
-                minHeight: '148px',
-                boxShadow: '0 8px 40px rgba(255,107,53,0.4), 0 2px 8px rgba(0,0,0,0.15)',
-              }}
+              className="relative z-20 flex items-center px-7 py-6 min-h-[155px]"
             >
-              {/* Background decorative blobs */}
-              <div
-                className="absolute inset-0 rounded-3xl pointer-events-none overflow-hidden"
-                style={{
-                  background: 'radial-gradient(circle at 75% 50%, rgba(255,255,255,0.13) 0%, transparent 55%), radial-gradient(circle at 15% 85%, rgba(0,0,0,0.08) 0%, transparent 50%)',
-                }}
-              />
-
-              {/* Floating dots */}
-              <div className="absolute top-4 right-[255px] w-2 h-2 rounded-full bg-white opacity-30" />
-              <div className="absolute top-10 right-[240px] w-1 h-1 rounded-full bg-white opacity-20" />
-              <div className="absolute bottom-5 left-[42%] w-1.5 h-1.5 rounded-full bg-white opacity-25" />
-              <div className="absolute top-5 left-[36%] w-1 h-1 rounded-full bg-white opacity-18" />
-
-              {/* Content row */}
-              <div
-                className="relative z-10 flex items-center px-7 py-6"
-                style={{ minHeight: '148px' }}
-              >
-                {/* Left: text */}
-                <div style={{ flex: 1, paddingRight: '250px' }}>
-                  <h1 className="text-2xl xl:text-3xl font-bold text-white leading-tight mb-2">
-                    Good {getHour()}, Alex! 👋
-                  </h1>
-                  <p className="text-sm mb-4 leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)', maxWidth: '320px' }}>
-                    You&apos;re on a roll — 3 modules left to hit your weekly goal. Keep it up!
-                  </p>
-
-                  {/* Pill badges */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span
-                      id="streak-badge"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold"
-                      style={{
-                        background: 'rgba(255,255,255,0.2)',
-                        backdropFilter: 'blur(8px)',
-                        border: '1px solid rgba(255,255,255,0.3)',
-                        color: '#fff',
-                      }}
-                    >
-                    </span>
-                  </div>
-                </div>
+              <div className="flex-1 pr-[230px]">
+                <h1 className="text-2xl xl:text-3xl font-bold text-white leading-tight mb-2">
+                  Good {getHour()}, Alex! 👋
+                </h1>
+                <p className="text-sm leading-relaxed text-white/85 max-w-[340px]">
+                  You&apos;re on a roll — 3 modules left to hit your weekly goal. Keep it up!
+                </p>
               </div>
             </div>
           </div>
 
-          {/* ── 2. Quick Stats Grid ────────────────────────────────────────── */}
+          {/* ── 2. Bento Stats Grid (Layout matching User Reference Image 1) ────────────── */}
           <section id="quick-stats">
-            <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
-              {statsCards.map((card) => (
-                <div
-                  key={card.id}
-                  id={card.id}
-                  className="relative rounded-2xl p-4 overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:-translate-y-0.5 cursor-pointer"
-                  style={{
-                    background: isBright
-                      ? `linear-gradient(135deg, #FFFFFF 60%, ${card.bg})`
-                      : `linear-gradient(135deg, #1E1A17 60%, ${card.bg})`,
-                    border: `1px solid ${card.border}`,
-                    boxShadow: cardShadow,
-                  }}
-                >
-                  {/* Icon */}
-                  <div
-                    className="w-8 h-8 rounded-xl flex items-center justify-center mb-3"
-                    style={{ background: card.bg, color: card.gradient[0], border: `1px solid ${card.border}` }}
-                  >
-                    {card.icon}
-                  </div>
-                  {/* Value */}
-                  <p className="text-2xl xl:text-3xl font-bold" style={{ color: card.gradient[0] }}>
-                    {card.value}
-                  </p>
-                  <p className="text-xs font-medium mt-0.5" style={{ color: textMuted }}>{card.label}</p>
-                  <p className="text-xs mt-0.5" style={{ color: textSub }}>{card.sub}</p>
+            <div className="grid grid-cols-12 gap-4">
+              
+              {/* ── Card 1: Courses In Progress (Yellow / Amber Theme - Top Left) ── */}
+              <div
+                id="stats-card-courses"
+                className="col-span-12 md:col-span-5 rounded-3xl p-5 relative overflow-hidden transition-all duration-300 hover:scale-[1.015] hover:shadow-xl group"
+                style={{
+                  background: isBright
+                    ? 'linear-gradient(135deg, #FEF08A 0%, #FEF9C3 100%)'
+                    : 'linear-gradient(135deg, #2A2208 0%, #1A1505 100%)',
+                  border: isBright ? '1px solid rgba(234, 179, 8, 0.4)' : '1px solid rgba(245, 158, 11, 0.3)',
+                  color: isBright ? '#451A03' : '#FFF8F0',
+                  boxShadow: cardShadow,
+                }}
+              >
+                {/* Decorative "+" watermark background graphic */}
+                <div className="absolute -top-3 -right-3 w-28 h-28 opacity-15 pointer-events-none text-amber-500 font-bold text-9xl select-none leading-none">
+                  +
+                </div>
 
-                  {/* Sparkline */}
-                  <div className="absolute right-3 bottom-3 opacity-70">
-                    <Sparkline data={card.chart} color={card.gradient[0]} />
-                  </div>
+                {/* Header Title */}
+                <h3 className="text-base font-extrabold tracking-tight mb-3 flex items-center justify-between" style={{ color: isBright ? '#78350F' : '#FBBF24' }}>
+                  <span>Courses In Progress:</span>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">+1 this month</span>
+                </h3>
 
-                  {/* Trend */}
-                  <div className="flex items-center gap-1 mt-2">
-                    <svg viewBox="0 0 24 24" fill="none" stroke={card.gradient[0]} strokeWidth={2.5} className="w-3 h-3">
-                      <polyline points="18 15 12 9 6 15" />
-                    </svg>
-                    <span className="text-xs font-medium" style={{ color: card.gradient[0] }}>{card.trend}</span>
+                {/* Sub-Metrics Columns with Underline Accents */}
+                <div className="grid grid-cols-3 gap-2 mb-4 text-left">
+                  <div className="pb-1.5 border-b-2 border-amber-500/60">
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#78350F' : '#FDE68A' }}>4 <span className="text-xs font-semibold">courses</span></p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">Active</p>
+                  </div>
+                  <div className="pb-1.5 border-b-2 border-amber-500/30">
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#92400E' : '#F59E0B' }}>2 <span className="text-xs font-semibold">due</span></p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">This Week</p>
+                  </div>
+                  <div className="pb-1.5 border-b-2 border-amber-500/60">
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#451A03' : '#FBBF24' }}>1 <span className="text-xs font-semibold">done</span></p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">Completed</p>
                   </div>
                 </div>
-              ))}
+
+                {/* Bar Chart Graphics & Time Labels */}
+                <div className="pt-2">
+                  <div className="h-16 flex items-end justify-between gap-1 px-1">
+                    {[
+                      { h: '45%', active: false },
+                      { h: '65%', active: false },
+                      { h: '25%', active: true },
+                      { h: '85%', active: false },
+                      { h: '35%', active: false },
+                      { h: '95%', active: true },
+                      { h: '55%', active: false },
+                      { h: '40%', active: false },
+                      { h: '70%', active: false },
+                    ].map((bar, idx) => (
+                      <div
+                        key={idx}
+                        className="flex-1 rounded-full transition-all duration-300 group-hover:scale-y-105"
+                        style={{
+                          height: bar.h,
+                          background: bar.active
+                            ? (isBright ? '#78350F' : '#FBBF24')
+                            : (isBright ? 'rgba(217, 119, 6, 0.25)' : 'rgba(245, 158, 11, 0.2)'),
+                          boxShadow: bar.active ? '0 0 10px rgba(251, 191, 36, 0.5)' : undefined,
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex justify-between text-[10px] opacity-60 font-mono mt-1.5 px-0.5">
+                    <span>07:30 p.m.</span>
+                    <span>12:00 p.m.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Card 2: Visits & Learning Summary (Pink / Rose / Ember Theme - Top Right) ── */}
+              <div
+                id="stats-card-learning-summary"
+                className="col-span-12 md:col-span-7 rounded-3xl p-5 relative overflow-hidden transition-all duration-300 hover:scale-[1.015] hover:shadow-xl group"
+                style={{
+                  background: isBright
+                    ? 'linear-gradient(135deg, #FBCFE8 0%, #FCE7F3 100%)'
+                    : 'linear-gradient(135deg, #2D1420 0%, #1A0B13 100%)',
+                  border: isBright ? '1px solid rgba(244, 114, 182, 0.4)' : '1px solid rgba(244, 114, 182, 0.3)',
+                  color: isBright ? '#831843' : '#FFF8F0',
+                  boxShadow: cardShadow,
+                }}
+              >
+                {/* Decorative Heart Watermark shape in background */}
+                <div className="absolute -top-6 -right-6 w-36 h-36 opacity-15 pointer-events-none flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full text-pink-400">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                  </svg>
+                </div>
+
+                {/* Header Title */}
+                <h3 className="text-base font-extrabold tracking-tight mb-3 flex items-center justify-between" style={{ color: isBright ? '#9D174D' : '#F472B6' }}>
+                  <span>Learning Summary & Hours:</span>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">+3.2h vs last week</span>
+                </h3>
+
+                {/* Sub-Metrics Columns */}
+                <div className="grid grid-cols-3 gap-2 mb-3 text-left">
+                  <div>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#831843' : '#FCE7F3' }}>12.5h</p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">AVERAGE</p>
+                  </div>
+                  <div>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#9D174D' : '#F472B6' }}>3.2h</p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">TODAY</p>
+                  </div>
+                  <div>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#BE185D' : '#F472B6' }}>01:30h</p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">PEAK SESSION</p>
+                  </div>
+                </div>
+
+                {/* Continuous Wavy Area Line Chart with Time Axis */}
+                <div className="relative pt-1">
+                  <svg viewBox="0 0 350 70" fill="none" className="w-full h-16 overflow-visible">
+                    <defs>
+                      <linearGradient id="pink-chart-grad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#F472B6" stopOpacity="0.45" />
+                        <stop offset="100%" stopColor="#F472B6" stopOpacity="0.0" />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      d="M 0 45 C 30 40, 50 50, 80 48 C 110 46, 130 20, 160 30 C 180 38, 200 12, 220 10 C 235 25, 250 40, 280 42 C 310 44, 330 35, 350 38 L 350 70 L 0 70 Z"
+                      fill="url(#pink-chart-grad)"
+                    />
+                    <path
+                      d="M 0 45 C 30 40, 50 50, 80 48 C 110 46, 130 20, 160 30 C 180 38, 200 12, 220 10 C 235 25, 250 40, 280 42 C 310 44, 330 35, 350 38"
+                      fill="none"
+                      stroke={isBright ? '#BE185D' : '#F472B6'}
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                    />
+                    {/* Peak Dot & Dashed Guide Line at 12:00 */}
+                    <line x1="220" y1="10" x2="220" y2="70" stroke={isBright ? '#BE185D' : '#F472B6'} strokeDasharray="3 3" opacity="0.6" strokeWidth="1.5" />
+                    <circle cx="220" cy="10" r="4.5" fill={isBright ? '#831843' : '#FFF8F0'} stroke={isBright ? '#BE185D' : '#F472B6'} strokeWidth="2.5" />
+                  </svg>
+
+                  {/* Time X-Axis */}
+                  <div className="flex justify-between text-[10px] opacity-60 font-mono mt-0.5 px-1">
+                    <span>10:30</span>
+                    <span>11:00</span>
+                    <span>11:30</span>
+                    <span className="font-bold underline text-pink-400">12:00</span>
+                    <span>12:30</span>
+                    <span>13:00</span>
+                    <span>13:30</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Card 3: Skill Gaps & Mastery (Green / Emerald Theme - Bottom Left) ── */}
+              <div
+                id="stats-card-skill-gaps"
+                className="col-span-12 md:col-span-5 rounded-3xl p-5 relative overflow-hidden transition-all duration-300 hover:scale-[1.015] hover:shadow-xl group"
+                style={{
+                  background: isBright
+                    ? 'linear-gradient(135deg, #A7F3D0 0%, #D1FAE5 100%)'
+                    : 'linear-gradient(135deg, #092618 0%, #051910 100%)',
+                  border: isBright ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(16, 185, 129, 0.3)',
+                  color: isBright ? '#064E3B' : '#FFF8F0',
+                  boxShadow: cardShadow,
+                }}
+              >
+                {/* Decorative Triangle / Pyramid Watermark */}
+                <div className="absolute -bottom-6 -right-6 w-32 h-32 opacity-15 pointer-events-none">
+                  <svg viewBox="0 0 100 100" fill="currentColor" className="w-full h-full text-emerald-400">
+                    <polygon points="50,10 90,90 10,90" />
+                  </svg>
+                </div>
+
+                {/* Header Title */}
+                <h3 className="text-base font-extrabold tracking-tight mb-3 flex items-center justify-between" style={{ color: isBright ? '#065F46' : '#34D399' }}>
+                  <span>By Condition & Skill Gaps:</span>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">39% Complete</span>
+                </h3>
+
+                {/* Sub-Metrics Columns */}
+                <div className="grid grid-cols-3 gap-2 text-left">
+                  <div>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#064E3B' : '#A7F3D0' }}>7 <span className="text-xs font-semibold">gaps</span></p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">CLOSED</p>
+                  </div>
+                  <div>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#065F46' : '#34D399' }}>5 <span className="text-xs font-semibold">skills</span></p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">IN REVIEW</p>
+                  </div>
+                  <div>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#047857' : '#10B981' }}>6 <span className="text-xs font-semibold">left</span></p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">REMAINING</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Card 4: Quiz & Assessment Sessions (Blue / Purple Theme - Bottom Right) ── */}
+              <div
+                id="stats-card-quizzes"
+                className="col-span-12 md:col-span-7 rounded-3xl p-5 relative overflow-hidden transition-all duration-300 hover:scale-[1.015] hover:shadow-xl group"
+                style={{
+                  background: isBright
+                    ? 'linear-gradient(135deg, #BFDBFE 0%, #DBEAFE 100%)'
+                    : 'linear-gradient(135deg, #101B38 0%, #0A1124 100%)',
+                  border: isBright ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid rgba(99, 102, 241, 0.3)',
+                  color: isBright ? '#1E3A8A' : '#FFF8F0',
+                  boxShadow: cardShadow,
+                }}
+              >
+                {/* Decorative Starburst Watermark shape */}
+                <div className="absolute -bottom-6 -right-6 w-32 h-32 opacity-20 pointer-events-none">
+                  <svg viewBox="0 0 100 100" fill="currentColor" className="w-full h-full text-blue-400">
+                    <path d="M50 0 L61 38 L100 50 L61 62 L50 100 L39 62 L0 50 L39 38 Z" />
+                  </svg>
+                </div>
+
+                {/* Header Title */}
+                <h3 className="text-base font-extrabold tracking-tight mb-3 flex items-center justify-between" style={{ color: isBright ? '#1E40AF' : '#818CF8' }}>
+                  <span>Quiz Performance & Sessions:</span>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">+5% this month</span>
+                </h3>
+
+                {/* Sub-Metrics Columns */}
+                <div className="grid grid-cols-3 gap-2 text-left">
+                  <div>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#1E3A8A' : '#C7D2FE' }}>87%</p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">AVG SCORE</p>
+                  </div>
+                  <div>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#1E40AF' : '#818CF8' }}>14</p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">QUIZZES</p>
+                  </div>
+                  <div>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#2563EB' : '#A5B4FC' }}>00:24m</p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">AVG SPEED</p>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </section>
 

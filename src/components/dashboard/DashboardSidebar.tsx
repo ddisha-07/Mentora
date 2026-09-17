@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import GoPremiumCard from '@/components/ui/GoPremiumCard';
 
 // ─── Icons Matching User Screenshot & Mentora Brand ───────────────────────────
 
@@ -623,6 +624,9 @@ export default function DashboardSidebar() {
           </>
         )}
       </AnimatePresence>
+
+      {/* ── 5. Go Premium Eduplex Card (Bottom-Left Corner) ───────────────── */}
+      <GoPremiumCard />
     </>
   );
 }
