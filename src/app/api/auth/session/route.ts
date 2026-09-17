@@ -1,57 +1,54 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/db';
-import { users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { getSession } from '@/lib/auth';
+import { NextRequest, NextResponse } from 'next/server';
+import { adminAuth, adminDb } from '@/utils/firebase/admin';
 
-export async function GET() {
+export async function POST(request: NextRequest) {
   try {
-    const session = await getSession();
+    const { idToken } = await request.json();
+    if (!idToken) return NextResponse.json({ error: 'Missing ID token' }, { status: 400 });
 
-    if (!session) {
-      return NextResponse.json(
-        { user: null, onboardingComplete: false },
-        { status: 401 }
-      );
+    // Verify token and create session cookie (valid for 5 days)
+    const decodedIdToken = await adminAuth.verifyIdToken(idToken);
+    const expiresIn = 60 * 60 * 24 * 5 * 1000;
+    const sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
+
+    const response = NextResponse.json({ status: 'success' }, { status: 200 });
+    response.cookies.set('mentora_session', sessionCookie, {
+      maxAge: expiresIn / 1000,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      sameSite: 'lax',
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Session creation error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const sessionCookie = request.cookies.get('mentora_session')?.value || '';
+    if (!sessionCookie) {
+      return NextResponse.json({ user: null, onboardingComplete: false }, { status: 401 });
     }
 
-    // Retrieve up-to-date user details from database
-    const [user] = await db
-      .select({
-        id: users.userId,
-        userId: users.userId,
-        email: users.email,
-        name: users.name,
-        role: users.role,
-        status: users.status,
-      })
-      .from(users)
-      .where(eq(users.userId, session.userId))
-      .limit(1);
-
-    if (!user) {
-      return NextResponse.json(
-        { user: null, onboardingComplete: false },
-        { status: 401 }
-      );
+    const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true);
+    
+    // Retrieve up-to-date user details from Firestore
+    const userDoc = await adminDb.collection('users').doc(decodedClaims.uid).get();
+    if (!userDoc.exists) {
+      return NextResponse.json({ user: null, onboardingComplete: false }, { status: 401 });
     }
 
+    const userData = userDoc.data();
     return NextResponse.json({
-      user: {
-        id: user.userId,
-        userId: user.userId,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        status: user.status,
-      },
-      onboardingComplete: true,
+      user: userData,
+      onboardingComplete: userData?.onboardingComplete ?? true,
     });
   } catch (error) {
     console.error('Session retrieval error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error retrieving session' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error retrieving session' }, { status: 500 });
   }
 }

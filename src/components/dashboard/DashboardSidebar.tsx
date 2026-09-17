@@ -8,9 +8,16 @@ import { useTheme } from '@/context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import GoPremiumCard from '@/components/ui/GoPremiumCard';
 
-// ─── Icons Matching User Screenshot & Mentora Brand ───────────────────────────
+// ─── Navigation Item Definition & Icons ───────────────────────────────────────
 
-// Slot 0 (Top Bulb): Dashboard (4-Square Grid)
+export interface NavItemConfig {
+  id: string;
+  label: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
+// Slot Icons Matching User Screenshot & Mentora Brand
 const DashGridIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
     <rect x="3" y="3" width="7" height="7" rx="1.5" />
@@ -20,7 +27,6 @@ const DashGridIcon = () => (
   </svg>
 );
 
-// Slot 1: Journeys (3-Layer Stack)
 const JourneysStackIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
     <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -29,7 +35,6 @@ const JourneysStackIcon = () => (
   </svg>
 );
 
-// Slot 2: Courses (Open Book)
 const CoursesBookIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
     <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
@@ -39,7 +44,6 @@ const CoursesBookIcon = () => (
   </svg>
 );
 
-// Slot 3: Community (Group / People)
 const CommunityPeopleIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
     <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -49,7 +53,6 @@ const CommunityPeopleIcon = () => (
   </svg>
 );
 
-// Slot 4: Leaderboard (Podium Bar Chart)
 const LeaderboardPodiumIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
     <rect x="2" y="14" width="5" height="7" rx="1.5" />
@@ -58,7 +61,6 @@ const LeaderboardPodiumIcon = () => (
   </svg>
 );
 
-// Slot 5: Skill Passport (Passport ID Badge Card)
 const PassportBadgeIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
     <rect x="3" y="2" width="18" height="20" rx="2.5" />
@@ -67,14 +69,12 @@ const PassportBadgeIcon = () => (
   </svg>
 );
 
-// Slot 6: Mentorship (Chat Bubble)
 const MentorshipChatIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
   </svg>
 );
 
-// Slot 7: Kai (4-Point AI Sparkle)
 const KaiSparkleIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
     <path d="M12 3c0 4.5-3.5 8-8 8 4.5 0 8 3.5 8 8 0-4.5 3.5-8 8-8-4.5 0-8-3.5-8-8z" />
@@ -82,7 +82,6 @@ const KaiSparkleIcon = () => (
   </svg>
 );
 
-// Slot 8: User Profile / Settings (Silhouette 👤)
 const UserProfileIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
     <circle cx="12" cy="7" r="4" />
@@ -90,7 +89,22 @@ const UserProfileIcon = () => (
   </svg>
 );
 
-// Menu Icons
+const ExpandSidebarIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-[18px] h-[18px]">
+    <rect x="3" y="3" width="18" height="18" rx="2.5" />
+    <path d="M9 3v18" />
+    <path d="M14 9l3 3-3 3" />
+  </svg>
+);
+
+const CollapseSidebarIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5">
+    <rect x="3" y="3" width="18" height="18" rx="2.5" />
+    <path d="M9 3v18" />
+    <path d="M16 15l-3-3 3-3" />
+  </svg>
+);
+
 const SunIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.8}>
     <circle cx="12" cy="12" r="5" />
@@ -118,44 +132,52 @@ const SettingsGearIcon = () => (
   </svg>
 );
 
-const LogoutArrowIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.8}>
-    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-    <polyline points="16 17 21 12 16 7" />
-    <line x1="21" y1="12" x2="9" y2="12" />
-  </svg>
-);
+// Canonical Sequence of All Navigation Items
+const NAV_ITEMS: NavItemConfig[] = [
+  { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: <DashGridIcon /> },
+  { id: 'journeys', label: 'Journeys', href: '/dashboard/journeys', icon: <JourneysStackIcon /> },
+  { id: 'courses', label: 'Courses', href: '/dashboard/courses', icon: <CoursesBookIcon /> },
+  { id: 'community', label: 'Community', href: '/dashboard/community', icon: <CommunityPeopleIcon /> },
+  { id: 'leaderboard', label: 'Leaderboard', href: '/dashboard/leaderboard', icon: <LeaderboardPodiumIcon /> },
+  { id: 'passport', label: 'Skill Passport', href: '/dashboard/passport', icon: <PassportBadgeIcon /> },
+  { id: 'mentorship', label: 'Mentorship', href: '/dashboard/mentorship', icon: <MentorshipChatIcon /> },
+  { id: 'kai', label: 'Kai AI', href: '/dashboard/kai', icon: <KaiSparkleIcon /> },
+  { id: 'settings', label: 'Settings & Profile', href: '/dashboard/settings', icon: <UserProfileIcon /> },
+];
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { isBright, toggleTheme } = useTheme();
 
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const profileRef = useRef<HTMLDivElement>(null);
-
-  // Close menus when clicking outside
+  // Keyboard shortcut: Esc to collapse expanded sidebar
   useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
-        setProfileOpen(false);
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape' && isExpanded) {
+        setIsExpanded(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExpanded]);
 
-  const isHomeActive = pathname === '/dashboard';
-  const isJourneysActive = pathname.startsWith('/dashboard/journeys');
-  const isCoursesActive = pathname.startsWith('/dashboard/courses');
-  const isCommunityActive = pathname.startsWith('/dashboard/community');
-  const isLeaderboardActive = pathname.startsWith('/dashboard/leaderboard');
-  const isPassportActive = pathname.startsWith('/dashboard/passport');
-  const isMentorshipActive = pathname.startsWith('/dashboard/mentorship');
-  const isKaiActive = pathname.startsWith('/dashboard/kai');
+  // Determine current active item ID based on route
+  const getActiveItemId = (): string => {
+    if (pathname === '/dashboard') return 'dashboard';
+    if (pathname.startsWith('/dashboard/journeys')) return 'journeys';
+    if (pathname.startsWith('/dashboard/courses')) return 'courses';
+    if (pathname.startsWith('/dashboard/community')) return 'community';
+    if (pathname.startsWith('/dashboard/leaderboard')) return 'leaderboard';
+    if (pathname.startsWith('/dashboard/passport')) return 'passport';
+    if (pathname.startsWith('/dashboard/mentorship')) return 'mentorship';
+    if (pathname.startsWith('/dashboard/kai')) return 'kai';
+    if (pathname.startsWith('/dashboard/settings') || pathname.startsWith('/dashboard/profile')) return 'settings';
+    return 'dashboard';
+  };
+
+  const activeId = getActiveItemId();
 
   // Tooltip Helper
   const renderTooltip = (id: string, label: string) => (
@@ -166,17 +188,20 @@ export default function DashboardSidebar() {
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: -8, scale: 0.94 }}
           transition={{ duration: 0.15 }}
-          className="absolute left-[64px] top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap pointer-events-none shadow-2xl z-50 backdrop-blur-md"
+          className="absolute left-[64px] top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap pointer-events-none shadow-2xl z-50 backdrop-blur-md flex items-center gap-1.5"
           style={{
             background: isBright ? '#FFFFFF' : '#1A120C',
-            border: isBright ? '1px solid rgba(234, 88, 12, 0.22)' : '1px solid rgba(255, 107, 53, 0.3)',
+            border: isBright ? '1px solid rgba(234, 88, 12, 0.25)' : '1px solid rgba(255, 107, 53, 0.35)',
             color: isBright ? '#1C1917' : '#FFF8F0',
             boxShadow: isBright
               ? '0 10px 25px -3px rgba(234,88,12,0.15), 0 4px 6px -2px rgba(0,0,0,0.05)'
-              : '0 10px 25px -3px rgba(0,0,0,0.6), 0 0 15px rgba(255,107,53,0.15)',
+              : '0 10px 25px -3px rgba(0,0,0,0.6), 0 0 15px rgba(255,107,53,0.2)',
           }}
         >
-          {label}
+          <span>{label}</span>
+          {id === activeId && (
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B35] animate-pulse" />
+          )}
         </motion.div>
       )}
     </AnimatePresence>
@@ -202,422 +227,293 @@ export default function DashboardSidebar() {
         </Link>
       </div>
 
-      {/* ── 2. Floating Liquid Metaball Dock ───────────────────────────────── */}
+      {/* ── 2. Floating Liquid Dock Sidebar (Items in Sequence, Encircled Animation) ── */}
       <div
         id="mentora-liquid-dock"
-        className="fixed left-3.5 top-[72px] z-40 flex flex-col items-center select-none"
+        className="fixed left-3.5 top-[68px] z-40 flex flex-col items-center select-none"
       >
-        {/* Organic Silhouette Container (Height: 423px for all 8 items + profile) */}
-        <div className="relative w-[56px] h-[423px] flex flex-col items-center">
-          {/* Custom SVG Liquid Backdrop (Math C1 Bézier Curves) */}
-          <svg
-            width="56"
-            height="423"
-            viewBox="0 0 56 423"
-            className="absolute inset-0 w-full h-full -z-10 pointer-events-none drop-shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
-            fill="none"
-          >
-            <defs>
-              <linearGradient id="mentora-dock-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={isBright ? '#FFFFFF' : '#1C130D'} stopOpacity="0.96" />
-                <stop offset="45%" stopColor={isBright ? '#FFF8F2' : '#140D08'} stopOpacity="0.96" />
-                <stop offset="100%" stopColor={isBright ? '#F5EDE3' : '#0E0805'} stopOpacity="0.98" />
-              </linearGradient>
-              <linearGradient id="mentora-dock-stroke" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={isBright ? 'rgba(234, 88, 12, 0.35)' : 'rgba(255, 107, 53, 0.38)'} />
-                <stop offset="50%" stopColor={isBright ? 'rgba(234, 88, 12, 0.18)' : 'rgba(255, 107, 53, 0.18)'} />
-                <stop offset="100%" stopColor={isBright ? 'rgba(234, 88, 12, 0.28)' : 'rgba(255, 107, 53, 0.28)'} />
-              </linearGradient>
-            </defs>
-            <path
-              d={`
-                M 28 0
-                A 28 28 0 0 1 56 28
-                C 56 40, 44 42, 44 54
-                C 44 66, 56 68, 56 80
-                L 56 395
-                A 28 28 0 0 1 0 395
-                L 0 80
-                C 0 68, 12 66, 12 54
-                C 12 42, 0 40, 0 28
-                A 28 28 0 0 1 28 0
-                Z
-              `}
-              fill="url(#mentora-dock-grad)"
-              stroke="url(#mentora-dock-stroke)"
-              strokeWidth="1.2"
-            />
-          </svg>
+        {/* Sleek Dock Capsule Container enclosing all items in exact sequence */}
+        <div
+          className="relative w-[54px] rounded-[27px] px-2 py-2.5 flex flex-col items-center gap-2 border shadow-2xl backdrop-blur-xl transition-all duration-300"
+          style={{
+            background: isBright
+              ? 'linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,248,242,0.96) 50%, rgba(245,237,227,0.98) 100%)'
+              : 'linear-gradient(180deg, rgba(28,19,13,0.96) 0%, rgba(20,13,8,0.96) 50%, rgba(14,8,5,0.98) 100%)',
+            borderColor: isBright ? 'rgba(234, 88, 12, 0.3)' : 'rgba(255, 107, 53, 0.35)',
+            boxShadow: isBright
+              ? '0 16px 36px -6px rgba(234, 88, 12, 0.15), 0 0 20px rgba(234, 88, 12, 0.08)'
+              : '0 16px 36px -6px rgba(0, 0, 0, 0.75), 0 0 20px rgba(255, 107, 53, 0.15)',
+          }}
+        >
+          {/* Navigation Items in Fixed, Canonical Sequence */}
+          {NAV_ITEMS.map((item) => {
+            const isActive = item.id === activeId;
+            return (
+              <div
+                key={item.id}
+                className="relative w-[36px] h-[36px] flex items-center justify-center"
+                onMouseEnter={() => setHoveredItem(item.id)}
+                onMouseLeave={() => setHoveredItem(null)}
+              >
+                {/* ── Encircled Loop Animation for Selected/Current Tab ── */}
+                {isActive && (
+                  <motion.div
+                    layoutId="sidebar-active-encircled-loop"
+                    transition={{
+                      type: 'spring',
+                      stiffness: 380,
+                      damping: 28,
+                    }}
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                  >
+                    {/* Separate Encircled Outer Loop Ring with Glowing Aura */}
+                    <div
+                      className="absolute -inset-[3px] rounded-full pointer-events-none"
+                      style={{
+                        border: isBright
+                          ? '1.8px solid rgba(234, 88, 12, 0.85)'
+                          : '1.8px solid rgba(255, 107, 53, 0.95)',
+                        boxShadow: isBright
+                          ? '0 0 14px rgba(234, 88, 12, 0.45), inset 0 0 8px rgba(234, 88, 12, 0.2)'
+                          : '0 0 18px rgba(255, 107, 53, 0.55), inset 0 0 10px rgba(255, 107, 53, 0.3)',
+                      }}
+                    />
 
-          {/* ── Slot 0: Top Bulb (Dashboard) ── */}
-          <div
-            className="absolute left-[10px] top-[10px] w-[36px] h-[36px]"
-            onMouseEnter={() => setHoveredItem('dashboard')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Link
-              href="/dashboard"
-              id="dock-dashboard"
-              className={`w-full h-full rounded-2xl flex items-center justify-center transition-all duration-200 ${
-                isHomeActive
-                  ? 'bg-gradient-to-tr from-[#FF6B35] to-[#FFA07A] text-white shadow-lg shadow-[#FF6B35]/40 scale-105'
-                  : 'text-stone-400 hover:text-[#FF6B35] hover:bg-white/10 hover:scale-105'
-              }`}
-            >
-              <DashGridIcon />
-            </Link>
-            {renderTooltip('dashboard', 'Dashboard')}
-          </div>
+                    {/* Inner Coral-Orange Active Circle */}
+                    <div
+                      className="w-full h-full rounded-full shadow-lg"
+                      style={{
+                        background: 'linear-gradient(135deg, #FF6B35 0%, #FFA07A 100%)',
+                        boxShadow: '0 4px 14px rgba(255, 107, 53, 0.45)',
+                      }}
+                    />
 
-          {/* ── Slot 1: Journeys (Stack) ── */}
-          <div
-            className="absolute left-[11px] top-[84px] w-[34px] h-[34px]"
-            onMouseEnter={() => setHoveredItem('journeys')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Link
-              href="/dashboard/journeys"
-              id="dock-journeys"
-              className={`w-full h-full rounded-xl flex items-center justify-center transition-all duration-200 ${
-                isJourneysActive
-                  ? 'bg-gradient-to-tr from-[#FF6B35] to-[#FFA07A] text-white shadow-md shadow-[#FF6B35]/35 scale-105'
-                  : 'text-stone-400 hover:text-[#FF6B35] hover:bg-white/10 hover:scale-105'
-              }`}
-            >
-              <JourneysStackIcon />
-            </Link>
-            {renderTooltip('journeys', 'Journeys')}
-          </div>
+                    {/* Ambient Breathing Pulse */}
+                    <motion.div
+                      animate={{ scale: [1, 1.15, 1], opacity: [0.35, 0.65, 0.35] }}
+                      transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+                      className="absolute -inset-1.5 rounded-full bg-[#FF6B35]/25 blur-sm pointer-events-none"
+                    />
+                  </motion.div>
+                )}
 
-          {/* ── Slot 2: Courses (Book) ── */}
-          <div
-            className="absolute left-[11px] top-[126px] w-[34px] h-[34px]"
-            onMouseEnter={() => setHoveredItem('courses')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Link
-              href="/dashboard/courses"
-              id="dock-courses"
-              className={`w-full h-full rounded-xl flex items-center justify-center transition-all duration-200 ${
-                isCoursesActive
-                  ? 'bg-gradient-to-tr from-[#FF6B35] to-[#FFA07A] text-white shadow-md shadow-[#FF6B35]/35 scale-105'
-                  : 'text-stone-400 hover:text-[#FF6B35] hover:bg-white/10 hover:scale-105'
-              }`}
-            >
-              <CoursesBookIcon />
-            </Link>
-            {renderTooltip('courses', 'Courses')}
-          </div>
+                {/* Clickable Nav Link */}
+                <Link
+                  href={item.href}
+                  id={`dock-nav-${item.id}`}
+                  className={`w-full h-full rounded-full flex items-center justify-center relative z-10 transition-all duration-200 ${
+                    isActive
+                      ? 'text-white scale-100'
+                      : isBright
+                      ? 'text-stone-500 hover:text-[#EA580C] hover:scale-110 active:scale-95'
+                      : 'text-stone-400 hover:text-[#FF6B35] hover:scale-110 active:scale-95'
+                  }`}
+                >
+                  {item.icon}
+                </Link>
 
-          {/* ── Slot 3: Community (Group / People) ── */}
-          <div
-            className="absolute left-[11px] top-[168px] w-[34px] h-[34px]"
-            onMouseEnter={() => setHoveredItem('community')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Link
-              href="/dashboard/community"
-              id="dock-community"
-              className={`w-full h-full rounded-xl flex items-center justify-center transition-all duration-200 ${
-                isCommunityActive
-                  ? 'bg-gradient-to-tr from-[#FF6B35] to-[#FFA07A] text-white shadow-md shadow-[#FF6B35]/35 scale-105'
-                  : 'text-stone-400 hover:text-[#FF6B35] hover:bg-white/10 hover:scale-105'
-              }`}
-            >
-              <CommunityPeopleIcon />
-            </Link>
-            {renderTooltip('community', 'Community')}
-          </div>
+                {renderTooltip(item.id, isActive ? `${item.label} (Current)` : item.label)}
+              </div>
+            );
+          })}
 
-          {/* ── Slot 4: Leaderboard (Podium Bar Chart) ── */}
+          {/* ── Expand Sidebar Toggle Button (At Bottom of Dock) ── */}
           <div
-            className="absolute left-[11px] top-[210px] w-[34px] h-[34px]"
-            onMouseEnter={() => setHoveredItem('leaderboard')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Link
-              href="/dashboard/leaderboard"
-              id="dock-leaderboard"
-              className={`w-full h-full rounded-xl flex items-center justify-center transition-all duration-200 ${
-                isLeaderboardActive
-                  ? 'bg-gradient-to-tr from-[#FF6B35] to-[#FFA07A] text-white shadow-md shadow-[#FF6B35]/35 scale-105'
-                  : 'text-stone-400 hover:text-[#FF6B35] hover:bg-white/10 hover:scale-105'
-              }`}
-            >
-              <LeaderboardPodiumIcon />
-            </Link>
-            {renderTooltip('leaderboard', 'Leaderboard')}
-          </div>
-
-          {/* ── Slot 5: Skill Passport (Passport Badge Card) ── */}
-          <div
-            className="absolute left-[11px] top-[252px] w-[34px] h-[34px]"
-            onMouseEnter={() => setHoveredItem('passport')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Link
-              href="/dashboard/passport"
-              id="dock-passport"
-              className={`w-full h-full rounded-xl flex items-center justify-center transition-all duration-200 ${
-                isPassportActive
-                  ? 'bg-gradient-to-tr from-[#FF6B35] to-[#FFA07A] text-white shadow-md shadow-[#FF6B35]/35 scale-105'
-                  : 'text-stone-400 hover:text-[#FF6B35] hover:bg-white/10 hover:scale-105'
-              }`}
-            >
-              <PassportBadgeIcon />
-            </Link>
-            {renderTooltip('passport', 'Skill Passport')}
-          </div>
-
-          {/* ── Slot 6: Mentorship (Chat Bubble) ── */}
-          <div
-            className="absolute left-[11px] top-[294px] w-[34px] h-[34px]"
-            onMouseEnter={() => setHoveredItem('mentorship')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Link
-              href="/dashboard/mentorship"
-              id="dock-mentorship"
-              className={`w-full h-full rounded-xl flex items-center justify-center transition-all duration-200 ${
-                isMentorshipActive
-                  ? 'bg-gradient-to-tr from-[#FF6B35] to-[#FFA07A] text-white shadow-md shadow-[#FF6B35]/35 scale-105'
-                  : 'text-stone-400 hover:text-[#FF6B35] hover:bg-white/10 hover:scale-105'
-              }`}
-            >
-              <MentorshipChatIcon />
-            </Link>
-            {renderTooltip('mentorship', 'Mentorship')}
-          </div>
-
-          {/* ── Slot 7: Kai (Sparkle AI) ── */}
-          <div
-            className="absolute left-[11px] top-[336px] w-[34px] h-[34px]"
-            onMouseEnter={() => setHoveredItem('kai')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Link
-              href="/dashboard/kai"
-              id="dock-kai"
-              className={`w-full h-full rounded-xl flex items-center justify-center transition-all duration-200 ${
-                isKaiActive
-                  ? 'bg-gradient-to-tr from-[#FF6B35] to-[#FFA07A] text-white shadow-md shadow-[#FF6B35]/35 scale-105'
-                  : 'text-stone-400 hover:text-[#FF6B35] hover:bg-white/10 hover:scale-105'
-              }`}
-            >
-              <KaiSparkleIcon />
-            </Link>
-            {renderTooltip('kai', 'Kai AI')}
-          </div>
-
-          {/* ── Slot 8: Profile & Quick Settings (User Silhouette 👤) ── */}
-          <div
-            ref={profileRef}
-            className="absolute left-[11px] top-[378px] w-[34px] h-[34px]"
-            onMouseEnter={() => setHoveredItem('profile')}
+            className="relative w-[36px] h-[36px] mt-1 pt-1.5 border-t flex items-center justify-center"
+            style={{ borderColor: isBright ? 'rgba(234, 88, 12, 0.15)' : 'rgba(255, 107, 53, 0.15)' }}
+            onMouseEnter={() => setHoveredItem('expand-dock')}
             onMouseLeave={() => setHoveredItem(null)}
           >
             <button
-              id="dock-profile"
-              onClick={() => {
-                setProfileOpen(!profileOpen);
-              }}
-              className={`w-full h-full rounded-full flex items-center justify-center transition-all duration-200 ${
-                profileOpen
-                  ? 'bg-gradient-to-tr from-[#FF6B35] to-[#FFA07A] text-white shadow-md shadow-[#FF6B35]/35 scale-105'
-                  : 'text-stone-400 hover:text-[#FF6B35] hover:bg-white/10 hover:scale-105'
+              id="dock-expand-sidebar-btn"
+              onClick={() => setIsExpanded(true)}
+              className={`w-full h-full rounded-xl flex items-center justify-center transition-all duration-200 group cursor-pointer ${
+                isBright
+                  ? 'text-stone-500 hover:text-[#EA580C] hover:bg-orange-500/10 hover:scale-110 active:scale-95'
+                  : 'text-stone-400 hover:text-[#FF6B35] hover:bg-white/10 hover:scale-110 active:scale-95'
               }`}
+              title="Expand Sidebar"
             >
-              <UserProfileIcon />
+              <span className="transition-transform duration-200 group-hover:translate-x-0.5">
+                <ExpandSidebarIcon />
+              </span>
             </button>
-            {renderTooltip('profile', 'Profile & Settings')}
-
-            {/* Profile Popover Flyout */}
-            <AnimatePresence>
-              {profileOpen && (
-                <motion.div
-                  initial={{ opacity: 0, x: -12, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: -12, scale: 0.95 }}
-                  transition={{ duration: 0.18 }}
-                  className="absolute left-[64px] bottom-0 w-64 rounded-2xl p-4 shadow-2xl z-50 backdrop-blur-xl border"
-                  style={{
-                    background: isBright ? 'rgba(255,255,255,0.96)' : 'rgba(28,19,14,0.96)',
-                    borderColor: isBright ? 'rgba(234,88,12,0.2)' : 'rgba(255,107,53,0.3)',
-                    boxShadow: isBright
-                      ? '0 20px 40px -10px rgba(234,88,12,0.2)'
-                      : '0 20px 40px -10px rgba(0,0,0,0.8), 0 0 20px rgba(255,107,53,0.15)',
-                  }}
-                >
-                  {/* User Info Header */}
-                  <div className="flex items-center gap-3 pb-3 border-b" style={{ borderColor: isBright ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)' }}>
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md" style={{ background: 'linear-gradient(135deg, #FF6B35, #FFA07A)' }}>
-                      AJ
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-bold truncate" style={{ color: isBright ? '#1C1917' : '#FFF8F0' }}>Alex Johnson</p>
-                      <p className="text-xs font-medium" style={{ color: '#FF6B35' }}>Pro Learner · Lvl 7</p>
-                    </div>
-                  </div>
-
-                  {/* Actions List */}
-                  <div className="py-2 space-y-1 text-sm font-medium">
-                    {/* Theme Toggle */}
-                    <button
-                      onClick={toggleTheme}
-                      className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition-colors hover:bg-[#FF6B35]/15"
-                      style={{ color: isBright ? '#44403C' : '#E7E5E4' }}
-                    >
-                      <span className="flex items-center gap-2.5">
-                        {isBright ? <MoonIcon /> : <SunIcon />}
-                        <span>{isBright ? 'Dark Mode' : 'Light Mode'}</span>
-                      </span>
-                      <span className="text-[11px] uppercase tracking-wider font-semibold text-[#FF6B35]">
-                        {isBright ? 'Dark' : 'Light'}
-                      </span>
-                    </button>
-
-                    {/* Settings */}
-                    <Link
-                      href="/dashboard/settings"
-                      onClick={() => setProfileOpen(false)}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors hover:bg-[#FF6B35]/15"
-                      style={{ color: isBright ? '#44403C' : '#E7E5E4' }}
-                    >
-                      <SettingsGearIcon />
-                      <span>Settings</span>
-                    </Link>
-
-                    {/* Expand Full Drawer */}
-                    <button
-                      onClick={() => {
-                        setProfileOpen(false);
-                        setDrawerOpen(true);
-                      }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors hover:bg-[#FF6B35]/15 text-[#FF6B35]"
-                    >
-                      <span className="text-xs">📑</span>
-                      <span>Expand Sidebar</span>
-                    </button>
-                  </div>
-
-                  {/* Logout */}
-                  <div className="pt-2 border-t" style={{ borderColor: isBright ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)' }}>
-                    <Link
-                      href="/"
-                      onClick={() => setProfileOpen(false)}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl transition-colors hover:bg-rose-500/15 text-rose-400"
-                    >
-                      <LogoutArrowIcon />
-                      <span>Logout</span>
-                    </Link>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {renderTooltip('expand-dock', 'Expand Sidebar')}
           </div>
         </div>
-
       </div>
 
-      {/* ── 4. Slide-Out Overlay Drawer (Optional Full View) ─────────────────── */}
+      {/* ── 3. Full-Featured Expanded Sidebar Drawer ───────────────────────── */}
       <AnimatePresence>
-        {drawerOpen && (
+        {isExpanded && (
           <>
-            {/* Backdrop */}
+            {/* Soft Ambient Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setDrawerOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              transition={{ duration: 0.22 }}
+              onClick={() => setIsExpanded(false)}
+              className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 cursor-pointer"
             />
 
-            {/* Drawer */}
+            {/* Slide-out Sidebar Panel */}
             <motion.aside
-              initial={{ x: -260 }}
-              animate={{ x: 0 }}
-              exit={{ x: -260 }}
-              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-              className="fixed left-0 top-0 bottom-0 w-[260px] z-50 flex flex-col shadow-2xl border-r"
+              initial={{ x: -280, opacity: 0.9 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -280, opacity: 0.9 }}
+              transition={{ type: 'spring', stiffness: 340, damping: 28 }}
+              className="fixed left-0 top-0 bottom-0 w-[270px] z-50 flex flex-col shadow-2xl border-r select-none"
               style={{
                 background: isBright
-                  ? 'linear-gradient(180deg, #FFFFFF 0%, #FAF4EE 100%)'
-                  : 'linear-gradient(180deg, #1A120C 0%, #110B07 100%)',
-                borderColor: isBright ? 'rgba(234, 88, 12, 0.15)' : 'rgba(255, 107, 53, 0.18)',
+                  ? 'linear-gradient(180deg, #FFFFFF 0%, #FFF8F2 50%, #FAF2E9 100%)'
+                  : 'linear-gradient(180deg, #1A120C 0%, #130D08 50%, #0E0805 100%)',
+                borderColor: isBright ? 'rgba(234, 88, 12, 0.2)' : 'rgba(255, 107, 53, 0.25)',
+                boxShadow: isBright
+                  ? '0 25px 50px -12px rgba(234, 88, 12, 0.15), 0 0 30px rgba(234, 88, 12, 0.08)'
+                  : '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 107, 53, 0.15)',
               }}
             >
-              {/* Header */}
-              <div className="flex items-center justify-between px-5 pt-6 pb-4">
-                <Link href="/" onClick={() => setDrawerOpen(false)} className="flex items-center select-none group">
+              {/* Header: Logo & Collapse Action */}
+              <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b" style={{ borderColor: isBright ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.07)' }}>
+                <Link
+                  href="/"
+                  onClick={() => setIsExpanded(false)}
+                  className="flex items-center gap-2 group cursor-pointer"
+                >
                   <Image
                     src="/images/mentora-logo.png"
                     alt="Mentora Logo"
-                    width={130}
-                    height={52}
+                    width={110}
+                    height={44}
                     priority
-                    className="h-9 w-auto object-contain transition-transform group-hover:scale-105 drop-shadow-[0_2px_12px_rgba(255,107,53,0.4)]"
+                    className="h-8 w-auto object-contain transition-transform group-hover:scale-105 drop-shadow-[0_2px_10px_rgba(255,107,53,0.35)]"
                   />
+                  <span
+                    className="text-xs font-black tracking-widest uppercase font-mono px-1.5 py-0.5 rounded-md"
+                    style={{
+                      background: 'rgba(255, 107, 53, 0.12)',
+                      color: '#FF6B35',
+                      border: '1px solid rgba(255, 107, 53, 0.25)',
+                    }}
+                  >
+                    PRO
+                  </span>
                 </Link>
+
                 <button
-                  onClick={() => setDrawerOpen(false)}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-stone-400 hover:text-white hover:bg-white/10"
+                  id="collapse-sidebar-btn"
+                  onClick={() => setIsExpanded(false)}
+                  title="Collapse to Dock"
+                  className={`p-1.5 rounded-xl transition-all cursor-pointer ${
+                    isBright
+                      ? 'text-stone-500 hover:text-stone-900 hover:bg-orange-500/10'
+                      : 'text-stone-400 hover:text-white hover:bg-white/10'
+                  }`}
                 >
-                  ✕
+                  <CollapseSidebarIcon />
                 </button>
               </div>
 
-              {/* Navigation Items */}
-              <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
-                {[
-                  { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: <DashGridIcon /> },
-                  { id: 'journeys', label: 'Journeys', href: '/dashboard/journeys', icon: <JourneysStackIcon /> },
-                  { id: 'courses', label: 'Courses', href: '/dashboard/courses', icon: <CoursesBookIcon /> },
-                  { id: 'community', label: 'Community', href: '/dashboard/community', icon: <CommunityPeopleIcon /> },
-                  { id: 'leaderboard', label: 'Leaderboard', href: '/dashboard/leaderboard', icon: <LeaderboardPodiumIcon /> },
-                  { id: 'passport', label: 'Skill Passport', href: '/dashboard/passport', icon: <PassportBadgeIcon /> },
-                  { id: 'mentorship', label: 'Mentorship', href: '/dashboard/mentorship', icon: <MentorshipChatIcon /> },
-                  { id: 'kai', label: 'Kai', href: '/dashboard/kai', icon: <KaiSparkleIcon /> },
-                  { id: 'settings', label: 'Settings', href: '/dashboard/settings', icon: <SettingsGearIcon /> },
-                ].map((item) => {
-                  const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
+              {/* Navigation Items List in Exact Sequence */}
+              <nav className="flex-1 px-3 py-3 space-y-1.5 overflow-y-auto">
+                <div className="px-3 pb-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF6B35]/80 font-mono">
+                    Navigation
+                  </span>
+                </div>
+
+                {NAV_ITEMS.map((item) => {
+                  const isActive = item.id === activeId;
                   return (
                     <Link
                       key={item.id}
                       href={item.href}
-                      onClick={() => setDrawerOpen(false)}
-                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all ${
-                        active
-                          ? 'bg-[#FF6B35]/20 text-[#FF6B35] font-bold shadow-sm'
-                          : 'text-stone-400 hover:text-stone-200 hover:bg-white/5 font-medium'
+                      onClick={() => setIsExpanded(false)}
+                      className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl transition-all duration-200 group ${
+                        isActive
+                          ? 'text-white font-bold shadow-md shadow-[#FF6B35]/25 scale-[1.01]'
+                          : isBright
+                          ? 'text-stone-600 hover:text-stone-900 hover:bg-orange-500/10 font-medium'
+                          : 'text-stone-300 hover:text-white hover:bg-white/5 font-medium'
                       }`}
+                      style={
+                        isActive
+                          ? {
+                              background: 'linear-gradient(135deg, #FF6B35 0%, #FFA07A 100%)',
+                            }
+                          : undefined
+                      }
                     >
-                      <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
-                      <span className="text-sm">{item.label}</span>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span
+                          className={`w-5 h-5 flex items-center justify-center transition-transform group-hover:scale-110 ${
+                            isActive ? 'text-white' : 'text-[#FF6B35]'
+                          }`}
+                        >
+                          {item.icon}
+                        </span>
+                        <span className="text-xs tracking-wide truncate">{item.label}</span>
+                      </div>
+
+                      {isActive && (
+                        <motion.span
+                          layoutId="active-indicator-dot"
+                          className="w-1.5 h-1.5 rounded-full bg-white shadow-sm"
+                        />
+                      )}
                     </Link>
                   );
                 })}
               </nav>
 
-              {/* Bottom Footer */}
-              <div className="p-4 border-t space-y-3" style={{ borderColor: isBright ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)' }}>
+              {/* Footer: Theme Toggle, User Profile & Quick Actions */}
+              <div
+                className="p-4 border-t space-y-3"
+                style={{ borderColor: isBright ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.07)' }}
+              >
+                {/* Theme Toggle Button */}
                 <button
                   onClick={toggleTheme}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold hover:bg-white/5"
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                    isBright ? 'bg-orange-500/8 hover:bg-orange-500/15' : 'bg-white/5 hover:bg-white/10'
+                  }`}
                   style={{ color: isBright ? '#44403C' : '#E7E5E4' }}
                 >
                   <span className="flex items-center gap-2">
                     {isBright ? <MoonIcon /> : <SunIcon />}
                     <span>{isBright ? 'Dark Mode' : 'Light Mode'}</span>
                   </span>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-[#FF6B35]">
+                    {isBright ? 'Dark' : 'Light'}
+                  </span>
                 </button>
+
+                {/* User Profile Info Card */}
                 <div className="flex items-center gap-3 pt-1">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shadow" style={{ background: 'linear-gradient(135deg, #FF6B35, #FFA07A)' }}>
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-md shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #FF6B35 0%, #FFA07A 100%)' }}
+                  >
                     AJ
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold truncate" style={{ color: isBright ? '#1C1917' : '#FFF8F0' }}>Alex Johnson</p>
-                    <p className="text-[11px] text-stone-400 truncate">Pro Learner · Lvl 7</p>
+                    <p className="text-xs font-bold truncate" style={{ color: isBright ? '#1C1917' : '#FFF8F0' }}>
+                      Alex Johnson
+                    </p>
+                    <p className="text-[11px] font-medium text-[#FF6B35] truncate">
+                      Pro Learner · Lvl 7
+                    </p>
                   </div>
+
+                  {/* Collapse Button Shortcut */}
+                  <button
+                    onClick={() => setIsExpanded(false)}
+                    className="text-[11px] text-stone-400 hover:text-[#FF6B35] transition-colors p-1 cursor-pointer"
+                    title="Collapse"
+                  >
+                    ⇤
+                  </button>
                 </div>
               </div>
             </motion.aside>
@@ -625,7 +521,7 @@ export default function DashboardSidebar() {
         )}
       </AnimatePresence>
 
-      {/* ── 5. Go Premium Eduplex Card (Bottom-Left Corner) ───────────────── */}
+      {/* ── 4. Go Premium Eduplex Card (Bottom-Left Corner) ───────────────── */}
       <GoPremiumCard />
     </>
   );

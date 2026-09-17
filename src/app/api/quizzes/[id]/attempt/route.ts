@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import {
-  quizAttempts,
-  quizOptions,
-  quizQuestions,
-  quizzes,
-  userAnswers,
-  users,
-  xps,
-} from '@/db/schema';
-import { asc, desc, eq } from 'drizzle-orm';
-import { getSession } from '@/lib/auth';
-import { DEMO_QUIZ_ID } from '@/lib/seedQuizAndLeaderboard';
+import { adminAuth, adminDb, FieldValue } from '@/utils/firebase/admin';
+
+
+const DEMO_QUIZ_ID = '00000000-0000-0000-0000-000000000001';
 
 export async function POST(
   request: NextRequest,
@@ -31,102 +22,45 @@ export async function POST(
 
     // 1. Locate quiz
     let targetQuizId = id;
-    let [quiz] = await db
-      .select()
-      .from(quizzes)
-      .where(eq(quizzes.id, targetQuizId))
-      .limit(1);
+    let quizDoc = await adminDb.collection('quizzes').doc(targetQuizId).get();
 
-    if (!quiz) {
+    if (!quizDoc.exists) {
       targetQuizId = DEMO_QUIZ_ID;
-      [quiz] = await db
-        .select()
-        .from(quizzes)
-        .where(eq(quizzes.id, targetQuizId))
-        .limit(1);
+      quizDoc = await adminDb.collection('quizzes').doc(targetQuizId).get();
     }
 
-    if (!quiz) {
+    if (!quizDoc.exists) {
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 
+    const quizData = quizDoc.data()!;
+    const questions = quizData.questions || [];
+
     // 2. Determine user
-    const session = await getSession();
-    let resolvedUserId = session?.userId || body.userId;
+    const sessionCookie = request.cookies.get('mentora_session')?.value || '';
+    let resolvedUserId = body.userId;
+
+    if (sessionCookie) {
+      try {
+        const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true);
+        resolvedUserId = decodedClaims.uid;
+      } catch (e) {
+        // Ignore
+      }
+    }
 
     if (!resolvedUserId) {
-      const [latestUser] = await db
-        .select({ userId: users.userId })
-        .from(users)
-        .orderBy(desc(users.createdAt))
-        .limit(1);
-
-      if (latestUser) {
-        resolvedUserId = latestUser.userId;
-      } else {
-        return NextResponse.json(
-          { error: 'Authentication required to submit quiz attempt' },
-          { status: 401 }
-        );
-      }
+      return NextResponse.json(
+        { error: 'Authentication required to submit quiz attempt' },
+        { status: 401 }
+      );
     }
 
-    // 3. Retrieve questions and options from normalized tables
-    const questionsList = await db
-      .select({
-        questionId: quizQuestions.id,
-        questionText: quizQuestions.question,
-        displayOrder: quizQuestions.displayOrder,
-        points: quizQuestions.points,
-        optionId: quizOptions.id,
-        optionText: quizOptions.optionText,
-        isCorrect: quizOptions.isCorrect,
-        optionOrder: quizOptions.displayOrder,
-      })
-      .from(quizQuestions)
-      .leftJoin(quizOptions, eq(quizOptions.questionId, quizQuestions.id))
-      .where(eq(quizQuestions.quizId, quiz.id))
-      .orderBy(asc(quizQuestions.displayOrder), asc(quizOptions.displayOrder));
-
-    // Group options by question
-    const qMap = new Map<
-      string,
-      {
-        id: string;
-        question: string;
-        correctIndex: number;
-        options: { id: string; text: string; isCorrect: boolean }[];
-      }
-    >();
-
-    for (const r of questionsList) {
-      if (!qMap.has(r.questionId)) {
-        qMap.set(r.questionId, {
-          id: r.questionId,
-          question: r.questionText,
-          correctIndex: 0,
-          options: [],
-        });
-      }
-      if (r.optionId && r.optionText) {
-        const qEntry = qMap.get(r.questionId)!;
-        const optIndex = qEntry.options.length;
-        if (r.isCorrect) {
-          qEntry.correctIndex = optIndex;
-        }
-        qEntry.options.push({
-          id: r.optionId,
-          text: r.optionText,
-          isCorrect: Boolean(r.isCorrect),
-        });
-      }
-    }
-
-    const questionEntries = Array.from(qMap.values());
+    // 3. Evaluate answers
     let correctCount = 0;
-    const totalQuestions = questionEntries.length;
+    const totalQuestions = questions.length;
 
-    const answerBreakdown = questionEntries.map((q, idx) => {
+    const answerBreakdown = questions.map((q: any, idx: number) => {
       let selected: number | undefined;
       if (typeof answers === 'object' && !Array.isArray(answers)) {
         selected = answers[q.id] ?? answers[idx] ?? answers[String(idx)];
@@ -134,69 +68,74 @@ export async function POST(
         selected = answers[idx];
       }
 
-      const isCorrect = typeof selected === 'number' && selected === q.correctIndex;
+      // We assume correctIndex is stored in Firestore question object.
+      // If it's missing (e.g. demo data), we'll default to 0.
+      const correctIndex = q.correctIndex ?? 0;
+      const isCorrect = typeof selected === 'number' && selected === correctIndex;
       if (isCorrect) {
         correctCount++;
       }
 
-      const selectedOpt = typeof selected === 'number' && q.options[selected] ? q.options[selected] : null;
-
       return {
         questionId: q.id,
-        selectedOptionId: selectedOpt?.id || null,
         selectedAnswer: selected,
-        correctAnswer: q.correctIndex,
+        correctAnswer: correctIndex,
         isCorrect,
       };
     });
 
     const percentage = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
-    const passingThreshold = quiz.passingScore ?? 70;
+    const passingThreshold = quizData.passingScore ?? 70;
     const passed = percentage >= passingThreshold;
-    const pointsToAward = passed ? 100 : 0;
+    const pointsToAward = passed ? (quizData.rewardPoints || 100) : 0;
 
-    // 4. Record quiz attempt in database (quiz_attempts table)
-    const [recordedAttempt] = await db
-      .insert(quizAttempts)
-      .values({
-        quizId: quiz.id,
-        userId: resolvedUserId,
-        score: percentage.toFixed(2),
-        passed,
-        startedAt: new Date(),
-        completedAt: new Date(),
-      })
-      .returning();
+    // 4. Record quiz attempt
+    const attemptRef = await adminDb.collection('quiz_attempts').add({
+      quizId: targetQuizId,
+      userId: resolvedUserId,
+      score: percentage,
+      passed,
+      answerBreakdown,
+      startedAt: FieldValue.serverTimestamp(),
+      completedAt: FieldValue.serverTimestamp(),
+    });
 
-    // Record user answers in user_answers table
-    for (const ans of answerBreakdown) {
-      if (!ans.questionId) continue;
-      await db
-        .insert(userAnswers)
-        .values({
-          attemptId: recordedAttempt.id,
-          questionId: ans.questionId,
-          selectedOptionId: ans.selectedOptionId || undefined,
-          isCorrect: Boolean(ans.isCorrect),
-        })
-        .onConflictDoNothing()
-        .catch(() => {});
-    }
-
-    // 5. Award points to xps table if score >= passingScore
+    // 5. Award points if passed
     if (passed && pointsToAward > 0) {
-      await db.insert(xps).values({
+      // Use a transaction to safely increment user's totalPoints
+      const userRef = adminDb.collection('users').doc(resolvedUserId);
+      
+      try {
+        await adminDb.runTransaction(async (t) => {
+          const userDocSnap = await t.get(userRef);
+          if (userDocSnap.exists) {
+            const currentPoints = userDocSnap.data()?.totalPoints || 0;
+            const currentActivities = userDocSnap.data()?.activitiesCount || 0;
+            t.update(userRef, {
+              totalPoints: currentPoints + pointsToAward,
+              activitiesCount: currentActivities + 1,
+              lastEarnedAt: FieldValue.serverTimestamp(),
+            });
+          }
+        });
+      } catch (err) {
+        console.error('Failed to award points transaction:', err);
+      }
+
+      // Record XP transaction
+      await adminDb.collection('xps').add({
         userId: resolvedUserId,
         points: pointsToAward,
         source: 'quiz',
-        refId: quiz.id,
+        refId: targetQuizId,
+        createdAt: FieldValue.serverTimestamp(),
       });
     }
 
     return NextResponse.json({
-      attemptId: recordedAttempt.id,
-      quizId: quiz.id,
-      quizTitle: quiz.title,
+      attemptId: attemptRef.id,
+      quizId: targetQuizId,
+      quizTitle: quizData.title,
       score: correctCount,
       maxScore: totalQuestions,
       percentage,

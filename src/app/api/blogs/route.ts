@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/db";
-import { blogs } from "@/db/schema";
-import { desc, asc, eq } from "drizzle-orm";
+import { adminDb, FieldValue } from '@/utils/firebase/admin';
+
 import { mockBlogs, BlogArticle } from "@/lib/admin/data/mockBlogs";
 
 export async function GET(request: NextRequest) {
@@ -14,10 +13,12 @@ export async function GET(request: NextRequest) {
     let results: any[] = [];
 
     try {
-      results = await db.select().from(blogs).orderBy(asc(blogs.num), asc(blogs.createdAt));
+      const blogsSnap = await adminDb.collection('blogs').orderBy('num', 'asc').get();
+      if (!blogsSnap.empty) {
+        results = blogsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      }
     } catch (dbErr) {
       console.warn("Database query failed in /api/blogs GET, using fallback:", dbErr);
-      results = [...mockBlogs];
     }
 
     if (!results || results.length === 0) {
@@ -25,29 +26,40 @@ export async function GET(request: NextRequest) {
     }
 
     // Format createdAt / updatedAt strings if needed
-    let formatted: BlogArticle[] = results.map((r) => ({
-      id: r.id,
-      num: r.num,
-      category: r.category,
-      tabLabel: r.tabLabel,
-      subTabLabel: r.subTabLabel,
-      tabPosition: r.tabPosition,
-      theme: r.theme,
-      primaryTabColor: r.primaryTabColor,
-      date: r.date,
-      readTime: r.readTime,
-      title: r.title,
-      kicker: r.kicker,
-      synopsis: r.synopsis,
-      tags: Array.isArray(r.tags) ? r.tags : [],
-      takeaways: Array.isArray(r.takeaways) ? r.takeaways : [],
-      fullBody: Array.isArray(r.fullBody) ? r.fullBody : [],
-      imageUrl: r.imageUrl || "",
-      status: r.status || "Published",
-      author: r.author || "Mentora Editorial",
-      createdAt: r.createdAt ? new Date(r.createdAt).toISOString().slice(0, 10) : undefined,
-      updatedAt: r.updatedAt ? new Date(r.updatedAt).toISOString().slice(0, 10) : undefined,
-    }));
+    let formatted: BlogArticle[] = results.map((r) => {
+      let createdAt = r.createdAt;
+      let updatedAt = r.updatedAt;
+      
+      if (createdAt && createdAt.toDate) createdAt = createdAt.toDate().toISOString().slice(0, 10);
+      else if (createdAt) createdAt = new Date(createdAt).toISOString().slice(0, 10);
+      
+      if (updatedAt && updatedAt.toDate) updatedAt = updatedAt.toDate().toISOString().slice(0, 10);
+      else if (updatedAt) updatedAt = new Date(updatedAt).toISOString().slice(0, 10);
+
+      return {
+        id: r.id,
+        num: r.num,
+        category: r.category,
+        tabLabel: r.tabLabel,
+        subTabLabel: r.subTabLabel,
+        tabPosition: r.tabPosition,
+        theme: r.theme,
+        primaryTabColor: r.primaryTabColor,
+        date: r.date,
+        readTime: r.readTime,
+        title: r.title,
+        kicker: r.kicker,
+        synopsis: r.synopsis,
+        tags: Array.isArray(r.tags) ? r.tags : [],
+        takeaways: Array.isArray(r.takeaways) ? r.takeaways : [],
+        fullBody: Array.isArray(r.fullBody) ? r.fullBody : [],
+        imageUrl: r.imageUrl || "",
+        status: r.status || "Published",
+        author: r.author || "Mentora Editorial",
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+      };
+    });
 
     if (category && category !== "All") {
       formatted = formatted.filter((b) => b.category.toLowerCase() === category.toLowerCase());
@@ -100,8 +112,8 @@ export async function POST(request: NextRequest) {
     // Get current count to determine next num
     let currentCount = 5;
     try {
-      const existing = await db.select().from(blogs);
-      currentCount = existing.length;
+      const existing = await adminDb.collection('blogs').get();
+      currentCount = existing.size;
     } catch {
       // ignore
     }
@@ -118,7 +130,6 @@ export async function POST(request: NextRequest) {
 
     const blogId = body.id || `blg-${Date.now()}`;
     const newBlogRecord = {
-      id: blogId,
       num: body.num || nextNum,
       category: body.category || "General",
       tabLabel: body.tabLabel || `ARTICLE ${nextNum}`,
@@ -137,26 +148,12 @@ export async function POST(request: NextRequest) {
       imageUrl: body.imageUrl || "",
       status: body.status || "Published",
       author: body.author || "Mentora Editorial",
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
     };
 
     try {
-      await db.insert(blogs).values(newBlogRecord).onConflictDoUpdate({
-        target: blogs.id,
-        set: {
-          title: newBlogRecord.title,
-          category: newBlogRecord.category,
-          kicker: newBlogRecord.kicker,
-          synopsis: newBlogRecord.synopsis,
-          tags: newBlogRecord.tags,
-          takeaways: newBlogRecord.takeaways,
-          fullBody: newBlogRecord.fullBody,
-          imageUrl: newBlogRecord.imageUrl,
-          status: newBlogRecord.status,
-          updatedAt: new Date(),
-        }
-      });
+      await adminDb.collection('blogs').doc(blogId).set(newBlogRecord, { merge: true });
     } catch (insertErr) {
       console.error("Failed to insert blog into database:", insertErr);
     }
@@ -164,9 +161,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
+        id: blogId,
         ...newBlogRecord,
-        createdAt: newBlogRecord.createdAt.toISOString().slice(0, 10),
-        updatedAt: newBlogRecord.updatedAt.toISOString().slice(0, 10),
+        createdAt: new Date().toISOString().slice(0, 10),
+        updatedAt: new Date().toISOString().slice(0, 10),
       },
     });
   } catch (error: any) {
@@ -187,7 +185,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const updateData: any = {
-      updatedAt: new Date(),
+      updatedAt: FieldValue.serverTimestamp(),
     };
 
     if (patch.title !== undefined) updateData.title = patch.title;
@@ -201,7 +199,7 @@ export async function PUT(request: NextRequest) {
     if (patch.status !== undefined) updateData.status = patch.status;
     if (patch.readTime !== undefined) updateData.readTime = patch.readTime;
 
-    await db.update(blogs).set(updateData).where(eq(blogs.id, id));
+    await adminDb.collection('blogs').doc(id).update(updateData);
 
     return NextResponse.json({ success: true, message: "Blog updated in database" });
   } catch (error: any) {
@@ -218,7 +216,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Blog ID is required" }, { status: 400 });
     }
 
-    await db.delete(blogs).where(eq(blogs.id, id));
+    await adminDb.collection('blogs').doc(id).delete();
     return NextResponse.json({ success: true, message: "Blog deleted from database" });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

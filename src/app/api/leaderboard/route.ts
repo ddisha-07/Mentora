@@ -1,54 +1,61 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { users, xps } from '@/db/schema';
-import { desc, eq, sql } from 'drizzle-orm';
-import { getSession } from '@/lib/auth';
+import { adminDb, adminAuth } from '@/utils/firebase/admin';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getSession();
-    const currentUserId = session?.userId || null;
+    const sessionCookie = request.cookies.get('mentora_session')?.value || '';
+    let currentUserId: string | null = null;
+    
+    if (sessionCookie) {
+      try {
+        const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true);
+        currentUserId = decodedClaims.uid;
+      } catch (e) {
+        // Ignore invalid session
+      }
+    }
 
-    // Aggregate points per user from xps table
-    const aggregated = await db
-      .select({
-        userId: users.userId,
-        email: users.email,
-        name: users.name,
-        role: users.role,
-        totalPoints: sql<number>`coalesce(sum(${xps.points}), 0)::int`,
-        activitiesCount: sql<number>`count(${xps.id})::int`,
-        lastEarnedAt: sql<string | null>`max(${xps.createdAt})`,
-      })
-      .from(users)
-      .innerJoin(xps, eq(xps.userId, users.userId))
-      .groupBy(users.userId, users.email, users.name, users.role)
-      .orderBy(desc(sql`sum(${xps.points})`));
+    // Fetch users ordered by totalPoints (assuming we maintain this field on user document)
+    // For now, if the field doesn't exist, we'll fetch all and calculate/sort in memory,
+    // but in a production NoSQL app, you'd want to maintain this counter via Cloud Functions or transactions.
+    
+    const usersSnapshot = await adminDb.collection('users').orderBy('totalPoints', 'desc').get();
+    
+    // In case we don't have totalPoints index yet, let's just fetch all and sort
+    let allUsers = [];
+    if (usersSnapshot.empty) {
+       const snapshot = await adminDb.collection('users').get();
+       allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+       allUsers.sort((a: any, b: any) => (b.totalPoints || 0) - (a.totalPoints || 0));
+    } else {
+       allUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
 
     // Assign sequential ranks and badges
-    const leaderboard = aggregated.map((entry, index) => {
+    const leaderboard = allUsers.map((entry: any, index) => {
       const rank = index + 1;
+      const totalPoints = entry.totalPoints || 0;
       let badge = 'Active Learner';
       if (rank === 1) badge = '👑 Grandmaster';
       else if (rank === 2) badge = '🥈 Elite Scholar';
       else if (rank === 3) badge = '🥉 High Achiever';
-      else if (entry.totalPoints >= 1000) badge = '⭐ Master';
-      else if (entry.totalPoints >= 500) badge = '🚀 Rising Star';
+      else if (totalPoints >= 1000) badge = '⭐ Master';
+      else if (totalPoints >= 500) badge = '🚀 Rising Star';
 
       return {
         rank,
-        userId: entry.userId,
-        name: entry.name || entry.email.split('@')[0],
+        userId: entry.id,
+        name: entry.name || entry.email?.split('@')[0] || 'Anonymous',
         email: entry.email,
-        targetRole: entry.role || 'Professional Learner',
-        experienceLevel: 'intermediate',
-        totalPoints: entry.totalPoints,
-        activitiesCount: entry.activitiesCount,
+        targetRole: entry.targetRole || entry.role || 'Professional Learner',
+        experienceLevel: entry.experienceLevel || 'intermediate',
+        totalPoints: totalPoints,
+        activitiesCount: entry.activitiesCount || 0,
         badge,
-        lastEarnedAt: entry.lastEarnedAt,
-        isCurrentUser: currentUserId === entry.userId,
+        lastEarnedAt: entry.lastEarnedAt || null,
+        isCurrentUser: currentUserId === entry.id,
       };
-    });
+    }).filter(u => u.totalPoints > 0); // Only show users with >0 points on leaderboard
 
     const currentUserRank = leaderboard.find((u) => u.isCurrentUser) || null;
 

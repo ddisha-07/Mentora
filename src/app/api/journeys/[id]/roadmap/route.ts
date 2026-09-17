@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { courseModules, courses, lessonProgress, lessons, userCourses } from '@/db/schema';
-import { and, asc, desc, eq, inArray } from 'drizzle-orm';
-import { getSession } from '@/lib/auth';
+import { adminDb, adminAuth } from '@/utils/firebase/admin';
 
 const LEVEL_NAMES: Record<number, string> = {
   1: 'Foundations',
@@ -16,63 +13,84 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const session = await getSession();
-    const userId = session?.userId || null;
+    
+    // Determine user session
+    const sessionCookie = request.cookies.get('mentora_session')?.value || '';
+    let userId: string | null = null;
+    if (sessionCookie) {
+      try {
+        const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true);
+        userId = decodedClaims.uid;
+      } catch (e) {}
+    }
 
     let targetCourseId = id;
-    let course: typeof courses.$inferSelect | undefined;
+    let courseDocData: any = null;
+    let courseDocId: string | null = null;
 
     if (id === 'active') {
+      // Find the latest course for the user, or just the latest course
+      let coursesQuery = adminDb.collection('courses').orderBy('createdAt', 'desc').limit(1);
       if (userId) {
-        [course] = await db
-          .select()
-          .from(courses)
-          .where(eq(courses.createdBy, userId))
-          .orderBy(desc(courses.createdAt))
-          .limit(1);
+        // Try user specific first
+        try {
+          const userCoursesSnap = await adminDb.collection('courses').where('createdBy', '==', userId).get();
+          if (!userCoursesSnap.empty) {
+            const sorted = userCoursesSnap.docs.sort((a, b) => {
+              const timeA = a.data().createdAt?.toMillis?.() || new Date(a.data().createdAt || 0).getTime();
+              const timeB = b.data().createdAt?.toMillis?.() || new Date(b.data().createdAt || 0).getTime();
+              return timeB - timeA;
+            });
+            courseDocId = sorted[0].id;
+            courseDocData = sorted[0].data();
+          }
+        } catch (e) {}
       }
-      if (!course) {
-        [course] = await db
-          .select()
-          .from(courses)
-          .orderBy(desc(courses.createdAt))
-          .limit(1);
+      
+      if (!courseDocData) {
+        const snap = await coursesQuery.get();
+        if (!snap.empty) {
+          courseDocId = snap.docs[0].id;
+          courseDocData = snap.docs[0].data();
+        }
       }
-      if (course) {
-        targetCourseId = course.id;
+      
+      if (courseDocId) {
+        targetCourseId = courseDocId;
       }
     }
 
-    // Attempt to locate course if not active alias
-    if (!course) {
-      [course] = await db
-        .select()
-        .from(courses)
-        .where(eq(courses.id, targetCourseId))
-        .limit(1);
+    if (!courseDocData && targetCourseId !== 'active') {
+      const docSnap = await adminDb.collection('courses').doc(targetCourseId).get();
+      if (docSnap.exists) {
+        courseDocId = docSnap.id;
+        courseDocData = docSnap.data();
+      }
     }
 
-    if (!course) {
+    if (!courseDocData || !courseDocId) {
       return NextResponse.json(
         { error: 'No active journey found. Please complete onboarding first.' },
         { status: 404 }
       );
     }
 
-    // Retrieve modules for this course ordered by displayOrder
-    const moduleList = await db
-      .select()
-      .from(courseModules)
-      .where(eq(courseModules.courseId, targetCourseId))
-      .orderBy(asc(courseModules.displayOrder));
+    // Retrieve modules for this course
+    const modulesSnap = await adminDb.collection('modules')
+      .where('courseId', '==', courseDocId)
+      .get();
+
+    const moduleList = modulesSnap.docs
+      .map(doc => ({ id: doc.id, ...doc.data() as any }))
+      .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
     if (moduleList.length === 0) {
       return NextResponse.json({
         journey: {
-          id: course.id,
-          title: course.title,
-          role: course.category || 'AI Engineer',
-          level: course.difficulty,
+          id: courseDocId,
+          title: courseDocData.title,
+          role: courseDocData.category || 'AI Engineer',
+          level: courseDocData.difficulty,
           totalModules: 0,
         },
         levels: [
@@ -113,10 +131,10 @@ export async function GET(
 
     return NextResponse.json({
       journey: {
-        id: course.id,
-        title: course.title,
-        role: course.category || 'AI Engineer',
-        level: course.difficulty,
+        id: courseDocId,
+        title: courseDocData.title,
+        role: courseDocData.category || 'AI Engineer',
+        level: courseDocData.difficulty,
         totalModules: moduleList.length,
       },
       levels,

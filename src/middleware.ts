@@ -1,10 +1,17 @@
-import { type NextRequest } from 'next/server';
-import { createClient } from '@/utils/supabase/middleware';
+import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  return createClient(request);
+  // Simple check for Firebase session cookie or token in headers/cookies.
+  // Full validation would typically be done in the API routes using firebase-admin.
+  const session = request.cookies.get('mentora_session');
+  
+  // Example basic protection for /dashboard routes:
+  if (request.nextUrl.pathname.startsWith('/dashboard') && !session) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+  
+  return NextResponse.next();
 }
-
 export const config = {
   matcher: [
     /*

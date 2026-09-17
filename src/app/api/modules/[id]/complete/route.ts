@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { courseModules, courses, userCourses } from '@/db/schema';
-import { and, asc, eq } from 'drizzle-orm';
-import { getSession } from '@/lib/auth';
+import { adminDb, adminAuth, FieldValue } from '@/utils/firebase/admin';
 
 export async function POST(
   request: NextRequest,
@@ -10,26 +7,32 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const session = await getSession();
-    const userId = session?.userId || null;
-
-    // 1. Locate current module
-    const [currentModule] = await db
-      .select()
-      .from(courseModules)
-      .where(eq(courseModules.id, id))
-      .limit(1);
-
-    if (!currentModule) {
-      return NextResponse.json({ error: 'Module not found' }, { status: 404 });
+    
+    // Determine user session
+    const sessionCookie = request.cookies.get('mentora_session')?.value || '';
+    let userId: string | null = null;
+    if (sessionCookie) {
+      try {
+        const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true);
+        userId = decodedClaims.uid;
+      } catch (e) {}
     }
 
+    // 1. Locate current module
+    const currentModuleDoc = await adminDb.collection('modules').doc(id).get();
+    if (!currentModuleDoc.exists) {
+      return NextResponse.json({ error: 'Module not found' }, { status: 404 });
+    }
+    const currentModule = { id: currentModuleDoc.id, ...currentModuleDoc.data() } as any;
+
     // 2. Find all modules in this course in sequence
-    const allModules = await db
-      .select()
-      .from(courseModules)
-      .where(eq(courseModules.courseId, currentModule.courseId))
-      .orderBy(asc(courseModules.displayOrder));
+    const allModulesSnap = await adminDb.collection('modules')
+      .where('courseId', '==', currentModule.courseId)
+      .get();
+      
+    const allModules = allModulesSnap.docs
+      .map(doc => ({ id: doc.id, ...doc.data() } as any))
+      .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
     const currentIndex = allModules.findIndex((m) => m.id === currentModule.id);
     const nextModule = currentIndex >= 0 && currentIndex + 1 < allModules.length
@@ -41,21 +44,21 @@ export async function POST(
       const completedCount = currentIndex + 1;
       const progressPercent = Math.min(100, Math.round((completedCount / allModules.length) * 100));
 
-      await db
-        .update(userCourses)
-        .set({
-          progress: progressPercent.toFixed(2),
+      const userCourseId = `${userId}_${currentModule.courseId}`;
+      const userCourseRef = adminDb.collection('user_courses').doc(userCourseId);
+      
+      try {
+        await userCourseRef.set({
+          userId,
+          courseId: currentModule.courseId,
+          progress: progressPercent,
           status: progressPercent >= 100 ? 'completed' : 'in_progress',
-          completedAt: progressPercent >= 100 ? new Date() : null,
-          lastAccessedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(userCourses.userId, userId),
-            eq(userCourses.courseId, currentModule.courseId)
-          )
-        )
-        .catch(() => {});
+          completedAt: progressPercent >= 100 ? FieldValue.serverTimestamp() : null,
+          lastAccessedAt: FieldValue.serverTimestamp(),
+        }, { merge: true });
+      } catch (err) {
+        console.error('Failed to update user course progress:', err);
+      }
     }
 
     let unlockedModule = null;

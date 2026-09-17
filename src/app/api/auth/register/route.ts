@@ -1,97 +1,65 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { hashPassword } from '@/lib/auth';
+import { adminAuth, adminDb } from '@/utils/firebase/admin';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, role, fullName, targetRole, experienceLevel } = body;
+    const { idToken, fullName, targetRole, experienceLevel, role } = body;
 
-    if (!email || typeof email !== 'string' || !email.includes('@')) {
-      return NextResponse.json({ error: 'Valid email is required' }, { status: 400 });
+    if (!idToken) {
+      return NextResponse.json({ error: 'Missing ID token' }, { status: 400 });
     }
 
-    if (!password || typeof password !== 'string' || password.length < 6) {
-      return NextResponse.json(
-        { error: 'Password must be at least 6 characters long' },
-        { status: 400 }
-      );
+    // Verify token
+    const decodedToken = await adminAuth.verifyIdToken(idToken);
+    const { uid, email } = decodedToken;
+
+    // Check if user exists in Firestore
+    const userRef = adminDb.collection('users').doc(uid);
+    const userDoc = await userRef.get();
+
+    if (userDoc.exists) {
+      return NextResponse.json({ error: 'User already exists' }, { status: 409 });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
-
-    // Check if user exists
-    const [existing] = await db
-      .select({ userId: users.userId })
-      .from(users)
-      .where(eq(users.email, normalizedEmail))
-      .limit(1);
-
-    if (existing) {
-      return NextResponse.json(
-        { error: 'User with this email already exists' },
-        { status: 409 }
-      );
-    }
-
-    const passwordHash = await hashPassword(password);
-    const resolvedName = fullName?.trim() || normalizedEmail.split('@')[0];
-
-    // Allowed roles: 'employee', 'admin', 'mentor', 'manager'
-    const allowedRoles = ['employee', 'admin', 'mentor', 'manager'];
+    const resolvedName = fullName?.trim() || email?.split('@')[0] || 'Learner';
+    const allowedRoles = ['employee', 'admin', 'mentor', 'manager', 'learner'];
     const resolvedRole = role && allowedRoles.includes(role) ? role : 'employee';
 
-    // Create user in users table
-    const [newUser] = await db
-      .insert(users)
-      .values({
-        email: normalizedEmail,
-        name: resolvedName,
-        password: passwordHash,
-        role: resolvedRole,
-        status: 'active',
-      })
-      .returning({
-        userId: users.userId,
-        email: users.email,
-        name: users.name,
-        role: users.role,
-        status: users.status,
-        createdAt: users.createdAt,
-      });
+    const newUser = {
+      userId: uid,
+      email: email || '',
+      name: resolvedName,
+      role: resolvedRole,
+      status: 'active',
+      targetRole: targetRole || null,
+      experienceLevel: experienceLevel || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      onboardingComplete: true, // Assuming true for now
+    };
 
-    // Generate session JWT
-    const { createSessionToken, SESSION_COOKIE_NAME } = await import('@/lib/auth');
-    const token = await createSessionToken({
-      userId: newUser.userId,
-      email: newUser.email,
-      role: newUser.role,
-    });
+    // Create user in Firestore
+    await userRef.set(newUser);
+
+    // Create session cookie
+    const expiresIn = 60 * 60 * 24 * 5 * 1000;
+    const sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
 
     const response = NextResponse.json(
       {
         message: 'User registered successfully',
-        user: {
-          id: newUser.userId,
-          userId: newUser.userId,
-          email: newUser.email,
-          name: newUser.name,
-          role: newUser.role,
-          status: newUser.status,
-          onboardingComplete: true,
-        },
+        user: newUser,
       },
       { status: 201 }
     );
 
-    response.cookies.set(SESSION_COOKIE_NAME, token, {
+    response.cookies.set('mentora_session', sessionCookie, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: expiresIn / 1000,
     });
 
     return response;
