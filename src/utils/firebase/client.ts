@@ -1,7 +1,11 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import type { FirebaseApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import type { Auth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import type { Firestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+import type { FirebaseStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,11 +16,31 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase for SSR compatibility
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+// Safe client-side app initialization that won't crash during SSR / build prerendering
+function getClientApp(): FirebaseApp {
+  if (getApps().length > 0) {
+    return getApp();
+  }
 
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+  // If apiKey is missing (e.g. during build-time static generation or CI without env vars),
+  // provide a fallback configuration to prevent compilation/prerendering crashes
+  const effectiveConfig = firebaseConfig.apiKey
+    ? firebaseConfig
+    : {
+        apiKey: 'dummy-api-key-for-build',
+        authDomain: 'dummy.firebaseapp.com',
+        projectId: 'dummy-project',
+        storageBucket: 'dummy.appspot.com',
+        messagingSenderId: '000000000000',
+        appId: '1:000000000000:web:0000000000000000',
+      };
+
+  return initializeApp(effectiveConfig);
+}
+
+const app: FirebaseApp = getClientApp();
+const auth: Auth = getAuth(app);
+const db: Firestore = getFirestore(app);
+const storage: FirebaseStorage = getStorage(app);
 
 export { app, auth, db, storage };
