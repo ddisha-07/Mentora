@@ -29,6 +29,10 @@ export function formatAuthError(err: any): string {
     return "Password is too weak. Please use at least 6 characters.";
   }
 
+  if (code === 'auth/api-key-not-valid' || msg.includes('api-key-not-valid') || msg.includes('API_KEY_NOT_VALID')) {
+    return "Firebase API key is missing or invalid. In your production hosting (e.g., Vercel), ensure NEXT_PUBLIC_FIREBASE_API_KEY is configured in Project Settings > Environment Variables, then redeploy.";
+  }
+
   if (code === 'auth/popup-closed-by-user' || msg.includes('popup-closed-by-user')) {
     return "Sign-in popup was closed before completing authentication.";
   }

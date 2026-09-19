@@ -1,63 +1,68 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/utils/firebase/admin';
+import { verifyFirebaseToken } from '@/utils/firebase/tokenVerifier';
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const { idToken, fullName, targetRole, experienceLevel, role, isGoogle } = body;
 
     if (!idToken) {
       return NextResponse.json({ error: 'Missing ID token' }, { status: 400 });
     }
 
-    // Verify token
-    const decodedToken = await adminAuth.verifyIdToken(idToken);
+    // Verify token with resilient multi-tier verifier
+    const decodedToken = await verifyFirebaseToken(idToken);
     const { uid, email } = decodedToken;
 
-    // Check if user exists in Firestore
-    const userRef = adminDb.collection('users').doc(uid);
-    const userDoc = await userRef.get();
+    const resolvedName = fullName?.trim() || email?.split('@')[0] || 'Learner';
+    const allowedRoles = ['employee', 'admin', 'mentor', 'manager', 'learner'];
+    const resolvedRole = role && allowedRoles.includes(role) ? role : 'learner';
 
-    let currentUserData: any;
+    let currentUserData: any = {
+      userId: uid,
+      email: email || '',
+      name: resolvedName,
+      role: resolvedRole,
+      status: 'active',
+      targetRole: targetRole || null,
+      experienceLevel: experienceLevel || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      onboardingComplete: false,
+    };
 
-    if (userDoc.exists) {
-      if (isGoogle) {
-        // Google user already exists, update role and proceed gracefully
-        await userRef.update({
-          targetRole: targetRole || null,
-          experienceLevel: experienceLevel || null,
-          updatedAt: new Date(),
-        });
-        currentUserData = (await userRef.get()).data();
+    // Best-effort Firestore user synchronization
+    try {
+      const { adminDb } = await import('@/utils/firebase/admin');
+      const userRef = adminDb.collection('users').doc(uid);
+      const userDoc = await userRef.get();
+
+      if (userDoc.exists) {
+        if (isGoogle) {
+          await userRef.update({
+            targetRole: targetRole || null,
+            experienceLevel: experienceLevel || null,
+            updatedAt: new Date(),
+          });
+          currentUserData = (await userRef.get()).data();
+        } else {
+          return NextResponse.json({ error: 'User already exists' }, { status: 409 });
+        }
       } else {
-        return NextResponse.json({ error: 'User already exists' }, { status: 409 });
+        await userRef.set(currentUserData);
       }
-    } else {
-      const resolvedName = fullName?.trim() || email?.split('@')[0] || 'Learner';
-      const allowedRoles = ['employee', 'admin', 'mentor', 'manager', 'learner'];
-      const resolvedRole = role && allowedRoles.includes(role) ? role : 'learner';
-
-      currentUserData = {
-        userId: uid,
-        email: email || '',
-        name: resolvedName,
-        role: resolvedRole,
-        status: 'active',
-        targetRole: targetRole || null,
-        experienceLevel: experienceLevel || null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        onboardingComplete: false,
-      };
-
-      // Create user in Firestore
-      await userRef.set(currentUserData);
+    } catch (dbError) {
+      console.warn('Register Firestore sync warning:', dbError);
     }
 
     // Create session cookie (or fallback to idToken)
     const expiresIn = 60 * 60 * 24 * 5 * 1000;
     let sessionCookie = idToken;
     try {
+      const { adminAuth } = await import('@/utils/firebase/admin');
       sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
     } catch (cookieErr) {
       console.warn('Register createSessionCookie fallback to idToken:', cookieErr);
@@ -81,10 +86,10 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Registration error:', error);
     return NextResponse.json(
-      { error: 'Internal server error during registration' },
+      { error: error?.message || 'Internal server error during registration' },
       { status: 500 }
     );
   }

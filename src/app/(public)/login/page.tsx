@@ -63,7 +63,7 @@ function LoginForm() {
         throw new Error(data.error || 'Failed to create session');
       }
       
-      router.push('/dashboard');
+      window.location.href = '/dashboard';
     } catch (err: any) {
       console.warn('Google Sign-In caught:', err?.code || err?.message);
       setError(formatAuthError(err));
@@ -95,7 +95,7 @@ function LoginForm() {
         throw new Error(data.error || 'Failed to create session');
       }
       
-      router.push('/dashboard');
+      window.location.href = '/dashboard';
     } catch (err: any) {
       console.warn('Sign-In caught:', err?.code || err?.message);
       setError(formatAuthError(err));
