@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/utils/firebase/admin';
+import { verifyFirebaseToken } from '@/utils/firebase/tokenVerifier';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,8 +11,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing ID token' }, { status: 400 });
     }
 
-    // Verify token
-    const decodedToken = await adminAuth.verifyIdToken(idToken);
+    // Verify token with resilient multi-tier verifier
+    const decodedToken = await verifyFirebaseToken(idToken);
     const { uid, email } = decodedToken;
 
     // Check if user exists in Firestore

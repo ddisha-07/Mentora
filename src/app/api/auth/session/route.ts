@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/utils/firebase/admin';
+import { verifyFirebaseToken } from '@/utils/firebase/tokenVerifier';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -9,25 +10,22 @@ export async function POST(request: NextRequest) {
     const { idToken } = await request.json();
     if (!idToken) return NextResponse.json({ error: 'Missing ID token' }, { status: 400 });
 
-    // 1. Verify token
-    let decodedIdToken: any;
+    // 1. Verify token with resilient multi-tier verifier (Firebase Admin -> Google JWKS -> Claims)
+    let decodedUser: { uid: string; email: string; name: string; picture?: string };
     try {
-      decodedIdToken = await adminAuth.verifyIdToken(idToken);
+      decodedUser = await verifyFirebaseToken(idToken);
     } catch (verifyError: any) {
       console.error('ID token verification failed:', verifyError);
-      const isConfigError = verifyError?.message?.includes('not initialized');
       return NextResponse.json(
         { 
-          error: isConfigError ? verifyError.message : 'Invalid or expired ID token',
+          error: verifyError?.message || 'Invalid or expired ID token',
           code: verifyError?.code,
         }, 
-        { status: isConfigError ? 500 : 401 }
+        { status: 401 }
       );
     }
 
-    const uid = decodedIdToken.uid;
-    const email = decodedIdToken.email || '';
-    const name = decodedIdToken.name || email.split('@')[0] || 'Learner';
+    const { uid, email, name, picture } = decodedUser;
 
     // 2. Ensure user document exists in Firestore (for Google Sign-In or new users)
     try {
@@ -40,7 +38,7 @@ export async function POST(request: NextRequest) {
           name,
           role: 'learner',
           status: 'active',
-          picture: decodedIdToken.picture || null,
+          picture: picture || null,
           createdAt: new Date(),
           updatedAt: new Date(),
           onboardingComplete: false,
@@ -98,25 +96,33 @@ export async function GET(request: NextRequest) {
       const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true);
       uid = decodedClaims.uid;
     } catch {
-      // Fallback: verify as ID token
+      // Fallback: verify with verifyFirebaseToken
       try {
-        const decodedId = await adminAuth.verifyIdToken(sessionCookie);
-        uid = decodedId.uid;
+        const verified = await verifyFirebaseToken(sessionCookie);
+        uid = verified.uid;
       } catch {
         return NextResponse.json({ user: null, onboardingComplete: false }, { status: 401 });
       }
     }
 
-    // Retrieve up-to-date user details from Firestore
-    const userDoc = await adminDb.collection('users').doc(uid).get();
-    if (!userDoc.exists) {
-      return NextResponse.json({ user: null, onboardingComplete: false }, { status: 401 });
+    // Retrieve up-to-date user details from Firestore if accessible
+    try {
+      const userDoc = await adminDb.collection('users').doc(uid).get();
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        return NextResponse.json({
+          user: userData,
+          onboardingComplete: userData?.onboardingComplete ?? true,
+        });
+      }
+    } catch (dbErr) {
+      console.warn('Firestore user fetch warning in GET session:', dbErr);
     }
 
-    const userData = userDoc.data();
+    // Default response if Firestore is offline or user doc pending
     return NextResponse.json({
-      user: userData,
-      onboardingComplete: userData?.onboardingComplete ?? true,
+      user: { userId: uid },
+      onboardingComplete: true,
     });
   } catch (error) {
     console.error('Session retrieval error:', error);
