@@ -134,7 +134,7 @@ export default function SettingsPage() {
             Nothing here touches a real database yet.
           </p>
           <p className="text-xs text-ink-500">
-            When ready, replace each function body in the service layer with the equivalent Supabase call — the UI won&apos;t need to change.
+            When ready, replace each function body in the service layer with the equivalent Firebase / Firestore call — the UI won&apos;t need to change.
           </p>
         </GlassCard>
       </div>
