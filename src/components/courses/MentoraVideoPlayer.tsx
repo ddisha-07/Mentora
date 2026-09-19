@@ -10,6 +10,7 @@ import {
   Search,
   Check,
   ChevronRight,
+  Lightbulb,
 } from "lucide-react";
 
 export interface VideoAlternateItem {
@@ -234,9 +235,12 @@ export default function MentoraVideoPlayer({
       <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
         <div className="text-xs text-white/70 max-w-xl">
           {activeVideo.relevance_reason ? (
-            <p>
-              💡 <span className="text-amber-300 font-semibold">Why this video:</span>{" "}
-              {activeVideo.relevance_reason}
+            <p className="flex items-center gap-1.5">
+              <Lightbulb className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span>
+                <span className="text-amber-300 font-semibold">Why this video:</span>{" "}
+                {activeVideo.relevance_reason}
+              </span>
             </p>
           ) : (
             <p>Curated learning video directly aligned with current lesson concepts.</p>

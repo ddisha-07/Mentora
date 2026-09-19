@@ -190,7 +190,7 @@ function generateDynamicFallback(
       actionableOutcome: 'Build and deploy autonomous multi-agent workflows capable of self-correcting and executing real-world tasks.',
       matchScore: 98,
       tag: 'Highest Impact',
-      techLogo: '🤖',
+      techLogo: 'bot',
       bannerBg: 'linear-gradient(135deg, #ea580c 0%, #c2410c 45%, #9a3412 100%)',
     },
     {
@@ -204,7 +204,7 @@ function generateDynamicFallback(
       actionableOutcome: 'Implement transformer attention layers from scratch and fine-tune pretrained models on specialized domain datasets.',
       matchScore: 94,
       tag: 'Core Prerequisite',
-      techLogo: '🧠',
+      techLogo: 'brain',
       bannerBg: 'linear-gradient(135deg, #0284c7 0%, #0369a1 45%, #075985 100%)',
     },
     {
@@ -218,7 +218,7 @@ function generateDynamicFallback(
       actionableOutcome: 'Deploy an enterprise RAG pipeline with sub-100ms latency and high retrieval precision.',
       matchScore: 91,
       tag: 'In High Demand',
-      techLogo: '⚡',
+      techLogo: 'database',
       bannerBg: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 45%, #5b21b6 100%)',
     },
     {
@@ -232,7 +232,7 @@ function generateDynamicFallback(
       actionableOutcome: 'Package, quantize, and serve fine-tuned models on GPU clusters with automated monitoring.',
       matchScore: 89,
       tag: 'Career Accelerator',
-      techLogo: '🚀',
+      techLogo: 'server',
       bannerBg: 'linear-gradient(135deg, #059669 0%, #047857 45%, #065f46 100%)',
     },
   ];

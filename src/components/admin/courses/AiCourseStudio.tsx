@@ -473,8 +473,8 @@ function AiFormattedMessage({
         }
 
         // 3. Scenario Callout block
-        if (trimmed.includes("🚨") || trimmed.includes("Situation:")) {
-          const content = trimmed.replace(/^🚨?\s*\**Situation:\**\s*/i, "").trim();
+        if (trimmed.includes("Situation:")) {
+          const content = trimmed.replace(/^[\s]*\**Situation:\**\s*/i, "").trim();
           return (
             <div
               key={sIdx}
@@ -485,7 +485,7 @@ function AiFormattedMessage({
               }`}
             >
               <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-amber-700 dark:text-amber-400 mb-1.5">
-                <span className="text-base">🚨</span>
+                <AlertCircle size={15} className="text-amber-500 shrink-0" />
                 <span>Real-World Scenario</span>
               </div>
               <div className="text-xs sm:text-sm leading-relaxed">
@@ -496,8 +496,8 @@ function AiFormattedMessage({
         }
 
         // 4. Diagnostic Question Callout block
-        if (trimmed.includes("❓") || trimmed.includes("Diagnostic Question:")) {
-          const content = trimmed.replace(/^❓?\s*\**Diagnostic Question:\**\s*/i, "").trim();
+        if (trimmed.includes("Diagnostic Question:")) {
+          const content = trimmed.replace(/^[\s]*\**Diagnostic Question:\**\s*/i, "").trim();
           return (
             <div
               key={sIdx}
@@ -508,7 +508,7 @@ function AiFormattedMessage({
               }`}
             >
               <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-ember-600 dark:text-ember-400 mb-1.5">
-                <span className="text-base">❓</span>
+                <HelpCircle size={15} className="text-ember-500 shrink-0" />
                 <span>Diagnostic Question</span>
               </div>
               <div className="text-xs sm:text-sm font-semibold leading-relaxed">
@@ -519,7 +519,7 @@ function AiFormattedMessage({
         }
 
         // 5. Positive / Solved Callout block
-        if (trimmed.includes("🎯 **Spot on!") || trimmed.includes("🏆 **Outstanding")) {
+        if (trimmed.includes("**Spot on!") || trimmed.includes("**Outstanding")) {
           return (
             <div
               key={sIdx}
@@ -535,7 +535,7 @@ function AiFormattedMessage({
         }
 
         // 6. Hint Callout block
-        if (trimmed.includes("💡 **Helpful Diagnostic Hint") || trimmed.includes("💡 **Hint")) {
+        if (trimmed.includes("**Helpful Diagnostic Hint") || trimmed.includes("**Hint")) {
           return (
             <div
               key={sIdx}
@@ -565,7 +565,7 @@ function AiFormattedMessage({
                   : "bg-white/[0.02] border-white/10 text-ink-300"
               }`}
             >
-              <span className="not-italic text-sm">💡</span>
+              <Lightbulb size={14} className="text-amber-500 shrink-0 not-italic mt-0.5" />
               <div className="flex-1 min-w-0">{renderInline(cleanTip)}</div>
             </div>
           );
@@ -1387,24 +1387,24 @@ export default function AiCourseStudio({
       general_tech: "Software Engineering & Architecture",
     };
 
-    let welcomeText = `🚀 Welcome to the Course Creation Studio for "${activeCourse.title}"!
+    let welcomeText = `Welcome to the Course Creation Studio for "${activeCourse.title}"!
 I've calibrated this course specifically for **${domainLabels[detectedDomain] || "Software Engineering"}** with:
-1. 📖 **Granular Subtopics**: In-depth theoretical readings, pizza/gaming mental models, and guided code challenges with solutions.
-2. 🍿 **Curated YouTube Masterclasses**: Verified visual tutorials from premier engineering creators.
-3. ⚡ **Flashcards**: High-yield cards with 100% upright text rotation.
-4. 💬 **Socratic Dialogue Coach**: Hands-on scenario dilemmas that coach you until correct, with review on completion!
-5. 🏆 **Module Pass Gates**: Admin-decided **Quiz** or **Task Mission** gates.
+1. **Granular Subtopics**: In-depth theoretical readings, pizza/gaming mental models, and guided code challenges with solutions.
+2. **Curated YouTube Masterclasses**: Verified visual tutorials from premier engineering creators.
+3. **Flashcards**: High-yield cards with 100% upright text rotation.
+4. **Socratic Dialogue Coach**: Hands-on scenario dilemmas that coach you until correct, with review on completion!
+5. **Module Pass Gates**: Admin-decided **Quiz** or **Task Mission** gates.
 
 *Tip: All course updates and XP gains are stored persistently so they never disappear!*`;
 
     if (activeCourse.documentInfo?.mode === "full") {
-      welcomeText = `🚀 Welcome to the Course Creation Studio for "${activeCourse.title}"!
+      welcomeText = `Welcome to the Course Creation Studio for "${activeCourse.title}"!
 I've thoroughly analyzed and synthesized your uploaded document **"${activeCourse.documentInfo.name}"** into a complete 5-step curriculum:
-1. 📖 **Granular Subtopics**: Structured modules and lessons derived directly from your document syllabus.
-2. 🍿 **Curated YouTube Masterclasses**: Visual tutorials matched to your document's key concepts.
-3. ⚡ **Flashcards**: High-yield cards extracted from definitions in your document.
-4. 💬 **Socratic Dialogue Coach**: Scenario dilemmas coaching learners on your document's principles.
-5. 🏆 **Module Pass Gates**: Calibrated 10–15 min Daily Tasks and Quizzes for active recall.
+1. **Granular Subtopics**: Structured modules and lessons derived directly from your document syllabus.
+2. **Curated YouTube Masterclasses**: Visual tutorials matched to your document's key concepts.
+3. **Flashcards**: High-yield cards extracted from definitions in your document.
+4. **Socratic Dialogue Coach**: Scenario dilemmas coaching learners on your document's principles.
+5. **Module Pass Gates**: Calibrated 10–15 min Daily Tasks and Quizzes for active recall.
 
 *Tip: You can reprompt me anytime in the chat below to expand topics, add pizza analogies, or add new flashcards!*`;
     } else if (activeCourse.documentInfo?.mode === "integrate") {
@@ -1432,13 +1432,13 @@ I've thoroughly analyzed and synthesized your uploaded document **"${activeCours
           ? "Reference Guide"
           : "Core Reading";
 
-      welcomeText = `🚀 Welcome to the Course Creation Studio for "${activeCourse.title}"!
+      welcomeText = `Welcome to the Course Creation Studio for "${activeCourse.title}"!
 I've preserved your uploaded ${activeCourse.documentInfo.isVideo ? "video" : "document"} **"${activeCourse.documentInfo.name}"** **100% AS IT IS** and placed it into **Module ${targetModNum}**${hasPrepModule ? ` (with Module 1 providing foundational prerequisites)` : ""}:
-1. ${activeCourse.documentInfo.isVideo ? "🎬" : "📄"} **Primary Source Lesson**: Embedded verbatim as the anchor ${formatLabel} lesson in Module ${targetModNum}.
-2. 🍿 **Companion Video Masterclass**: Curated video walkthrough providing visual context.
-3. ⚡ **Flashcards**: High-yield cards testing terminology and concepts directly from your source.
-4. 💬 **Socratic Dialogue Coach**: Dilemma coaching that applies concepts directly from your source.
-5. 🏆 **Module Pass Gate**: 80% passing grade pass gate quiz testing deep retention.
+1. **Primary Source Lesson**: Embedded verbatim as the anchor ${formatLabel} lesson in Module ${targetModNum}.
+2. **Companion Video Masterclass**: Curated video walkthrough providing visual context.
+3. **Flashcards**: High-yield cards testing terminology and concepts directly from your source.
+4. **Socratic Dialogue Coach**: Dilemma coaching that applies concepts directly from your source.
+5. **Module Pass Gate**: 80% passing grade pass gate quiz testing deep retention.
 
 *Tip: Click any subtopic to view its in-depth reader drawer, or reprompt me anytime in chat!*`;
     }
@@ -1497,14 +1497,14 @@ I've preserved your uploaded ${activeCourse.documentInfo.isVideo ? "video" : "do
       {
         id: uid("dmsg"),
         sender: "bot",
-        text: `👋 Greetings! I'm **Byte**, your Socratic AI Coach for **${targetMod ? cleanTitle(targetMod.title) : course.title}**.
+        text: `Greetings! I'm **Byte**, your Socratic AI Coach for **${targetMod ? cleanTitle(targetMod.title) : course.title}**.
 
 Here is a real-world scenario to test your analytical thinking:
 
-🚨 **Situation:**
+**Situation:**
 ${firstScen.situation}
 
-❓ **Diagnostic Question:**
+**Diagnostic Question:**
 ${firstScen.question}
 
 *Type your answer below! If you're slightly off, I'll coach you with hints until you get it 100% right. You can click **"End Dialogue & Get Review"** at any time.*`,
@@ -1565,19 +1565,19 @@ ${firstScen.question}
               id: uid("dmsg"),
               sender: "bot",
               isCorrect: true,
-              text: `🎯 **Spot on! Brilliant explanation.**
+              text: `**Spot on! Brilliant explanation.**
 ${activeScen.correctExplanation}
 
-*(+50 XP awarded! 🎉)*
+*(+50 XP awarded!)*
 
 ---
 
 Here is your next challenge (**Scenario ${nextScenIdx + 1} of ${scenarios.length}**):
 
-🚨 **Situation:**
+**Situation:**
 ${nextScen.situation}
 
-❓ **Diagnostic Question:**
+**Diagnostic Question:**
 ${nextScen.question}`,
             },
           ]);
@@ -1594,11 +1594,11 @@ ${nextScen.question}`,
               sender: "bot",
               isCorrect: true,
               isReview: true,
-              text: `🏆 **Outstanding Mastery!** You have solved all diagnostic scenarios!
+              text: `**Outstanding Mastery!** You have solved all diagnostic scenarios!
 
 ${activeScen.correctExplanation}
 
-*(+50 XP awarded! 🎉)*
+*(+50 XP awarded!)*
 
 I've generated your complete **Dialogue Performance Review** below!`,
             },
@@ -1608,12 +1608,12 @@ I've generated your complete **Dialogue Performance Review** below!`,
         // Not quite correct: give coaching hint and continue until correct
         let hintMsg = "";
         if (nextAttempts === 1) {
-          hintMsg = `💡 **Good thinking, but not quite!**
+          hintMsg = `**Good thinking, but not quite!**
 ${activeScen.hint}
 
 *Take another look at the situation and try answering again! (The dialogue continues until correct, or click "End Dialogue & Get Review" anytime).*`;
         } else {
-          hintMsg = `🔍 **Getting closer! Here's a deeper clue:**
+          hintMsg = `**Getting closer! Here's a deeper clue:**
 Notice the core keyword: consider **${activeScen.expectedKeywords[0]}** or **${activeScen.expectedKeywords[1] || "the key trade-off"}**.
 How does this resolve the issue described in the scenario? Give it another shot!`;
         }
@@ -1649,7 +1649,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
         id: uid("dmsg"),
         sender: "bot",
         isReview: true,
-        text: `🏁 **Dialogue Concluded!** Here is your comprehensive analytical review and key learning takeaways:`,
+        text: `**Dialogue Concluded!** Here is your comprehensive analytical review and key learning takeaways:`,
       },
     ]);
   }
@@ -1668,9 +1668,9 @@ How does this resolve the issue described in the scenario? Give it another shot!
     const solved = solvedIds.length;
     const scorePercent = Math.round((solved / Math.max(1, total)) * 100);
 
-    let tier = "🌱 Developing Thinker";
-    if (scorePercent >= 90) tier = "🌟 Dialogue Master (Architect Level)";
-    else if (scorePercent >= 50) tier = "⚡ Proficient Analytical Practitioner";
+    let tier = "Developing Thinker";
+    if (scorePercent >= 90) tier = "Dialogue Master (Architect Level)";
+    else if (scorePercent >= 50) tier = "Proficient Analytical Practitioner";
 
     const strengths: string[] = [];
     const areasToImprove: string[] = [];
@@ -1957,7 +1957,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
       setMessages((prev) =>
         prev.map((m) =>
           m.id === msgId
-            ? { ...m, isPendingApproval: false, actionTaken: `✓ Applied to Course: ${desc}` }
+            ? { ...m, isPendingApproval: false, actionTaken: `Applied to Course: ${desc}` }
             : m
         )
       );
@@ -2021,8 +2021,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: `✨ **Implemented!** Removed all "Week 1", "Week 2", and "Module" prefix noise across all course modules. Every module now directly displays its clean topical content title.`,
-          actionTaken: `✓ Applied to Course: Directly rendered content titles on all modules (no Week prefixes)`,
+          text: `**Implemented!** Removed all "Week 1", "Week 2", and "Module" prefix noise across all course modules. Every module now directly displays its clean topical content title.`,
+          actionTaken: `Applied to Course: Directly rendered content titles on all modules (no Week prefixes)`,
         },
       ]);
       return;
@@ -2073,8 +2073,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: `✨ **Moved!** Placed your uploaded source directly into **Module ${targetModIdx + 1}**, preserving all content 100% intact and maintaining seamless prerequisite flow.`,
-          actionTaken: `✓ Applied to Course: Moved uploaded document to Module ${targetModIdx + 1}`,
+          text: `**Moved!** Placed your uploaded source directly into **Module ${targetModIdx + 1}**, preserving all content 100% intact and maintaining seamless prerequisite flow.`,
+          actionTaken: `Applied to Course: Moved uploaded document to Module ${targetModIdx + 1}`,
         },
       ]);
       return;
@@ -2211,15 +2211,15 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: `✨ **Implemented!** Updated **Module ${modIdx + 1}, Day ${dayNum}** to **"${cleanTopic}"**!\n\n` +
-            `• 📝 **Lesson Title**: Day ${dayNum}: ${cleanTopic}\n` +
-            `• 📖 **Content**: Theoretical mechanics, production patterns & boundary rules\n` +
-            `• 💻 **Code & Examples**: Injected verified syntax examples & runnable exercise\n` +
-            `• 🍿 **Curated Video**: "${vid.title}" (${vid.channel}) with 10+ alternate masterclasses\n` +
-            `• ⚡ **Active Recall**: ${flashcards.length} lesson-specific flashcards\n` +
-            `• 💡 **Socratic Dialogue**: Added interactive dilemma challenge\n\n` +
+          text: `**Implemented!** Updated **Module ${modIdx + 1}, Day ${dayNum}** to **"${cleanTopic}"**!\n\n` +
+            `• **Lesson Title**: Day ${dayNum}: ${cleanTopic}\n` +
+            `• **Content**: Theoretical mechanics, production patterns & boundary rules\n` +
+            `• **Code & Examples**: Injected verified syntax examples & runnable exercise\n` +
+            `• **Curated Video**: "${vid.title}" (${vid.channel}) with 10+ alternate masterclasses\n` +
+            `• **Active Recall**: ${flashcards.length} lesson-specific flashcards\n` +
+            `• **Socratic Dialogue**: Added interactive dilemma challenge\n\n` +
             `*The curriculum panel on the right and lesson player have updated live!*`,
-          actionTaken: `✓ Applied to Course: Updated Module ${modIdx + 1}, Day ${dayNum} to "${cleanTopic}"`,
+          actionTaken: `Applied to Course: Updated Module ${modIdx + 1}, Day ${dayNum} to "${cleanTopic}"`,
         },
       ]);
       return;
@@ -2287,8 +2287,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
             id: uid("msg"),
             sender: "ai",
             timestamp: "Just now",
-            text: `✨ **Implemented!** Updated Module ${modIdx + 1} title directly to **"${cleanModTitle}"**.\n\n*The curriculum header and module assets have been updated live!*`,
-            actionTaken: `✓ Applied to Course: Renamed Module ${modIdx + 1} to "${cleanModTitle}"`,
+            text: `**Implemented!** Updated Module ${modIdx + 1} title directly to **"${cleanModTitle}"**.\n\n*The curriculum header and module assets have been updated live!*`,
+            actionTaken: `Applied to Course: Renamed Module ${modIdx + 1} to "${cleanModTitle}"`,
           },
         ]);
         return;
@@ -2416,14 +2416,14 @@ How does this resolve the issue described in the scenario? Give it another shot!
             id: uid("msg"),
             sender: "ai",
             timestamp: "Just now",
-            text: `✨ **Implemented!** Updated **Day ${rawDayNum}** in Module ${inferredModIdx + 1} to **"${cleanTopic}"**!\n\n` +
-              `• 📝 **Lesson Title**: Day ${rawDayNum}: ${cleanTopic}\n` +
-              `• 📖 **Content**: Theoretical mechanics & defensive patterns\n` +
-              `• 💻 **Code & Examples**: Injected syntax examples & exercise\n` +
-              `• 🍿 **Curated Video**: "${vid.title}" (${vid.channel})\n` +
-              `• ⚡ **Active Recall**: ${flashcards.length} lesson-specific flashcards\n\n` +
+            text: `**Implemented!** Updated **Day ${rawDayNum}** in Module ${inferredModIdx + 1} to **"${cleanTopic}"**!\n\n` +
+              `• **Lesson Title**: Day ${rawDayNum}: ${cleanTopic}\n` +
+              `• **Content**: Theoretical mechanics & defensive patterns\n` +
+              `• **Code & Examples**: Injected syntax examples & exercise\n` +
+              `• **Curated Video**: "${vid.title}" (${vid.channel})\n` +
+              `• **Active Recall**: ${flashcards.length} lesson-specific flashcards\n\n` +
               `*The curriculum panel on the right has been updated live!*`,
-            actionTaken: `✓ Applied to Course: Updated Day ${rawDayNum} to "${cleanTopic}"`,
+            actionTaken: `Applied to Course: Updated Day ${rawDayNum} to "${cleanTopic}"`,
           },
         ]);
         return;
@@ -2458,8 +2458,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
             id: uid("msg"),
             sender: "ai",
             timestamp: "Just now",
-            text: `✨ **Implemented!** Course title has been updated to **"${newTitle}"**. You can see the new title at the top header and in all course assets.`,
-            actionTaken: `✓ Applied to Course: Renamed course to "${newTitle}"`,
+            text: `**Implemented!** Course title has been updated to **"${newTitle}"**. You can see the new title at the top header and in all course assets.`,
+            actionTaken: `Applied to Course: Renamed course to "${newTitle}"`,
           },
         ]);
         return;
@@ -2486,8 +2486,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: `✨ **Implemented!** Course difficulty level has been updated to **${targetLvl}**.`,
-          actionTaken: `✓ Applied to Course: Set level to ${targetLvl}`,
+          text: `**Implemented!** Course difficulty level has been updated to **${targetLvl}**.`,
+          actionTaken: `Applied to Course: Set level to ${targetLvl}`,
         },
       ]);
       return;
@@ -2595,13 +2595,13 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: `✨ **Implemented!** I have created and added a complete daily lesson: **"${newSub.title}"** to **Module ${targetIdx + 1}: ${cleanTitle(targetMod?.title || "Curriculum")}**.\n\n` +
-            `• 📖 **In-Depth Reading & Code**: Foundational mechanics, syntax snippet & mental model\n` +
-            `• 🍿 **Curated Masterclass**: "${vid.title}" (${vid.channel})\n` +
-            `• ⚡ **Active Recall**: ${flashcards.length} targeted flashcards\n` +
-            `• 🛠️ **Practical Exercise**: Hands-on challenge with verified solution code\n\n` +
+          text: `**Implemented!** I have created and added a complete daily lesson: **"${newSub.title}"** to **Module ${targetIdx + 1}: ${cleanTitle(targetMod?.title || "Curriculum")}**.\n\n` +
+            `• **In-Depth Reading & Code**: Foundational mechanics, syntax snippet & mental model\n` +
+            `• **Curated Masterclass**: "${vid.title}" (${vid.channel})\n` +
+            `• **Active Recall**: ${flashcards.length} targeted flashcards\n` +
+            `• **Practical Exercise**: Hands-on challenge with verified solution code\n\n` +
             `*The curriculum on the right panel has been updated live!*`,
-          actionTaken: `✓ Applied to Course: Added "${newSub.title}" to Module ${targetIdx + 1}`,
+          actionTaken: `Applied to Course: Added "${newSub.title}" to Module ${targetIdx + 1}`,
         },
       ]);
       return;
@@ -2655,13 +2655,13 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: `✨ **Implemented!** I have re-scaled the course to **${durStr}** with **${newMods.length * 7} total daily deliverables** (7 daily lessons per week).\n\n` +
-            `1. 📚 **${newMods.length} Modules**: Sequenced logically from Day 1 fundamentals through to production architecture.\n` +
-            `2. 🍿 **Daily YouTube Masterclasses**: Dedicated video attached to every single day.\n` +
-            `3. ⚡ **Active Recall Flashcards**: ${newFlashcards.length} cards across all ${newMods.length} weeks.\n` +
-            `4. 🎯 **Day 7 Pass Gate Quizzes**: 10 diagnostic questions per week with 80% passing threshold.\n\n` +
+          text: `**Implemented!** I have re-scaled the course to **${durStr}** with **${newMods.length * 7} total daily deliverables** (7 daily lessons per week).\n\n` +
+            `1. **${newMods.length} Modules**: Sequenced logically from Day 1 fundamentals through to production architecture.\n` +
+            `2. **Daily YouTube Masterclasses**: Dedicated video attached to every single day.\n` +
+            `3. **Active Recall Flashcards**: ${newFlashcards.length} cards across all ${newMods.length} weeks.\n` +
+            `4. **Day 7 Pass Gate Quizzes**: 10 diagnostic questions per week with 80% passing threshold.\n\n` +
             `*All modules and daily lessons on the right have updated immediately!*`,
-          actionTaken: `✓ Applied to Course: Scaled to ${durStr} (${newMods.length * 7} daily lessons)`,
+          actionTaken: `Applied to Course: Scaled to ${durStr} (${newMods.length * 7} daily lessons)`,
         },
       ]);
       return;
@@ -2797,8 +2797,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: `✨ **Implemented!** Created **"${cleanModTitle}"** with **7 structured daily lessons**, curated YouTube masterclasses, and a 10-question Pass Gate Quiz (80% passing grade).\n\n*The new module is now active in your curriculum!*`,
-          actionTaken: `✓ Applied to Course: Added "${cleanModTitle}"`,
+          text: `**Implemented!** Created **"${cleanModTitle}"** with **7 structured daily lessons**, curated YouTube masterclasses, and a 10-question Pass Gate Quiz (80% passing grade).\n\n*The new module is now active in your curriculum!*`,
+          actionTaken: `Applied to Course: Added "${cleanModTitle}"`,
         },
       ]);
       return;
@@ -2821,8 +2821,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
             id: uid("msg"),
             sender: "ai",
             timestamp: "Just now",
-            text: "💻 **Implemented!** All flashcards in the deck are now styled with technical Monospace typography.",
-            actionTaken: "✓ Applied to Course: Set flashcards font to Monospace",
+            text: "**Implemented!** All flashcards in the deck are now styled with technical Monospace typography.",
+            actionTaken: "Applied to Course: Set flashcards font to Monospace",
           },
         ]);
         return;
@@ -2834,8 +2834,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
             id: uid("msg"),
             sender: "ai",
             timestamp: "Just now",
-            text: "📖 **Implemented!** All flashcards in the deck are now styled with Classic Serif editorial typography.",
-            actionTaken: "✓ Applied to Course: Set flashcards font to Classic Serif",
+            text: "**Implemented!** All flashcards in the deck are now styled with Classic Serif editorial typography.",
+            actionTaken: "Applied to Course: Set flashcards font to Classic Serif",
           },
         ]);
         return;
@@ -2847,8 +2847,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
             id: uid("msg"),
             sender: "ai",
             timestamp: "Just now",
-            text: "🌌 **Implemented!** Flashcard deck theme is now Cyber Sky.",
-            actionTaken: "✓ Applied to Course: Changed deck theme to Cyber Sky",
+            text: "**Implemented!** Flashcard deck theme is now Cyber Sky.",
+            actionTaken: "Applied to Course: Changed deck theme to Cyber Sky",
           },
         ]);
         return;
@@ -2860,8 +2860,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
             id: uid("msg"),
             sender: "ai",
             timestamp: "Just now",
-            text: "🌿 **Implemented!** Flashcard deck theme is now Emerald Forest.",
-            actionTaken: "✓ Applied to Course: Changed deck theme to Emerald",
+            text: "**Implemented!** Flashcard deck theme is now Emerald Forest.",
+            actionTaken: "Applied to Course: Changed deck theme to Emerald",
           },
         ]);
         return;
@@ -2873,8 +2873,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
             id: uid("msg"),
             sender: "ai",
             timestamp: "Just now",
-            text: "🔮 **Implemented!** Flashcard deck theme is now Purple Nebula.",
-            actionTaken: "✓ Applied to Course: Changed deck theme to Purple Nebula",
+            text: "**Implemented!** Flashcard deck theme is now Purple Nebula.",
+            actionTaken: "Applied to Course: Changed deck theme to Purple Nebula",
           },
         ]);
         return;
@@ -2933,8 +2933,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: `⚡ **Implemented!** Added **${newCards.length} high-yield flashcards** on **"${cleanTopic}"** to your workout deck.\n\n*Switched to the Flashcards tab so you can practice them now!*`,
-          actionTaken: `✓ Applied to Course: Added ${newCards.length} flashcards on "${cleanTopic}"`,
+          text: `**Implemented!** Added **${newCards.length} high-yield flashcards** on **"${cleanTopic}"** to your workout deck.\n\n*Switched to the Flashcards tab so you can practice them now!*`,
+          actionTaken: `Applied to Course: Added ${newCards.length} flashcards on "${cleanTopic}"`,
         },
       ]);
       return;
@@ -2957,8 +2957,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: "🛠️ **Implemented!** Switched Pass Gate across all modules to **Hands-on Capstone Tasks** with verified checklists.",
-          actionTaken: "✓ Applied to Course: Switched Pass Gate to Hands-on Task Mission",
+          text: "**Implemented!** Switched Pass Gate across all modules to **Hands-on Capstone Tasks** with verified checklists.",
+          actionTaken: "Applied to Course: Switched Pass Gate to Hands-on Task Mission",
         },
       ]);
       return;
@@ -2985,8 +2985,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: "🎯 **Implemented!** Pass Gates are set to **10-Question Diagnostic Quizzes** with an **80% passing grade** (8/10 required to unlock the next module).",
-          actionTaken: "✓ Applied to Course: Set Pass Gate to 10-Question Quiz (80% pass)",
+          text: "**Implemented!** Pass Gates are set to **10-Question Diagnostic Quizzes** with an **80% passing grade** (8/10 required to unlock the next module).",
+          actionTaken: "Applied to Course: Set Pass Gate to 10-Question Quiz (80% pass)",
         },
       ]);
       return;
@@ -3029,8 +3029,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: "💡 **Implemented!** Injected intuitive, clear **Real-World Mental Models & Analogies** into the lesson breakdown.",
-          actionTaken: "✓ Applied to Course: Added Intuitive Mental Models to lessons",
+          text: "**Implemented!** Injected intuitive, clear **Real-World Mental Models & Analogies** into the lesson breakdown.",
+          actionTaken: "Applied to Course: Added Intuitive Mental Models to lessons",
         },
       ]);
       return;
@@ -3108,8 +3108,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: "📚 **Implemented!** Expanded all modules into **in-depth daily structured learning tracks** (7 full daily lessons per module with syntax code snippets, mental models, and flashcards).",
-          actionTaken: "✓ Applied to Course: Expanded in-depth subtopics across all modules",
+          text: "**Implemented!** Expanded all modules into **in-depth daily structured learning tracks** (7 full daily lessons per module with syntax code snippets, mental models, and flashcards).",
+          actionTaken: "Applied to Course: Expanded in-depth subtopics across all modules",
         },
       ]);
       return;
@@ -3156,8 +3156,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: "💡 **Implemented!** Added verified, syntax-highlighted **code examples** and runnable **practical exercises** with solutions to every lesson.",
-          actionTaken: "✓ Applied to Course: Added practical code examples & exercises to lessons",
+          text: "**Implemented!** Added verified, syntax-highlighted **code examples** and runnable **practical exercises** with solutions to every lesson.",
+          actionTaken: "Applied to Course: Added practical code examples & exercises to lessons",
         },
       ]);
       return;
@@ -3206,10 +3206,10 @@ How does this resolve the issue described in the scenario? Give it another shot!
             id: uid("msg"),
             sender: "ai",
             timestamp: "Just now",
-            text: `🍿 **Loaded 10+ Curated YouTube Alternates for "${activeSubtopic.title}"!**\n\n` +
+            text: `**Loaded 10+ Curated YouTube Alternates for "${activeSubtopic.title}"!**\n\n` +
               `I've retrieved and verified 10+ alternate masterclasses from leading engineering channels (Fireship, Web Dev Simplified, freeCodeCamp, Traversy Media, etc.).\n` +
               `You can switch between any of them in the lesson video player drawer below.`,
-            actionTaken: `✓ Applied to Lesson: Expanded to ${extraSubVideo.alternates.length} alternate videos for "${activeSubtopic.title}"`,
+            actionTaken: `Applied to Lesson: Expanded to ${extraSubVideo.alternates.length} alternate videos for "${activeSubtopic.title}"`,
           },
         ]);
         return;
@@ -3280,11 +3280,11 @@ How does this resolve the issue described in the scenario? Give it another shot!
           id: uid("msg"),
           sender: "ai",
           timestamp: "Just now",
-          text: `🍿 **Expanded YouTube Masterclass Alternates Across Entire Course!**\n\n` +
-            `• 🎯 **10–12 Verified Alternates**: Every module and lesson now has 10+ verified, embeddable video alternatives from top engineering educators.\n` +
-            `• 🔄 **1-Click Fallback**: If any video doesn't play in your region, click *"Try Next Alternate"* to seamlessly rotate.\n` +
-            `• 📚 **Masterclass Stack**: Check the **Video Masterclass** tab to browse all curated explanations.`,
-          actionTaken: `✓ Applied to Course: Stored 10-12 verified video alternates across all modules & lessons`,
+          text: `**Expanded YouTube Masterclass Alternates Across Entire Course!**\n\n` +
+            `• **10–12 Verified Alternates**: Every module and lesson now has 10+ verified, embeddable video alternatives from top engineering educators.\n` +
+            `• **1-Click Fallback**: If any video doesn't play in your region, click *"Try Next Alternate"* to seamlessly rotate.\n` +
+            `• **Masterclass Stack**: Check the **Video Masterclass** tab to browse all curated explanations.`,
+          actionTaken: `Applied to Course: Stored 10-12 verified video alternates across all modules & lessons`,
         },
       ]);
       return;
@@ -3309,8 +3309,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
             id: uid("msg"),
             sender: "ai",
             timestamp: "Just now",
-            text: chat_response || `✨ **Implemented!** I have applied your update for "${prompt}" directly to the course content. All modules, subtopics, and resources on the right are updated.`,
-            actionTaken: `✓ Applied to Course: ${actionDesc}`,
+            text: chat_response || `**Implemented!** I have applied your update for "${prompt}" directly to the course content. All modules, subtopics, and resources on the right are updated.`,
+            actionTaken: `Applied to Course: ${actionDesc}`,
             proposedChange: editRes.editResult,
             isPendingApproval: false,
           },
@@ -3355,11 +3355,11 @@ How does this resolve the issue described in the scenario? Give it another shot!
 
     const subject = extractSubjectName(course.title, prompt);
     const fallbackDesc = `Re-calibrated curriculum for "${subject}" (${targetLevel})`;
-    const fallbackAiResponse = `✨ **Implemented!** I have updated the course content for **${subject}** at the **${targetLevel}** level:\n\n` +
-      `1. 🎯 **Curriculum Updated**: Structured 7 daily lessons per week with code, mental models & exercises.\n` +
-      `2. ⚡ **Topic Flashcards**: Refreshed ${newFlashcards.length} flashcards dedicated strictly to ${subject}.\n` +
-      `3. 📋 **Comprehensive Cheat Sheet**: Updated axioms, idioms, and resilience patterns for ${subject}.\n` +
-      `4. 🎯 **Day 7 Pass Gate Quizzes**: 10-Question diagnostic quizzes with 80% passing threshold.`;
+    const fallbackAiResponse = `**Implemented!** I have updated the course content for **${subject}** at the **${targetLevel}** level:\n\n` +
+      `1. **Curriculum Updated**: Structured 7 daily lessons per week with code, mental models & exercises.\n` +
+      `2. **Topic Flashcards**: Refreshed ${newFlashcards.length} flashcards dedicated strictly to ${subject}.\n` +
+      `3. **Comprehensive Cheat Sheet**: Updated axioms, idioms, and resilience patterns for ${subject}.\n` +
+      `4. **Day 7 Pass Gate Quizzes**: 10-Question diagnostic quizzes with 80% passing threshold.`;
 
     setMessages((prev) => [
       ...prev,
@@ -3368,7 +3368,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
         sender: "ai",
         timestamp: "Just now",
         text: fallbackAiResponse,
-        actionTaken: `✓ Applied to Course: ${fallbackDesc}`,
+        actionTaken: `Applied to Course: ${fallbackDesc}`,
       },
     ]);
   }
@@ -3481,7 +3481,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
     setQuizPassed(passed);
 
     if (passed) {
-      setCelebrationBanner(`🎉 Incredible! You passed the Quiz Gate with ${correctCount}/${questions.length} correct! (+100 XP)`);
+      setCelebrationBanner(`Incredible! You passed the Quiz Gate with ${correctCount}/${questions.length} correct! (+100 XP)`);
       awardXp(100, "quiz", `Passed Quiz Duel in ${cleanTitle(mod.title)}`);
       setCompletedModules((prev) => ({ ...prev, [mod.id]: true }));
     }
@@ -3491,7 +3491,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
   function handleTaskSubmit(mod: CourseModule) {
     setTaskSubmitted(true);
     const reward = mod.passGate.task.xpReward || 100;
-    setCelebrationBanner(`🏆 Mission Accomplished! Task verified and passed. (+${reward} XP)`);
+    setCelebrationBanner(`Mission Accomplished! Task verified and passed. (+${reward} XP)`);
     awardXp(reward, "task", `Completed Mission: ${mod.passGate.task.missionTitle}`);
     setCompletedModules((prev) => ({ ...prev, [mod.id]: true }));
   }
@@ -3714,10 +3714,10 @@ How does this resolve the issue described in the scenario? Give it another shot!
             >
               <span className="shrink-0 text-slate-400 dark:text-ink-600 font-medium">Quick prompts:</span>
               {[
-                "📚 Add in-depth subtopics",
-                "💡 Add clear analogies",
-                "🎯 Refine module quizzes",
-                "💡 Add practical examples",
+                "Add in-depth subtopics",
+                "Add clear analogies",
+                "Refine module quizzes",
+                "Add practical examples",
               ].map((chip) => (
                 <button
                   key={chip}
@@ -4115,7 +4115,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                         >
                           <div className="flex items-start sm:items-center gap-3 min-w-0">
                             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white flex items-center justify-center font-black text-base shadow-sm shrink-0 mt-0.5 sm:mt-0">
-                              🎯
+                              <Target size={18} className="text-white" />
                             </div>
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
@@ -4146,7 +4146,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                               }}
                               className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
                             >
-                              Take Pass Gate 🏆 →
+                              Take Pass Gate →
                             </button>
                           </div>
                         </div>
@@ -4197,7 +4197,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                             : "text-slate-500 dark:text-ink-400 hover:text-slate-900 dark:hover:text-ink-100"
                         }`}
                       >
-                        🃏 Single Card
+                        Single Card
                       </button>
                       <button
                         type="button"
@@ -4442,7 +4442,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                                   <span className={`font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${themeInfo.tagClass}`}>
                                     Core Axiom & Answer
                                   </span>
-                                  <span className="text-emerald-500 font-medium">Click to flip back 🔄</span>
+                                  <span className="text-emerald-500 font-medium">Click to flip back</span>
                                 </div>
 
                                 <div className="my-auto py-2 overflow-y-auto max-h-48 pr-1">
@@ -4452,8 +4452,8 @@ How does this resolve the issue described in the scenario? Give it another shot!
                                 </div>
 
                                 <div className="flex items-center justify-between text-xs text-slate-500 dark:text-emerald-400 pt-3 border-t border-emerald-500/20">
-                                  <span>✓ Verified Upright</span>
-                                  <span className="font-bold text-emerald-500">Active Recall ⚡</span>
+                                  <span>Verified Upright</span>
+                                  <span className="font-bold text-emerald-500">Active Recall</span>
                                 </div>
                               </div>
                             </>
@@ -4562,7 +4562,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                           onClick={() => setFlashcardViewMode("single")}
                           className="cursor-pointer text-amber-500 font-semibold text-xs"
                         >
-                          🃏 Single Card View
+                          Single Card View
                         </Button>
                       </div>
                     </div>
@@ -4689,7 +4689,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                                     <span className={`font-bold px-2 py-0.5 rounded-full uppercase tracking-wider text-[10px] ${themeInfo.tagClass}`}>
                                       Core Axiom & Answer
                                     </span>
-                                    <span className="text-[10px] text-emerald-500 font-medium">Click to flip back 🔄</span>
+                                    <span className="text-[10px] text-emerald-500 font-medium">Click to flip back</span>
                                   </div>
 
                                   <div className="my-auto py-2 overflow-y-auto max-h-36 pr-1">
@@ -4712,7 +4712,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                                     >
                                       Open in Single View ↗
                                     </button>
-                                    <span className="font-bold text-emerald-500 text-[10px]">Active Recall ⚡</span>
+                                    <span className="font-bold text-emerald-500 text-[10px]">Active Recall</span>
                                   </div>
                                 </div>
                               </div>
@@ -4733,7 +4733,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                           onClick={() => setFlashcardViewMode("single")}
                           className="cursor-pointer font-bold text-amber-500"
                         >
-                          🃏 Switch to Single Card View
+                          Switch to Single Card View
                         </Button>
                         <Button
                           variant="primary"
@@ -5190,7 +5190,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                               }`}
                             >
                               <div className="flex items-center gap-2 min-w-0">
-                                <span className="text-sm">🎯</span>
+                                <Target size={14} className="text-amber-500 inline" />
                                 <div className="min-w-0">
                                   <div className="truncate font-bold">
                                     {m.passGate?.type === "task" ? "Capstone Pass Gate" : "Module Pass Gate"}
@@ -5269,7 +5269,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                     </div>
                     <h1 className="font-black text-base sm:text-xl truncate !text-slate-900 dark:!text-white">
                       {isPassGateActive
-                        ? `🎯 ${
+                        ? `${
                             course.modules?.[playerModuleIdx]?.passGate?.type === "task"
                               ? course.modules?.[playerModuleIdx]?.passGate.task?.missionTitle || "Capstone Mission"
                               : course.modules?.[playerModuleIdx]?.passGate?.quiz?.title || "10-Question Diagnostic Assessment"
@@ -5338,7 +5338,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                       }`}>
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white flex items-center justify-center font-black text-xl shadow-sm shrink-0">
-                            🎯
+                            <Target size={20} className="text-white" />
                           </div>
                           <div>
                             <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white">
@@ -5383,7 +5383,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                                     <span className={`text-xs font-black px-2 py-0.5 rounded-full shrink-0 ${
                                       isCorrect ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
                                     }`}>
-                                      {isCorrect ? "Correct ✓" : "Incorrect ✕"}
+                                      {isCorrect ? "Correct" : "Incorrect"}
                                     </span>
                                   )}
                                 </div>
@@ -5463,7 +5463,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                                 : "bg-rose-500/15 border-rose-500/40 text-rose-950 dark:text-rose-200"
                             }`}>
                               <h4 className="font-black text-base sm:text-lg">
-                                {quizPassed ? "🏆 Pass Gate Cleared! Module Mastered!" : "⚠️ Pass Gate Not Met (80% Required)"}
+                                {quizPassed ? "Pass Gate Cleared! Module Mastered!" : "Pass Gate Not Met (80% Required)"}
                               </h4>
                               <p className="text-xs sm:text-sm">
                                 {quizPassed
@@ -5480,7 +5480,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                                   }}
                                   className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-current text-xs font-bold transition-all cursor-pointer"
                                 >
-                                  Retake Quiz 🔄
+                                  Retake Quiz
                                 </button>
                                 {quizPassed && (
                                   <button
@@ -5541,7 +5541,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
                               disabled={taskSubmitted}
                               className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white font-bold text-xs sm:text-sm shadow-md cursor-pointer transition-all"
                             >
-                              {taskSubmitted ? "✓ Capstone Verified (+100 XP)" : "Verify & Complete Capstone (+100 XP) →"}
+                              {taskSubmitted ? "Capstone Verified (+100 XP)" : "Verify & Complete Capstone (+100 XP) →"}
                             </button>
                           </div>
                         </div>
@@ -5573,10 +5573,10 @@ How does this resolve the issue described in the scenario? Give it another shot!
                             onChange={(e: any) => setSubtopicEditDraft({ ...subtopicEditDraft, type: e.target.value })}
                             className="w-full p-2.5 rounded-xl border text-xs bg-black/5 dark:bg-white/5 border-line-soft outline-none focus:border-amber-500 text-slate-900 dark:text-white [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-[#161B26] dark:[&>option]:text-white cursor-pointer"
                           >
-                            <option value="reading" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">📖 Reading</option>
-                            <option value="video" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">🍿 Video</option>
-                            <option value="exercise" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">⚡ Exercise</option>
-                            <option value="dialogue" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">💬 Dialogue</option>
+                            <option value="reading" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">Reading</option>
+                            <option value="video" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">Video</option>
+                            <option value="exercise" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">Exercise</option>
+                            <option value="dialogue" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">Dialogue</option>
                           </select>
                         </div>
                         <div>
@@ -5873,7 +5873,7 @@ How does this resolve the issue described in the scenario? Give it another shot!
 
                           {activeSubtopic.sections?.map((sec, secIdx) => {
                             const cleanAnalogy = sec.analogy
-                              ? sec.analogy.replace(/^[🍕\s]*(?:Real-World Intuition|Mental Model|Real-World Analogy|Analogy)?[:\s-]*/i, "").trim()
+                              ? sec.analogy.replace(/^[\s]*(?:Real-World Intuition|Mental Model|Real-World Analogy|Analogy)?[:\s-]*/i, "").trim()
                               : undefined;
 
                             const sectionCode = sec.code || (
@@ -6300,10 +6300,10 @@ How does this resolve the issue described in the scenario? Give it another shot!
                       onChange={(e: any) => setNewLessonDraft({ ...newLessonDraft, type: e.target.value })}
                       className="w-full p-2.5 rounded-xl border text-xs bg-black/5 dark:bg-white/5 border-line-soft outline-none focus:border-amber-500 text-slate-900 dark:text-white [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-[#161B26] dark:[&>option]:text-white cursor-pointer"
                     >
-                      <option value="reading" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">📖 Reading / Theory</option>
-                      <option value="video" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">🍿 Video Masterclass</option>
-                      <option value="exercise" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">⚡ Hands-on Exercise</option>
-                      <option value="dialogue" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">💬 Dialogue</option>
+                      <option value="reading" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">Reading / Theory</option>
+                      <option value="video" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">Video Masterclass</option>
+                      <option value="exercise" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">Hands-on Exercise</option>
+                      <option value="dialogue" className="bg-white text-slate-900 dark:bg-[#161B26] dark:text-white py-1.5">Dialogue</option>
                     </select>
                   </div>
                   <div>
@@ -6575,7 +6575,7 @@ function ensureModuleSequence(m: any, idx: number, courseTitle: string, level: s
           },
         ]).map((sec: any) => ({
           ...sec,
-          analogy: sec.analogy ? sec.analogy.replace(/^[🍕\s]+(?:Mental Model|Real-World Analogy)?[:\s-]*/i, "Real-World Intuition: ").trim() : undefined,
+          analogy: sec.analogy ? sec.analogy.replace(/^[\s]+(?:Mental Model|Real-World Analogy)?[:\s-]*/i, "Real-World Intuition: ").trim() : undefined,
         })),
         keyTakeaways: s.keyTakeaways || [`Apply ${s.title || "this lesson"} in real-world workflows.`],
         exercisePrompt: s.exercisePrompt,
@@ -6602,7 +6602,7 @@ function ensureModuleSequence(m: any, idx: number, courseTitle: string, level: s
               },
             ]).map((sec: any) => ({
               ...sec,
-              analogy: sec.analogy ? sec.analogy.replace(/^[🍕\s]+(?:Mental Model|Real-World Analogy)?[:\s-]*/i, "Real-World Intuition: ").trim() : undefined,
+              analogy: sec.analogy ? sec.analogy.replace(/^[\s]+(?:Mental Model|Real-World Analogy)?[:\s-]*/i, "Real-World Intuition: ").trim() : undefined,
             })),
             keyTakeaways: (typeof l === "object" && l.keyTakeaways) || [`Apply ${typeof l === "string" ? l : (l.title || "this lesson")} in real-world workflows.`],
             exercisePrompt: typeof l === "object" ? l.exercisePrompt : undefined,
@@ -6759,7 +6759,7 @@ function ensureModuleSequence(m: any, idx: number, courseTitle: string, level: s
             ],
       },
       task: {
-        missionTitle: `📅 Day ${idx + 1} Daily Task: ${cleanModTitle} Practice`,
+        missionTitle: `Day ${idx + 1} Daily Task: ${cleanModTitle} Practice`,
         xpReward: 100,
         estimatedTime: (level || "").toLowerCase().includes("beg") ? "10–15 mins" : "20 mins",
         dailyGoal: (level || "").toLowerCase().includes("beg")

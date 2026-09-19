@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { Sparkles, X, Map, Rocket, Target, Clock, Shield, Zap, Search, Star } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
@@ -163,12 +164,15 @@ export default function JourneysPage() {
           {/* Notification Toast */}
           {enrolledNotice && (
             <div className="p-4 rounded-2xl bg-orange-950/90 border border-orange-500/70 text-orange-200 text-sm font-medium shadow-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-3">
-              <span className="flex items-center gap-2">✨ {enrolledNotice}</span>
+              <span className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-orange-400 shrink-0" />
+                <span>{enrolledNotice}</span>
+              </span>
               <button
                 onClick={() => setEnrolledNotice(null)}
                 className="text-orange-400 hover:text-white font-bold ml-4"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -176,8 +180,9 @@ export default function JourneysPage() {
           {/* Header Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span>🗺️ CAREER PATHWAYS</span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
+                <Map className="w-3.5 h-3.5" />
+                <span>CAREER PATHWAYS</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Learning Journeys
@@ -192,7 +197,8 @@ export default function JourneysPage() {
                 href="/dashboard/journeys/demo"
                 className="px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all active:scale-95 flex items-center gap-2 bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] text-white hover:brightness-110 shadow-orange-500/20"
               >
-                <span>🚀 Resume Active Roadmap</span>
+                <Rocket className="w-3.5 h-3.5" />
+                <span>Resume Active Roadmap</span>
               </Link>
             </div>
           </div>
@@ -200,10 +206,10 @@ export default function JourneysPage() {
           {/* Metrics Quick Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: 'Active Tracks', val: `${activeJourneysCount}`, sub: 'Personalized to role', icon: '🎯' },
-              { label: 'Total Hours Completed', val: '53.5h', sub: '+8.2h this month', icon: '⏳' },
-              { label: 'Verified Levels', val: '6 Levels', sub: 'Across 2 tracks', icon: '🛡️' },
-              { label: 'Next Milestone', val: 'Level 5 Gate', sub: 'Event Architecture', icon: '⚡' },
+              { label: 'Active Tracks', val: `${activeJourneysCount}`, sub: 'Personalized to role', icon: <Target className="w-4 h-4 text-orange-500" /> },
+              { label: 'Total Hours Completed', val: '53.5h', sub: '+8.2h this month', icon: <Clock className="w-4 h-4 text-amber-500" /> },
+              { label: 'Verified Levels', val: '6 Levels', sub: 'Across 2 tracks', icon: <Shield className="w-4 h-4 text-emerald-500" /> },
+              { label: 'Next Milestone', val: 'Level 5 Gate', sub: 'Event Architecture', icon: <Zap className="w-4 h-4 text-yellow-500" /> },
             ].map((stat, i) => (
               <div
                 key={i}
@@ -212,7 +218,7 @@ export default function JourneysPage() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-medium" style={{ color: textMuted }}>{stat.label}</span>
-                  <span className="text-base">{stat.icon}</span>
+                  <span>{stat.icon}</span>
                 </div>
                 <div className="text-xl sm:text-2xl font-black" style={{ color: textPrimary }}>{stat.val}</div>
                 <div className="text-[11px] font-mono mt-0.5 text-orange-500 font-semibold">{stat.sub}</div>
@@ -349,7 +355,7 @@ export default function JourneysPage() {
                   }}
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-orange-500">
-                  🔍
+                  <Search className="w-3.5 h-3.5" />
                 </span>
               </div>
             </div>
@@ -372,7 +378,7 @@ export default function JourneysPage() {
                           {journey.categoryLabel}
                         </span>
                         <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: textMuted }}>
-                          <span className="text-amber-400">★</span>
+                          <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
                           <span>{journey.rating}</span>
                           <span>({journey.studentsCount})</span>
                         </div>

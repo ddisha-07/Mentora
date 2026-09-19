@@ -5,6 +5,7 @@ import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import DashboardRightPanel from '@/components/dashboard/DashboardRightPanel';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Award, Zap, Sprout, Check, AlertTriangle, Target, Clock, Cpu, Sparkles } from 'lucide-react';
 import type { CareerAnalysisResult, CourseRecommendation } from '@/app/api/analyze-profile/route';
 
 // ─── Mock Data ─────────────────────────────────────────────────────────────────
@@ -120,7 +121,7 @@ const recommendedCourses = [
     tagBg: '#0084FF',
     author: 'Mentora Studio',
     category: 'DevOps',
-    techLogo: '🐳',
+    techLogo: 'K8S',
     bannerBg: 'linear-gradient(135deg, #c2410c 0%, #ea580c 45%, #fb923c 100%)',
     bannerText: 'DOCKER & KUBERNETES ESSENTIALS',
     illustrationType: 'docker',
@@ -154,7 +155,7 @@ const recommendedCourses = [
     tagBg: '#0084FF',
     author: 'Mentora Studio',
     category: 'Database',
-    techLogo: '📈',
+    techLogo: 'CACHE',
     bannerBg: 'linear-gradient(135deg, #a16207 0%, #ca8a04 45%, #fde047 100%)',
     bannerText: 'REDIS & CACHING STRATEGIES',
     illustrationType: 'redis',
@@ -171,7 +172,7 @@ const recommendedCourses = [
     tagBg: '#0084FF',
     author: 'Mentora Studio',
     category: 'System Architecture',
-    techLogo: '⚙️',
+    techLogo: 'ARCH',
     bannerBg: 'linear-gradient(135deg, #581c87 0%, #7e22ce 45%, #a855f7 100%)',
     bannerText: 'MICROSERVICES ARCHITECTURE',
     illustrationType: 'microservices',
@@ -568,7 +569,7 @@ export default function DashboardPage() {
             >
               <div className="flex-1 pr-[230px]">
                 <h1 className="text-2xl xl:text-3xl font-bold text-white leading-tight mb-2">
-                  Good {getHour()}, Alex! 👋
+                  Good {getHour()}, Alex!
                 </h1>
                 <p className="text-sm leading-relaxed text-white/85 max-w-[340px]">
                   You&apos;re on a roll — 3 modules left to hit your weekly goal. Keep it up!
@@ -601,8 +602,9 @@ export default function DashboardPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4" style={{ borderColor: isBright ? 'rgba(234,88,12,0.15)' : 'rgba(255,107,53,0.15)' }}>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-[#EA580C]/15 text-[#EA580C] border border-[#EA580C]/30">
-                        ✦ GEMINI AI CAREER BLUEPRINT
+                      <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-[#EA580C]/15 text-[#EA580C] border border-[#EA580C]/30 inline-flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-[#EA580C]" />
+                        <span>GEMINI AI CAREER BLUEPRINT</span>
                       </span>
                       <span className="text-xs font-mono font-bold" style={{ color: textMuted }}>
                         Target Goal: <span style={{ color: textPrimary }} className="underline decoration-orange-500 font-extrabold">{careerAnalysis.futureGoal}</span>
@@ -632,8 +634,14 @@ export default function DashboardPage() {
                             : '#10B981',
                       }}
                     >
-                      <span className="text-lg">
-                        {careerAnalysis.currentLevel === 'Advanced' ? '🏆' : careerAnalysis.currentLevel === 'Intermediate' ? '⚡' : '🌱'}
+                      <span className="shrink-0">
+                        {careerAnalysis.currentLevel === 'Advanced' ? (
+                          <Award className="w-5 h-5 text-amber-500" />
+                        ) : careerAnalysis.currentLevel === 'Intermediate' ? (
+                          <Zap className="w-5 h-5 text-orange-500" />
+                        ) : (
+                          <Sprout className="w-5 h-5 text-emerald-500" />
+                        )}
                       </span>
                       <div>
                         <div className="text-[10px] font-mono uppercase font-bold tracking-wider" style={{ color: textMuted }}>
@@ -643,7 +651,7 @@ export default function DashboardPage() {
                           className="text-sm font-black font-mono"
                           style={{
                             color:
-                              careerAnalysis.currentLevel === 'Advanced'
+                               careerAnalysis.currentLevel === 'Advanced'
                                 ? '#D97706'
                                 : careerAnalysis.currentLevel === 'Intermediate'
                                 ? '#EA580C'
@@ -691,7 +699,7 @@ export default function DashboardPage() {
                     <button
                       type="button"
                       onClick={() => setActiveGapTab('missing')}
-                      className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                      className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer inline-flex items-center gap-1.5 ${
                         activeGapTab === 'missing'
                           ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-sm'
                           : isBright
@@ -699,12 +707,13 @@ export default function DashboardPage() {
                           : 'bg-[#120b06] border-orange-950/60 text-zinc-400 hover:border-orange-800'
                       }`}
                     >
-                      ⚠️ Prerequisite Gaps ({careerAnalysis.prerequisiteGaps?.length || careerAnalysis.missingSkills?.length || 0})
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Prerequisite Gaps ({careerAnalysis.prerequisiteGaps?.length || careerAnalysis.missingSkills?.length || 0})</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setActiveGapTab('possessed')}
-                      className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                      className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer inline-flex items-center gap-1.5 ${
                         activeGapTab === 'possessed'
                           ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
                           : isBright
@@ -712,7 +721,8 @@ export default function DashboardPage() {
                           : 'bg-[#120b06] border-emerald-950/60 text-zinc-400 hover:border-emerald-800'
                       }`}
                     >
-                      ✓ Possessed Skills ({careerAnalysis.possessedSkills?.length || 0})
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>Possessed Skills ({careerAnalysis.possessedSkills?.length || 0})</span>
                     </button>
                   </div>
 
@@ -773,7 +783,7 @@ export default function DashboardPage() {
                             borderColor: isBright ? '#A7F3D0' : 'rgba(16, 185, 129, 0.3)',
                           }}
                         >
-                          <span className="text-emerald-500 font-bold">✓</span>
+                          <Check className="w-3.5 h-3.5 text-emerald-500 font-bold" />
                           <span>{skill}</span>
                         </span>
                       ))}
@@ -794,8 +804,8 @@ export default function DashboardPage() {
               }}
             >
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-2xl shrink-0">
-                  🎯
+                <div className="w-12 h-12 rounded-2xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center shrink-0">
+                  <Target className="w-6 h-6 text-orange-500" />
                 </div>
                 <div>
                   <h3 className="text-sm font-black" style={{ color: textPrimary }}>
@@ -1077,7 +1087,7 @@ export default function DashboardPage() {
                 >
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                      <div className="text-3xl mb-1">⚙️</div>
+                      <Cpu className="w-8 h-8 text-blue-300 mx-auto mb-1" />
                       <div className="text-xs font-bold text-blue-300">NODE.JS</div>
                     </div>
                   </div>
@@ -1206,8 +1216,9 @@ export default function DashboardPage() {
             {/* Header Row */}
             <div className="relative z-10 flex items-center justify-between mb-4">
               <div>
-                <span className="text-[10px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/25 uppercase">
-                  {careerAnalysis ? '✦ TAILORED FOR YOUR GAPS' : '✦ FEATURED FOR YOU'}
+                <span className="text-[10px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/25 uppercase inline-flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-orange-500" />
+                  <span>{careerAnalysis ? 'TAILORED FOR YOUR GAPS' : 'FEATURED FOR YOU'}</span>
                 </span>
                 <h2 className="text-xl font-black tracking-tight mt-1 mb-0" style={{ color: textPrimary }}>
                   {careerAnalysis ? 'AI Targeted Course Recommendations' : 'Recommended For You'}
@@ -1330,7 +1341,10 @@ export default function DashboardPage() {
 
                         {/* Duration & Level metadata */}
                         <div className="flex items-center justify-between mt-2.5 text-[10px] font-mono" style={{ color: textSub }}>
-                          <span>⏱ {course.duration || '6h 30m'}</span>
+                          <span className="inline-flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            <span>{course.duration || '6h 30m'}</span>
+                          </span>
                           <span>Level: {course.level || 'Intermediate'}</span>
                         </div>
                       </div>
@@ -1358,7 +1372,7 @@ export default function DashboardPage() {
                       >
                         {isEnrolled ? (
                           <>
-                            <span>✓</span>
+                            <Check className="w-3.5 h-3.5" />
                             <span>Enrolled in Pathway</span>
                           </>
                         ) : (
@@ -1434,8 +1448,9 @@ export default function DashboardPage() {
             {/* Header Row */}
             <div className="relative z-10 flex items-center justify-between mb-4">
               <div>
-                <span className="text-[10px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/25 uppercase">
-                  ✦ ROADMAP & PATHWAYS
+                <span className="text-[10px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/25 uppercase inline-flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-orange-500" />
+                  <span>ROADMAP & PATHWAYS</span>
                 </span>
                 <h2 className="text-xl font-black tracking-tight mt-1 mb-0" style={{ color: textPrimary }}>
                   My Learning Journeys
@@ -1556,8 +1571,9 @@ export default function DashboardPage() {
                   boxShadow: cardShadow,
                 }}
               >
-                <span className="text-xs font-medium" style={{ color: textMuted }}>
-                  ⚡ <strong style={{ color: textPrimary }}>4 active journeys</strong> · 32 total modules completed
+                <span className="text-xs font-medium inline-flex items-center gap-1.5" style={{ color: textMuted }}>
+                  <Zap className="w-3.5 h-3.5 text-orange-400" />
+                  <span><strong style={{ color: textPrimary }}>4 active journeys</strong> · 32 total modules completed</span>
                 </span>
                 <Link
                   href="/dashboard/journeys"

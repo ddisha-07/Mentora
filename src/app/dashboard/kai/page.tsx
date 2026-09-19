@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { Shield, Building2, Target, Zap, Search, Sparkles } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
@@ -194,10 +195,11 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
               </button>
               <Link
                 href="/dashboard/passport"
-                className="px-4 py-2 rounded-xl text-xs font-bold border transition-all hover:bg-orange-500/10 active:scale-95"
+                className="px-4 py-2 rounded-xl text-xs font-bold border transition-all hover:bg-orange-500/10 active:scale-95 flex items-center gap-1.5"
                 style={{ borderColor: cardBorder, color: textPrimary }}
               >
-                View Synced Passport 🛡️
+                <span>View Synced Passport</span>
+                <Shield className="w-3.5 h-3.5 text-orange-500" />
               </Link>
             </div>
           </div>
@@ -205,36 +207,39 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
           {/* Mode Selector Chips */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { id: 'architect', label: 'Architecture & RFC', icon: '🏛️', desc: 'System design & distributed trade-offs' },
-              { id: 'interviewer', label: 'Staff Mock Loop', icon: '🎯', desc: 'Realistic tech loops with evaluation criteria' },
-              { id: 'drill', label: 'Diagnostic Drills', icon: '⚡', desc: 'Micro-assessments targeting 70% threshold' },
-              { id: 'debug', label: 'Code & Profiling', icon: '🔍', desc: 'Latency, memory leaks & compiler safety' },
-            ].map((mode) => (
-              <button
-                key={mode.id}
-                type="button"
-                onClick={() => setActiveMode(mode.id as any)}
-                className={`p-3.5 rounded-2xl border text-left transition-all duration-200 ${
-                  activeMode === mode.id
-                    ? 'border-orange-500 bg-orange-500/10 shadow-md shadow-orange-500/10 ring-1 ring-orange-500/40'
-                    : 'hover:border-orange-500/30'
-                }`}
-                style={{
-                  background: activeMode === mode.id ? undefined : cardBg,
-                  borderColor: activeMode === mode.id ? '#FF6B35' : cardBorder,
-                }}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{mode.icon}</span>
-                  <span className="text-xs font-bold" style={{ color: activeMode === mode.id ? '#FF6B35' : textPrimary }}>
-                    {mode.label}
-                  </span>
-                </div>
-                <p className="text-[11px] mt-1 line-clamp-1" style={{ color: textMuted }}>
-                  {mode.desc}
-                </p>
-              </button>
-            ))}
+              { id: 'architect', label: 'Architecture & RFC', icon: Building2, desc: 'System design & distributed trade-offs' },
+              { id: 'interviewer', label: 'Staff Mock Loop', icon: Target, desc: 'Realistic tech loops with evaluation criteria' },
+              { id: 'drill', label: 'Diagnostic Drills', icon: Zap, desc: 'Micro-assessments targeting 70% threshold' },
+              { id: 'debug', label: 'Code & Profiling', icon: Search, desc: 'Latency, memory leaks & compiler safety' },
+            ].map((mode) => {
+              const ModeIcon = mode.icon;
+              return (
+                <button
+                  key={mode.id}
+                  type="button"
+                  onClick={() => setActiveMode(mode.id as any)}
+                  className={`p-3.5 rounded-2xl border text-left transition-all duration-200 ${
+                    activeMode === mode.id
+                      ? 'border-orange-500 bg-orange-500/10 shadow-md shadow-orange-500/10 ring-1 ring-orange-500/40'
+                      : 'hover:border-orange-500/30'
+                  }`}
+                  style={{
+                    background: activeMode === mode.id ? undefined : cardBg,
+                    borderColor: activeMode === mode.id ? '#FF6B35' : cardBorder,
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <ModeIcon className="w-4 h-4 text-orange-500" />
+                    <span className="text-xs font-bold" style={{ color: activeMode === mode.id ? '#FF6B35' : textPrimary }}>
+                      {mode.label}
+                    </span>
+                  </div>
+                  <p className="text-[11px] mt-1 line-clamp-1" style={{ color: textMuted }}>
+                    {mode.desc}
+                  </p>
+                </button>
+              );
+            })}
           </div>
 
           {/* Context Ingestion Indicator */}
@@ -274,7 +279,7 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
                 >
                   {msg.sender === 'kai' && (
                     <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-md">
-                      ✨
+                      <Sparkles className="w-4 h-4 text-white" />
                     </div>
                   )}
 
@@ -352,7 +357,7 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
               {isSynthesizing && (
                 <div className="flex gap-3 items-center text-xs text-orange-500 font-mono py-2">
                   <div className="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-500 flex items-center justify-center font-bold text-xs animate-spin">
-                    ✨
+                    <Sparkles className="w-4 h-4" />
                   </div>
                   <span>Kai is evaluating architecture patterns & formulating telemetry response...</span>
                 </div>

@@ -2,9 +2,56 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import {
+  Bot,
+  Code2,
+  Database,
+  Server,
+  Shield,
+  Terminal,
+  Palette,
+  Smartphone,
+  Cpu,
+  Brain,
+  Check,
+  X,
+  Search,
+  Bookmark,
+  BookmarkCheck,
+  BookOpen,
+  Clock,
+  Zap,
+  GraduationCap,
+  Sparkles,
+} from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import * as courseService from '@/lib/admin/services/courseService';
+
+function renderArtworkIcon(iconName: string, className = 'w-4 h-4') {
+  switch (iconName) {
+    case 'bot':
+      return <Bot className={className} />;
+    case 'code':
+      return <Code2 className={className} />;
+    case 'database':
+      return <Database className={className} />;
+    case 'server':
+      return <Server className={className} />;
+    case 'shield':
+      return <Shield className={className} />;
+    case 'terminal':
+      return <Terminal className={className} />;
+    case 'palette':
+      return <Palette className={className} />;
+    case 'smartphone':
+      return <Smartphone className={className} />;
+    case 'brain':
+      return <Brain className={className} />;
+    default:
+      return <BookOpen className={className} />;
+  }
+}
 
 interface FannedCourse {
   id: string;
@@ -50,7 +97,7 @@ const fannedCourses: FannedCourse[] = [
     cardColor: 'from-[#321c10] via-[#22140b] to-[#140c06]',
     accentGradient: 'from-orange-500 via-amber-500 to-yellow-500',
     tag: 'Active Track',
-    artworkIcon: '🤖',
+    artworkIcon: 'bot',
     description: 'Master high-availability distributed systems, multi-region cloud resilience, and level-gated enterprise microservices.',
     modules: [
       { id: 'm1', title: 'Core Cloud Resilience & Multi-Region VPCs', duration: '45m', isQuiz: false, completed: true },
@@ -79,7 +126,7 @@ const fannedCourses: FannedCourse[] = [
     cardColor: 'from-[#1a2336] via-[#121927] to-[#0c101a]',
     accentGradient: 'from-blue-500 via-indigo-500 to-cyan-400',
     tag: 'Trending',
-    artworkIcon: '👾',
+    artworkIcon: 'code',
     description: 'Master template literal combinators, recursive type gymnastics, and compiler-level invariant typing.',
     modules: [
       { id: 't1', title: 'Generics, Constraints & Invariant Typing', duration: '40m', isQuiz: false, completed: true },
@@ -107,7 +154,7 @@ const fannedCourses: FannedCourse[] = [
     cardColor: 'from-[#102b20] via-[#0c1e16] to-[#07130e]',
     accentGradient: 'from-emerald-500 via-teal-500 to-green-400',
     tag: 'Staff Pick',
-    artworkIcon: '💾',
+    artworkIcon: 'database',
     description: 'Deep dive on EXPLAIN ANALYZE, composite B-tree indexing, connection pooling, and MVCC bloat prevention.',
     modules: [
       { id: 'p1', title: 'Execution Plans & Index Selection Internals', duration: '50m', isQuiz: false, completed: true },
@@ -134,7 +181,7 @@ const fannedCourses: FannedCourse[] = [
     cardColor: 'from-[#302416] via-[#21180e] to-[#140e08]',
     accentGradient: 'from-amber-600 via-orange-600 to-yellow-500',
     tag: 'Essential',
-    artworkIcon: '☸️',
+    artworkIcon: 'server',
     description: 'Container lifecycle, rolling updates, pod autoscaling, ingress controllers, and secrets rotation.',
     modules: [
       { id: 'k1', title: 'Multi-stage Docker Builds & Minimal Images', duration: '40m', isQuiz: false, completed: true },
@@ -237,15 +284,15 @@ const CARD_PALETTES = [
 
 function getCourseArtworkIcon(category = '', title = ''): string {
   const text = `${category} ${title}`.toLowerCase();
-  if (text.includes('ai') || text.includes('machine learning') || text.includes('neural') || text.includes('deep learning')) return '🧠';
-  if (text.includes('type') || text.includes('react') || text.includes('frontend') || text.includes('web')) return '👾';
-  if (text.includes('postgres') || text.includes('sql') || text.includes('database') || text.includes('data')) return '💾';
-  if (text.includes('k8s') || text.includes('kubernetes') || text.includes('cloud') || text.includes('docker') || text.includes('devops')) return '☸️';
-  if (text.includes('security') || text.includes('cyber') || text.includes('auth')) return '🛡️';
-  if (text.includes('python')) return '🐍';
-  if (text.includes('design') || text.includes('ui') || text.includes('ux')) return '🎨';
-  if (text.includes('mobile') || text.includes('ios') || text.includes('android')) return '📱';
-  return '⚡';
+  if (text.includes('ai') || text.includes('machine learning') || text.includes('neural') || text.includes('deep learning')) return 'brain';
+  if (text.includes('type') || text.includes('react') || text.includes('frontend') || text.includes('web')) return 'code';
+  if (text.includes('postgres') || text.includes('sql') || text.includes('database') || text.includes('data')) return 'database';
+  if (text.includes('k8s') || text.includes('kubernetes') || text.includes('cloud') || text.includes('docker') || text.includes('devops')) return 'server';
+  if (text.includes('security') || text.includes('cyber') || text.includes('auth')) return 'shield';
+  if (text.includes('python')) return 'terminal';
+  if (text.includes('design') || text.includes('ui') || text.includes('ux')) return 'palette';
+  if (text.includes('mobile') || text.includes('ios') || text.includes('android')) return 'smartphone';
+  return 'cpu';
 }
 
 function getInstructorInitials(name = ''): string {
@@ -456,12 +503,15 @@ export default function CoursesPage() {
           {/* Toast Alert */}
           {toastMessage && (
             <div className="p-4 rounded-2xl bg-orange-950/90 border border-orange-500/70 text-orange-200 text-sm font-medium shadow-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-3">
-              <span className="flex items-center gap-2">🎓 {toastMessage}</span>
+              <span className="flex items-center gap-2">
+                <GraduationCap className="w-4 h-4 text-orange-400 shrink-0" />
+                <span>{toastMessage}</span>
+              </span>
               <button
                 onClick={() => setToastMessage(null)}
                 className="text-orange-400 hover:text-white font-bold ml-4"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -545,7 +595,7 @@ export default function CoursesPage() {
                   }}
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-orange-500">
-                  🔍
+                  <Search className="w-3.5 h-3.5" />
                 </span>
               </div>
 
@@ -586,7 +636,7 @@ export default function CoursesPage() {
                 <div className="relative h-[340px] sm:h-[360px] w-full overflow-x-auto overflow-y-visible flex items-center py-4 px-2" style={{ scrollbarWidth: 'none' }}>
                   {displayedCourses.length === 0 ? (
                     <div className="flex flex-col items-center justify-center w-full h-[280px] rounded-3xl border border-dashed border-orange-500/30 p-8 text-center bg-black/20">
-                      <span className="text-4xl mb-3">🔖</span>
+                      <Bookmark className="w-10 h-10 text-orange-400 mb-3" />
                       <h3 className="font-bold text-base" style={{ color: textPrimary }}>No saved courses yet</h3>
                       <p className="text-xs text-zinc-400 mt-1 max-w-sm">Bookmark courses from the Recommended Courses tab to save them here for quick access.</p>
                       <button
@@ -669,12 +719,12 @@ export default function CoursesPage() {
                             {/* Top Header: Creator Chip & Level Badge */}
                             <div className="flex items-center justify-between gap-1.5 p-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
                               <div className="flex items-center gap-1.5 min-w-0">
-                                <span className="text-base shrink-0">{course.artworkIcon}</span>
+                                <span className="shrink-0">{renderArtworkIcon(course.artworkIcon, "w-4 h-4 text-orange-400")}</span>
                                 <span className="text-[11px] font-bold text-white truncate">
                                   {course.instructor.name}
                                 </span>
                                 {course.instructor.verified && (
-                                  <span className="text-[10px] text-sky-400 shrink-0">✓</span>
+                                  <Check className="w-3 h-3 text-sky-400 shrink-0" />
                                 )}
                               </div>
                               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-white/10 text-orange-400 border border-orange-500/20 shrink-0">
@@ -710,15 +760,15 @@ export default function CoursesPage() {
                             <div className="grid grid-cols-2 gap-1.5 py-1.5 px-2 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 text-left">
                               <div className="space-y-0.5">
                                 <span className="text-[9px] uppercase tracking-wider text-zinc-400 font-mono block">Modules</span>
-                                <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-white">
-                                  <span>📚</span>
+                                <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold text-white">
+                                  <BookOpen className="w-3.5 h-3.5 text-orange-400" />
                                   <span>{course.totalModules} Modules</span>
                                 </div>
                               </div>
                               <div className="space-y-0.5 border-l border-white/10 pl-2">
                                 <span className="text-[9px] uppercase tracking-wider text-zinc-400 font-mono block">Duration</span>
-                                <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-amber-300">
-                                  <span>⏱️</span>
+                                <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold text-amber-300">
+                                  <Clock className="w-3.5 h-3.5 text-amber-300" />
                                   <span>{course.duration}</span>
                                 </div>
                               </div>
@@ -727,7 +777,7 @@ export default function CoursesPage() {
                             {/* Bottom Row: XP Count Badge & Bookmark Button */}
                             <div className="flex items-center justify-between gap-2 pt-0.5">
                               <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[11px] font-mono font-black shadow-md shadow-orange-500/25">
-                                <span>⚡</span>
+                                <Zap className="w-3.5 h-3.5 text-white" />
                                 <span>{course.xpPoints.toLocaleString()} XP</span>
                               </div>
 
@@ -750,7 +800,11 @@ export default function CoursesPage() {
                                 }`}
                                 title={isCardSaved ? "Remove from saved" : "Bookmark Course"}
                               >
-                                {isCardSaved ? '★' : '🔖'}
+                                {isCardSaved ? (
+                                  <BookmarkCheck className="w-3.5 h-3.5 text-white" />
+                                ) : (
+                                  <Bookmark className="w-3.5 h-3.5 text-zinc-300" />
+                                )}
                               </button>
                             </div>
                           </div>
@@ -896,7 +950,7 @@ export default function CoursesPage() {
                           {activeCourse.instructor.name}
                         </span>
                         {activeCourse.instructor.verified && (
-                          <span className="text-[10px] text-sky-400">✓</span>
+                          <Check className="w-3 h-3 text-sky-400" />
                         )}
                       </div>
                       <span className="text-[10px] block font-mono" style={{ color: textMuted }}>
@@ -926,7 +980,11 @@ export default function CoursesPage() {
                       }`}
                       title={savedCourseIds.includes(activeCourse.id) ? "Remove from saved" : "Save course"}
                     >
-                      {savedCourseIds.includes(activeCourse.id) ? '★' : '☆'}
+                      {savedCourseIds.includes(activeCourse.id) ? (
+                        <BookmarkCheck className="w-4 h-4 text-white" />
+                      ) : (
+                        <Bookmark className="w-4 h-4 text-zinc-300" />
+                      )}
                     </button>
                     <button
                       type="button"
@@ -942,9 +1000,15 @@ export default function CoursesPage() {
                 {/* Central Visual Stage: 3D Character Artwork */}
                 <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-6">
                   {/* Floating particle sparkle decorations */}
-                  <div className="absolute top-4 left-8 text-xs opacity-50 animate-bounce">✨</div>
-                  <div className="absolute top-12 right-10 text-xs opacity-40 animate-pulse">🦋</div>
-                  <div className="absolute bottom-8 left-12 text-sm opacity-40">✦</div>
+                  <div className="absolute top-4 left-8 text-xs opacity-50 animate-bounce">
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                  </div>
+                  <div className="absolute top-12 right-10 text-xs opacity-40 animate-pulse">
+                    <Sparkles className="w-3 h-3 text-orange-400" />
+                  </div>
+                  <div className="absolute bottom-8 left-12 text-sm opacity-40">
+                    <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
+                  </div>
 
                   {/* Character Illustration */}
                   <div className="relative w-56 sm:w-64 h-56 sm:h-64 flex items-center justify-center">
@@ -979,7 +1043,7 @@ export default function CoursesPage() {
                       className="flex items-center gap-2 px-4 py-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-xs font-mono font-bold transition-all hover:bg-black/50"
                       style={{ color: textPrimary }}
                     >
-                      <span>📚</span>
+                      <BookOpen className="w-4 h-4 text-orange-400" />
                       <span>{activeCourse.totalModules} Modules</span>
                     </button>
 
@@ -1021,7 +1085,11 @@ export default function CoursesPage() {
                       }}
                       title={savedCourseIds.includes(activeCourse.id) ? "Remove from saved" : "Save to bookmarks"}
                     >
-                      {savedCourseIds.includes(activeCourse.id) ? '🔖' : '📑'}
+                      {savedCourseIds.includes(activeCourse.id) ? (
+                        <BookmarkCheck className="w-5 h-5 text-white" />
+                      ) : (
+                        <Bookmark className="w-5 h-5 text-zinc-300" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1056,7 +1124,7 @@ export default function CoursesPage() {
                 className="w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold"
                 style={{ borderColor: cardBorder, color: textMuted }}
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
@@ -1098,7 +1166,9 @@ export default function CoursesPage() {
                         </span>
                       )}
                       {m.completed ? (
-                        <span className="text-emerald-500 font-bold">✓ Done</span>
+                        <span className="text-emerald-500 font-bold inline-flex items-center gap-1">
+                          <Check className="w-3.5 h-3.5" /> Done
+                        </span>
                       ) : (
                         <span className="text-orange-500 font-semibold">Start</span>
                       )}
@@ -1149,7 +1219,7 @@ export default function CoursesPage() {
                 className="w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold"
                 style={{ borderColor: cardBorder, color: textMuted }}
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
@@ -1161,7 +1231,7 @@ export default function CoursesPage() {
                   style={{ background: isBright ? '#FAF4EE' : '#140C08', borderColor: cardBorder }}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{c.artworkIcon}</span>
+                    <span className="shrink-0">{renderArtworkIcon(c.artworkIcon, "w-6 h-6 text-orange-400")}</span>
                     <div>
                       <h4 className="text-xs font-bold" style={{ color: textPrimary }}>{c.title}</h4>
                       <p className="text-[11px]" style={{ color: textMuted }}>By {c.instructor.name} • {c.totalModules} modules</p>

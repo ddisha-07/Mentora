@@ -737,69 +737,69 @@ When the user provides an uploaded document (PDF, DOCX, TXT, PPTX) or video lect
 #### 1. OPTION 1: FULL AI SYNTHESIS (\`docMode === "full"\`)
 - **Objective**: Synthesize a comprehensive, multi-week curriculum derived directly from the subject, principles, and concepts contained in the uploaded document or video.
 - **Extraction Protocol**:
-  - Extract the core subject, theoretical foundations, key terminology, mathematical formulations, and engineering patterns.
-  - Distribute topics logically across all weeks (${"DURATION_WEEKS"}), maintaining a smooth progression: Foundations → Core Mechanics → Production Optimization → Capstone Integration.
-  - Structure complete 5-step curriculum for each module:
-    1. Granular subtopics with rich conceptual explanations, real-world mental models (pizza/gaming/engineering analogies), and runnable code patterns.
-    2. Video search specifications matched to the document's topics.
-    3. High-yield flashcards testing definitions and concepts from the document.
-    4. Socratic dialogue dilemmas coaching learners on architectural trade-offs from the document.
-    5. Pass-gate quizzes (10 questions, 80% passing grade) testing deep understanding.
+ - Extract the core subject, theoretical foundations, key terminology, mathematical formulations, and engineering patterns.
+ - Distribute topics logically across all weeks (${"DURATION_WEEKS"}), maintaining a smooth progression: Foundations → Core Mechanics → Production Optimization → Capstone Integration.
+ - Structure complete 5-step curriculum for each module:
+ 1. Granular subtopics with rich conceptual explanations, real-world mental models (pizza/gaming/engineering analogies), and runnable code patterns.
+ 2. Video search specifications matched to the document's topics.
+ 3. High-yield flashcards testing definitions and concepts from the document.
+ 4. Socratic dialogue dilemmas coaching learners on architectural trade-offs from the document.
+ 5. Pass-gate quizzes (10 questions, 80% passing grade) testing deep understanding.
 - **ZERO HALLUCINATIONS**: Never use generic filler, dummy functions (\`solution(input) { return input.trim(); }\`), or placeholder text. Every explanation, code snippet, and quiz question must reflect authentic, verifiable domain knowledge.
 
 #### 2. OPTION 2: SMART ANCHOR INTEGRATION (\`docMode === "integrate"\`)
 - **MANDATORY PRIME DIRECTIVE: KEEP THE CONTENT AS IT IS. DO NOT CHANGE ANYTHING IN THE UPLOADED DOCUMENT/VIDEO CONTENT. JUST PUT IT IN THE RIGHT PLACE.**
-  - Under Option 2, the user has explicitly provided source material they want preserved. You must NEVER summarize away, rewrite, truncate, or paraphrase the uploaded text, sections, code, or video lecture.
-  - Your job is to **intelligently place it in the correct pedagogical sequence** and build the surrounding curriculum around it.
+ - Under Option 2, the user has explicitly provided source material they want preserved. You must NEVER summarize away, rewrite, truncate, or paraphrase the uploaded text, sections, code, or video lecture.
+ - Your job is to **intelligently place it in the correct pedagogical sequence** and build the surrounding curriculum around it.
 
 - **PEDAGOGICAL COMPLEXITY ANALYSIS & SMART FLOW PLACEMENT**:
-  - Compare the target course difficulty (\`level\`: Beginner, Intermediate, Advanced) against the intrinsic complexity and explicit markers of the document (e.g. \`Module-II\`, \`Part-2\`, \`Deep Learning & Backpropagation\`, \`Kubernetes Orchestration\`, \`Advanced Concurrency\`).
-  - **The Prerequisite Flow Rule**:
-    - **Intermediate/Advanced Document in a Beginner Course**:
-      - If the course is **Beginner** and the uploaded document is **Intermediate or Advanced** (or marked as \`Module-II\` or higher):
-        - **DO NOT PLACE IT IN MODULE 1!**
-        - Placing advanced material in Module 1 overwhelms beginners and breaks pedagogical flow.
-        - Instead, place the uploaded document in **Module 2** (or the appropriate intermediate module).
-        - Intelligently generate **Module 1** as the prerequisite foundation module (e.g. foundational mental models, mathematical warm-up, core syntax, environment setup) so the learner is fully prepared before encountering the uploaded material.
-        - Construct subsequent modules (Module 3, Module 4, etc.) advancing to production application, real-world deployment, and capstone projects.
-    - **Introductory Document**:
-      - If the document is foundational or introductory (e.g. \`Module-I Introduction to ML\`, \`Python Foundations\`), anchor it directly in **Module 1**.
-      - Construct subsequent modules building on that foundation.
-    - **Intermediate/Advanced Course**:
-      - Place the document in the module that logically corresponds to its conceptual prerequisites.
+ - Compare the target course difficulty (\`level\`: Beginner, Intermediate, Advanced) against the intrinsic complexity and explicit markers of the document (e.g. \`Module-II\`, \`Part-2\`, \`Deep Learning & Backpropagation\`, \`Kubernetes Orchestration\`, \`Advanced Concurrency\`).
+ - **The Prerequisite Flow Rule**:
+ - **Intermediate/Advanced Document in a Beginner Course**:
+ - If the course is **Beginner** and the uploaded document is **Intermediate or Advanced** (or marked as \`Module-II\` or higher):
+ - **DO NOT PLACE IT IN MODULE 1!**
+ - Placing advanced material in Module 1 overwhelms beginners and breaks pedagogical flow.
+ - Instead, place the uploaded document in **Module 2** (or the appropriate intermediate module).
+ - Intelligently generate **Module 1** as the prerequisite foundation module (e.g. foundational mental models, mathematical warm-up, core syntax, environment setup) so the learner is fully prepared before encountering the uploaded material.
+ - Construct subsequent modules (Module 3, Module 4, etc.) advancing to production application, real-world deployment, and capstone projects.
+ - **Introductory Document**:
+ - If the document is foundational or introductory (e.g. \`Module-I Introduction to ML\`, \`Python Foundations\`), anchor it directly in **Module 1**.
+ - Construct subsequent modules building on that foundation.
+ - **Intermediate/Advanced Course**:
+ - Place the document in the module that logically corresponds to its conceptual prerequisites.
 
 - **SURROUNDING COMPANION ARCHITECTURE**:
-  - Keep the uploaded document/video 100% intact as the primary anchor lesson within its target module.
-  - Surround the anchor lesson with companion learning materials:
-    1. **Curated Video Search Specification**: Query targeted to the exact thesis of the uploaded document.
-    2. **Active Recall Flashcards**: High-yield cards testing terminology and formulas from the document.
-    3. **Socratic Dialogue Dilemma**: A real-world troubleshooting scenario testing decisions based on the document.
-    4. **Practical Code Exercise**: Authentic domain implementation verifying the document's concepts.
-    5. **10-Question Pass Gate Quiz**: 80% passing threshold testing comprehension of the document.
+ - Keep the uploaded document/video 100% intact as the primary anchor lesson within its target module.
+ - Surround the anchor lesson with companion learning materials:
+ 1. **Curated Video Search Specification**: Query targeted to the exact thesis of the uploaded document.
+ 2. **Active Recall Flashcards**: High-yield cards testing terminology and formulas from the document.
+ 3. **Socratic Dialogue Dilemma**: A real-world troubleshooting scenario testing decisions based on the document.
+ 4. **Practical Code Exercise**: Authentic domain implementation verifying the document's concepts.
+ 5. **10-Question Pass Gate Quiz**: 80% passing threshold testing comprehension of the document.
 
 ---
 
 ### B. DOMAIN FEW-SHOT DEMONSTRATIONS (ZERO HALLUCINATIONS):
 
 1. **Machine Learning & Deep Learning**:
-   - *Prerequisite Module 1 (Beginner Course)*: Vectors, NumPy arrays, loss functions (MSE, cross-entropy), linear regression, train/test split, feature scaling.
-   - *Intermediate Document Module 2 (e.g. "Module-II Neural Networks & Backprop")*: Forward pass matrix operations, activation functions (ReLU, Sigmoid, Softmax), computational graph gradients, chain rule backpropagation, SGD/Adam optimizer.
-   - *Code Quality*: Authentic NumPy/PyTorch code with shape assertions and gradient updates—never dummy stubs.
+ - *Prerequisite Module 1 (Beginner Course)*: Vectors, NumPy arrays, loss functions (MSE, cross-entropy), linear regression, train/test split, feature scaling.
+ - *Intermediate Document Module 2 (e.g. "Module-II Neural Networks & Backprop")*: Forward pass matrix operations, activation functions (ReLU, Sigmoid, Softmax), computational graph gradients, chain rule backpropagation, SGD/Adam optimizer.
+ - *Code Quality*: Authentic NumPy/PyTorch code with shape assertions and gradient updates—never dummy stubs.
 
 2. **Fullstack Web & React Architecture**:
-   - *Prerequisite Module 1 (Beginner Course)*: ES6+ JavaScript, DOM reconciliation, component tree, unidirectional props, JSX rendering.
-   - *Intermediate Document Module 2 (e.g. "Module-II React Hooks & State Management")*: \`useState\`, \`useEffect\` cleanup, \`useReducer\` state machines, \`useMemo\` memoization, concurrency transitions (\`useTransition\`), immutable updates.
-   - *Code Quality*: Strict TypeScript React components with proper typing and dependency arrays.
+ - *Prerequisite Module 1 (Beginner Course)*: ES6+ JavaScript, DOM reconciliation, component tree, unidirectional props, JSX rendering.
+ - *Intermediate Document Module 2 (e.g. "Module-II React Hooks & State Management")*: \`useState\`, \`useEffect\` cleanup, \`useReducer\` state machines, \`useMemo\` memoization, concurrency transitions (\`useTransition\`), immutable updates.
+ - *Code Quality*: Strict TypeScript React components with proper typing and dependency arrays.
 
 3. **Python Systems & Backend Engineering**:
-   - *Prerequisite Module 1 (Beginner Course)*: Python data model, virtualenvs, type hints, synchronous HTTP requests, JSON serialization.
-   - *Intermediate Document Module 2 (e.g. "Module-II Async Systems & FastAPI")*: Asyncio event loops, coroutines (\`async/await\`), Pydantic models with Field validation, dependency injection (\`Depends\`), connection pooling.
-   - *Code Quality*: Production-grade FastAPI route handlers with error boundaries.
+ - *Prerequisite Module 1 (Beginner Course)*: Python data model, virtualenvs, type hints, synchronous HTTP requests, JSON serialization.
+ - *Intermediate Document Module 2 (e.g. "Module-II Async Systems & FastAPI")*: Asyncio event loops, coroutines (\`async/await\`), Pydantic models with Field validation, dependency injection (\`Depends\`), connection pooling.
+ - *Code Quality*: Production-grade FastAPI route handlers with error boundaries.
 
 4. **DevOps, Containers & Cloud**:
-   - *Prerequisite Module 1 (Beginner Course)*: Linux process isolation, networking fundamentals (ports, DNS, subnets), shell scripting.
-   - *Intermediate Document Module 2 (e.g. "Module-II Docker & Containerization")*: Multi-stage Dockerfiles, image layer caching, bind mounts vs volumes, container networks, non-root security.
-   - *Code Quality*: Valid, linted Dockerfile specifications and Compose files.
+ - *Prerequisite Module 1 (Beginner Course)*: Linux process isolation, networking fundamentals (ports, DNS, subnets), shell scripting.
+ - *Intermediate Document Module 2 (e.g. "Module-II Docker & Containerization")*: Multi-stage Dockerfiles, image layer caching, bind mounts vs volumes, container networks, non-root security.
+ - *Code Quality*: Valid, linted Dockerfile specifications and Compose files.
 
 ---
 
@@ -821,26 +821,26 @@ When generating course data for the application, return valid JSON adhering to t
 
 Generate search specifications:
 {
-  "topic": "",
-  "search_query": "",
-  "required_concepts": [],
-  "difficulty": "",
-  "target_count": 8
+ "topic": "",
+ "search_query": "",
+ "required_concepts": [],
+ "difficulty": "",
+ "target_count": 8
 }
 
 After videos are returned, rank them:
 {
-  "youtube_videos": [
-    {
-      "title": "",
-      "video_id": "",
-      "url": "",
-      "channel": "",
-      "duration_minutes": 0,
-      "relevance_reason": "",
-      "xp": 0
-    }
-  ]
+ "youtube_videos": [
+ {
+ "title": "",
+ "video_id": "",
+ "url": "",
+ "channel": "",
+ "duration_minutes": 0,
+ "relevance_reason": "",
+ "xp": 0
+ }
+ ]
 }
 
 ---
@@ -851,67 +851,67 @@ You are the AI Course Architect and Learning Coach. Every piece of content must 
 `;
 
 export interface CourseInputParams {
-  title: string;
-  description: string;
-  category: string;
-  duration_weeks: number;
-  difficulty: "Beginner" | "Intermediate" | "Advanced" | string;
-  documentInfo?: {
-    name: string;
-    mode: "full" | "integrate";
-    integrationType?: "reading" | "video" | "reference";
-    documentText?: string;
-    isVideo?: boolean;
-    videoUrl?: string;
-    targetModuleIndex?: number;
-    smartFlowNote?: string;
-  };
+ title: string;
+ description: string;
+ category: string;
+ duration_weeks: number;
+ difficulty: "Beginner" | "Intermediate" | "Advanced" | string;
+ documentInfo?: {
+ name: string;
+ mode: "full" | "integrate";
+ integrationType?: "reading" | "video" | "reference";
+ documentText?: string;
+ isVideo?: boolean;
+ videoUrl?: string;
+ targetModuleIndex?: number;
+ smartFlowNote?: string;
+ };
 }
 
 export interface DocumentCoursePromptParams extends CourseInputParams {
-  documentName: string;
-  documentMode: "full" | "integrate";
-  integrationType?: "reading" | "video" | "reference";
-  documentSummaryOrText?: string;
-  isVideo?: boolean;
-  videoUrl?: string;
-  targetModuleIndex?: number;
-  smartFlowNote?: string;
-  approved_plan?: any;
+ documentName: string;
+ documentMode: "full" | "integrate";
+ integrationType?: "reading" | "video" | "reference";
+ documentSummaryOrText?: string;
+ isVideo?: boolean;
+ videoUrl?: string;
+ targetModuleIndex?: number;
+ smartFlowNote?: string;
+ approved_plan?: any;
 }
 
 export function buildPhase1PlanPrompt(params: CourseInputParams): string {
-  const totalDeliverables = params.duration_weeks * 7;
-  const docInfo = params.documentInfo;
+ const totalDeliverables = params.duration_weeks * 7;
+ const docInfo = params.documentInfo;
 
-  let docSection = "";
-  if (docInfo) {
-    if (docInfo.mode === "full") {
-      docSection = `
+ let docSection = "";
+ if (docInfo) {
+ if (docInfo.mode === "full") {
+ docSection = `
 UPLOADED SOURCE (OPTION 1 — FULL AI SYNTHESIS):
 - Source Name: "${docInfo.name}" (${docInfo.isVideo ? "Video Lecture / Masterclass" : "Document / Syllabus"})
 - Mode: Full AI Synthesis.
 - INSTRUCTION: Synthesize the entire course plan derived deeply and strictly from this uploaded source.
-  Ensure a smooth, natural pedagogical progression across all ${params.duration_weeks} weeks.
-  Zero placeholder topics, zero hallucinations.
+ Ensure a smooth, natural pedagogical progression across all ${params.duration_weeks} weeks.
+ Zero placeholder topics, zero hallucinations.
 `;
-    } else {
-      const targetModNum = (docInfo.targetModuleIndex ?? 0) + 1;
-      docSection = `
+ } else {
+ const targetModNum = (docInfo.targetModuleIndex ?? 0) + 1;
+ docSection = `
 UPLOADED SOURCE (OPTION 2 — SMART ANCHOR INTEGRATION):
 - Source Name: "${docInfo.name}" (${docInfo.isVideo ? "Video Lecture / Masterclass" : "Document / Syllabus"})
 - Integration Type: ${docInfo.integrationType || (docInfo.isVideo ? "video" : "reading")}
 - Optimal Pedagogical Placement: Module ${targetModNum}
 - Smart Flow Analysis: ${docInfo.smartFlowNote || "Preserve prerequisite flow"}
 - CRITICAL MANDATORY INSTRUCTION:
-  KEEP THE UPLOADED DOCUMENT/VIDEO CONTENT 100% AS IT IS. DO NOT CHANGE ANYTHING IN THE CONTENT. JUST PUT IT IN THE RIGHT PLACE (Module ${targetModNum}).
-  ${(docInfo.targetModuleIndex ?? 0) > 0 ? `Module 1 MUST be designed as the prerequisite foundation module (warm-up, mental models, basic syntax) so the learner has the essential foundation before encountering "${docInfo.name}".` : `Module 1 anchors "${docInfo.name}" directly as the primary introductory lesson.`}
-  Plan companion deliverables (video search, flashcards, dialogue dilemma, daily practice, quiz) around this exact anchored source.
+ KEEP THE UPLOADED DOCUMENT/VIDEO CONTENT 100% AS IT IS. DO NOT CHANGE ANYTHING IN THE CONTENT. JUST PUT IT IN THE RIGHT PLACE (Module ${targetModNum}).
+ ${(docInfo.targetModuleIndex ?? 0) > 0 ? `Module 1 MUST be designed as the prerequisite foundation module (warm-up, mental models, basic syntax) so the learner has the essential foundation before encountering "${docInfo.name}".` : `Module 1 anchors "${docInfo.name}" directly as the primary introductory lesson.`}
+ Plan companion deliverables (video search, flashcards, dialogue dilemma, daily practice, quiz) around this exact anchored source.
 `;
-    }
-  }
+ }
+ }
 
-  return `
+ return `
 Apply the MENTORA MASTER SYSTEM PROMPT (specifically Rule 33 for uploaded documents/videos).
 
 TASK: Generate Phase 1 Proposed Course Plan (Plan Only).
@@ -927,46 +927,46 @@ ${docSection}
 
 Deliver the output as a valid JSON object matching this schema:
 {
-  "phase": "plan",
-  "course_overview": {
-    "title": "${params.title}",
-    "description": "${params.description}",
-    "category": "${params.category}",
-    "difficulty": "${params.difficulty}",
-    "duration_weeks": ${params.duration_weeks},
-    "total_deliverables": ${totalDeliverables},
-    "learning_outcomes": [ "string", "string", ... ]
-  },
-  "modules": [
-    {
-      "module_number": 1,
-      "title": "Module Title",
-      "purpose": "Why this module exists",
-      "introduction": "Detailed context and prerequisites",
-      "learning_objectives": [ "string", ... ],
-      "subtopics": [ "string", ... ],
-      "estimated_weeks": 1
-    }
-  ],
-  "weeks": [
-    {
-      "week_number": 1,
-      "module_ref": 1,
-      "topics": [ "string", ... ],
-      "planned_deliverables": [
-        {
-          "deliverable_number": 1,
-          "type": "Lesson / Concept | Flashcards | YouTube learning resources | Interactive dialogue | Practical example | Reading material | Other useful learning activity",
-          "title": "Deliverable title",
-          "learning_purpose": "Clear purpose for this deliverable",
-          "estimated_minutes": 15,
-          "xp": 10
-        }
-      ],
-      "expected_learning_outcome": "string"
-    }
-  ],
-  "confirmation_prompt": "This is the proposed course structure. Would you like me to proceed with generating the complete course content?"
+ "phase": "plan",
+ "course_overview": {
+ "title": "${params.title}",
+ "description": "${params.description}",
+ "category": "${params.category}",
+ "difficulty": "${params.difficulty}",
+ "duration_weeks": ${params.duration_weeks},
+ "total_deliverables": ${totalDeliverables},
+ "learning_outcomes": [ "string", "string", ... ]
+ },
+ "modules": [
+ {
+ "module_number": 1,
+ "title": "Module Title",
+ "purpose": "Why this module exists",
+ "introduction": "Detailed context and prerequisites",
+ "learning_objectives": [ "string", ... ],
+ "subtopics": [ "string", ... ],
+ "estimated_weeks": 1
+ }
+ ],
+ "weeks": [
+ {
+ "week_number": 1,
+ "module_ref": 1,
+ "topics": [ "string", ... ],
+ "planned_deliverables": [
+ {
+ "deliverable_number": 1,
+ "type": "Lesson / Concept | Flashcards | YouTube learning resources | Interactive dialogue | Practical example | Reading material | Other useful learning activity",
+ "title": "Deliverable title",
+ "learning_purpose": "Clear purpose for this deliverable",
+ "estimated_minutes": 15,
+ "xp": 10
+ }
+ ],
+ "expected_learning_outcome": "string"
+ }
+ ],
+ "confirmation_prompt": "This is the proposed course structure. Would you like me to proceed with generating the complete course content?"
 }
 
 CRITICAL RULES:
@@ -979,40 +979,40 @@ CRITICAL RULES:
 }
 
 export function buildPhase2GeneratePrompt(
-  params: CourseInputParams,
-  approvedPlan?: any
+ params: CourseInputParams,
+ approvedPlan?: any
 ): string {
-  const totalDeliverables = params.duration_weeks * 7;
-  const docInfo = params.documentInfo;
+ const totalDeliverables = params.duration_weeks * 7;
+ const docInfo = params.documentInfo;
 
-  let docSection = "";
-  if (docInfo) {
-    if (docInfo.mode === "full") {
-      docSection = `
+ let docSection = "";
+ if (docInfo) {
+ if (docInfo.mode === "full") {
+ docSection = `
 DOCUMENT CONTEXT (OPTION 1 — FULL AI SYNTHESIS):
 - Uploaded Source: "${docInfo.name}" (${docInfo.isVideo ? "Video Lecture / Masterclass" : "Document / Syllabus"})
 - Mode: Full AI Synthesis.
 - INSTRUCTION: Generate the complete multi-week course strictly derived from this source.
-  Zero generic placeholders, zero dummy code snippets (like "solution(input) { return input.trim(); }").
-  Provide authentic, verifiable engineering logic, clear mental models, and deep explanations throughout.
+ Zero generic placeholders, zero dummy code snippets (like "solution(input) { return input.trim(); }").
+ Provide authentic, verifiable engineering logic, clear mental models, and deep explanations throughout.
 `;
-    } else {
-      const targetModNum = (docInfo.targetModuleIndex ?? 0) + 1;
-      docSection = `
+ } else {
+ const targetModNum = (docInfo.targetModuleIndex ?? 0) + 1;
+ docSection = `
 DOCUMENT CONTEXT (OPTION 2 — SMART ANCHOR INTEGRATION):
 - Uploaded Source: "${docInfo.name}" (${docInfo.isVideo ? "Video Lecture / Masterclass" : "Document / Syllabus"})
 - Integration Type: ${docInfo.integrationType || (docInfo.isVideo ? "video" : "reading")}
 - Optimal Pedagogical Placement: Module ${targetModNum}
 - Smart Flow Analysis: ${docInfo.smartFlowNote || "Preserve prerequisite flow"}
 - CRITICAL MANDATORY INSTRUCTION:
-  KEEP THE UPLOADED DOCUMENT/VIDEO CONTENT 100% AS IT IS. DO NOT CHANGE ANYTHING IN THE CONTENT. JUST PUT IT IN THE RIGHT PLACE (Module ${targetModNum}).
-  ${(docInfo.targetModuleIndex ?? 0) > 0 ? `Module 1 MUST be generated as the prerequisite foundation module (warm-up, mental models, basic syntax) so the learner has the essential foundation before encountering "${docInfo.name}".` : `Module 1 anchors "${docInfo.name}" directly as the primary introductory lesson.`}
-  Surround the anchor with authentic companion deliverables: targeted YouTube search spec, flashcards testing definitions from the document, a real-world Socratic dilemma, a practical exercise with runnable code, and a 10-question pass gate quiz (80% passing grade).
+ KEEP THE UPLOADED DOCUMENT/VIDEO CONTENT 100% AS IT IS. DO NOT CHANGE ANYTHING IN THE CONTENT. JUST PUT IT IN THE RIGHT PLACE (Module ${targetModNum}).
+ ${(docInfo.targetModuleIndex ?? 0) > 0 ? `Module 1 MUST be generated as the prerequisite foundation module (warm-up, mental models, basic syntax) so the learner has the essential foundation before encountering "${docInfo.name}".` : `Module 1 anchors "${docInfo.name}" directly as the primary introductory lesson.`}
+ Surround the anchor with authentic companion deliverables: targeted YouTube search spec, flashcards testing definitions from the document, a real-world Socratic dilemma, a practical exercise with runnable code, and a 10-question pass gate quiz (80% passing grade).
 `;
-    }
-  }
+ }
+ }
 
-  return `
+ return `
 Apply the MENTORA MASTER SYSTEM PROMPT (specifically Rule 33 for uploaded documents/videos).
 
 TASK: Generate Phase 2 Complete Course Content.
@@ -1030,126 +1030,126 @@ ${approvedPlan ? `APPROVED PLAN CONTEXT:\n${JSON.stringify(approvedPlan).slice(0
 
 Generate a comprehensive, complete JSON output matching this structure:
 {
-  "course": {
-    "title": "${params.title}",
-    "description": "${params.description}",
-    "category": "${params.category}",
-    "difficulty": "${params.difficulty}",
-    "duration_weeks": ${params.duration_weeks},
-    "total_deliverables": ${totalDeliverables},
-    "learning_outcomes": [ ... ]
-  },
-  "modules": [
-    {
-      "module_id": "mod-1",
-      "module_number": 1,
-      "title": "Module Title",
-      "purpose": "Why this module is important",
-      "introduction": {
-        "context": "Detailed explanation of why this matters and what will be learned",
-        "main_concepts": [ ... ],
-        "practical_applications": [ ... ],
-        "learning_objectives": [ ... ],
-        "prerequisites": [ ... ]
-      },
-      "subtopics": [
-        {
-          "id": "sub-1-1",
-          "title": "Subtopic Title",
-          "summary": "Core mental model summary",
-          "key_takeaways": [ ... ]
-        }
-      ],
-      "weeks": [
-        {
-          "week_number": 1,
-          "deliverables": [
-            // EXACTLY 7 deliverables for week 1
-            {
-              "deliverable_id": "del-1-1",
-              "deliverable_number": 1,
-              "type": "Lesson / Concept | Flashcards | YouTube learning resources | Interactive dialogue | Practical example | Reading material",
-              "title": "Deliverable Title",
-              "subtopic": "Corresponding subtopic title",
-              "estimated_time_minutes": 15,
-              "xp": 10,
-              // If type is "Lesson / Concept":
-              "lesson": {
-                "introduction": "...",
-                "explanation": "Detailed pedagogical explanation covering what it is, why it is important, how it works, practical examples, real world applications, common mistakes",
-                "important_concepts": [ ... ],
-                "examples": [ ... ],
-                "practical_application": "...",
-                "key_takeaways": [ ... ]
-              },
-              // If type is "Flashcards":
-              "flashcards": [
-                {
-                  "question": "...",
-                  "answer": "...",
-                  "explanation": "...",
-                  "example": "...",
-                  "difficulty": "Easy | Moderate",
-                  "xp": 1 // +1 for Easy, +2 for Moderate
-                }
-              ],
-              // If type is "YouTube learning resources":
-              "video_search_spec": {
-                "topic": "Precise subtopic name",
-                "search_query": "Targeted YouTube search query",
-                "required_concepts": [ ... ],
-                "difficulty": "${params.difficulty}",
-                "target_count": 8
-              },
-              // If type is "Interactive dialogue":
-              "dialogue": {
-                "scenario": "Real-world context or problem dilemma",
-                "question": "Application-based or why/how question",
-                "hints": [
-                  "Subtle clue without giving away the answer",
-                  "Stronger guided hint"
-                ],
-                "expected_reasoning": "What a top-quality answer should demonstrate",
-                "max_xp": 20
-              },
-              // If type is "Reading material":
-              "reading": {
-                "content": "In-depth theoretical and technical reference text",
-                "key_points": [ ... ],
-                "estimated_minutes": 10,
-                "xp": 15 // max 15 XP
-              },
-              // If type is "Practical example":
-              "practical_example": {
-                "scenario": "...",
-                "step_by_step": [ ... ],
-                "code_or_instructions": "...",
-                "solution_breakdown": "..."
-              }
-            }
-          ]
-        }
-      ],
-      "quiz": {
-        "title": "Module Pass Gate Quiz",
-        "total_questions": 10,
-        "passing_percentage": 80,
-        "passing_score": 8,
-        "questions": [
-          // EXACTLY 10 questions testing application and deep understanding
-          {
-            "id": "q-1",
-            "question": "Question text",
-            "options": [ "Option A", "Option B", "Option C", "Option D" ],
-            "correct_answer_index": 0,
-            "explanation": "Why this is correct and why other options are flawed",
-            "concept_tested": "Specific concept name",
-            "xp": 5
-          }
-        ]
-      }
-    }
-  ]
+ "course": {
+ "title": "${params.title}",
+ "description": "${params.description}",
+ "category": "${params.category}",
+ "difficulty": "${params.difficulty}",
+ "duration_weeks": ${params.duration_weeks},
+ "total_deliverables": ${totalDeliverables},
+ "learning_outcomes": [ ... ]
+ },
+ "modules": [
+ {
+ "module_id": "mod-1",
+ "module_number": 1,
+ "title": "Module Title",
+ "purpose": "Why this module is important",
+ "introduction": {
+ "context": "Detailed explanation of why this matters and what will be learned",
+ "main_concepts": [ ... ],
+ "practical_applications": [ ... ],
+ "learning_objectives": [ ... ],
+ "prerequisites": [ ... ]
+ },
+ "subtopics": [
+ {
+ "id": "sub-1-1",
+ "title": "Subtopic Title",
+ "summary": "Core mental model summary",
+ "key_takeaways": [ ... ]
+ }
+ ],
+ "weeks": [
+ {
+ "week_number": 1,
+ "deliverables": [
+ // EXACTLY 7 deliverables for week 1
+ {
+ "deliverable_id": "del-1-1",
+ "deliverable_number": 1,
+ "type": "Lesson / Concept | Flashcards | YouTube learning resources | Interactive dialogue | Practical example | Reading material",
+ "title": "Deliverable Title",
+ "subtopic": "Corresponding subtopic title",
+ "estimated_time_minutes": 15,
+ "xp": 10,
+ // If type is "Lesson / Concept":
+ "lesson": {
+ "introduction": "...",
+ "explanation": "Detailed pedagogical explanation covering what it is, why it is important, how it works, practical examples, real world applications, common mistakes",
+ "important_concepts": [ ... ],
+ "examples": [ ... ],
+ "practical_application": "...",
+ "key_takeaways": [ ... ]
+ },
+ // If type is "Flashcards":
+ "flashcards": [
+ {
+ "question": "...",
+ "answer": "...",
+ "explanation": "...",
+ "example": "...",
+ "difficulty": "Easy | Moderate",
+ "xp": 1 // +1 for Easy, +2 for Moderate
+ }
+ ],
+ // If type is "YouTube learning resources":
+ "video_search_spec": {
+ "topic": "Precise subtopic name",
+ "search_query": "Targeted YouTube search query",
+ "required_concepts": [ ... ],
+ "difficulty": "${params.difficulty}",
+ "target_count": 8
+ },
+ // If type is "Interactive dialogue":
+ "dialogue": {
+ "scenario": "Real-world context or problem dilemma",
+ "question": "Application-based or why/how question",
+ "hints": [
+ "Subtle clue without giving away the answer",
+ "Stronger guided hint"
+ ],
+ "expected_reasoning": "What a top-quality answer should demonstrate",
+ "max_xp": 20
+ },
+ // If type is "Reading material":
+ "reading": {
+ "content": "In-depth theoretical and technical reference text",
+ "key_points": [ ... ],
+ "estimated_minutes": 10,
+ "xp": 15 // max 15 XP
+ },
+ // If type is "Practical example":
+ "practical_example": {
+ "scenario": "...",
+ "step_by_step": [ ... ],
+ "code_or_instructions": "...",
+ "solution_breakdown": "..."
+ }
+ }
+ ]
+ }
+ ],
+ "quiz": {
+ "title": "Module Pass Gate Quiz",
+ "total_questions": 10,
+ "passing_percentage": 80,
+ "passing_score": 8,
+ "questions": [
+ // EXACTLY 10 questions testing application and deep understanding
+ {
+ "id": "q-1",
+ "question": "Question text",
+ "options": [ "Option A", "Option B", "Option C", "Option D" ],
+ "correct_answer_index": 0,
+ "explanation": "Why this is correct and why other options are flawed",
+ "concept_tested": "Specific concept name",
+ "xp": 5
+ }
+ ]
+ }
+ }
+ ]
 }
 
 MANDATORY SPECIFICATIONS:
@@ -1170,11 +1170,11 @@ MANDATORY SPECIFICATIONS:
  * - Option 2 ("integrate"): Preserves source content 100% as-is, places it in target module (e.g. Module 2 with Module 1 prerequisites), and builds companion materials around it.
  */
 export function buildDocumentCoursePrompt(params: DocumentCoursePromptParams): string {
-  const targetModIdx = params.targetModuleIndex ?? (params.documentInfo?.targetModuleIndex ?? 0);
-  const targetModNum = targetModIdx + 1;
-  const isOption2 = params.documentMode === "integrate";
+ const targetModIdx = params.targetModuleIndex ?? (params.documentInfo?.targetModuleIndex ?? 0);
+ const targetModNum = targetModIdx + 1;
+ const isOption2 = params.documentMode === "integrate";
 
-  return `
+ return `
 Apply the MENTORA MASTER SYSTEM PROMPT (specifically Rule 33: UPLOADED DOCUMENT & VIDEO MASTERCLASS CURRICULUM SYNTHESIS AND SMART PEDAGOGICAL FLOW).
 
 TASK: Generate Course from Uploaded Source Material.
@@ -1196,20 +1196,20 @@ COURSE METADATA:
 
 CRITICAL PEDAGOGICAL INSTRUCTIONS:
 ${
-  isOption2
-    ? `1. OPTION 2 MANDATORY DIRECTIVE: KEEP THE UPLOADED CONTENT 100% AS IT IS. DO NOT CHANGE ANYTHING IN THE SOURCE CONTENT. JUST PUT IT IN THE RIGHT PLACE (Module ${targetModNum}).
+ isOption2
+ ? `1. OPTION 2 MANDATORY DIRECTIVE: KEEP THE UPLOADED CONTENT 100% AS IT IS. DO NOT CHANGE ANYTHING IN THE SOURCE CONTENT. JUST PUT IT IN THE RIGHT PLACE (Module ${targetModNum}).
 2. PEDAGOGICAL PLACEMENT & FLOW:
-   - Module ${targetModNum} contains the uploaded source material as its primary anchor lesson.
-   ${
-     targetModIdx > 0
-       ? `- Because the course is "${params.difficulty}" and the source material contains intermediate/advanced topics (e.g. designated "Module-II" or requires prerequisites), Module 1 MUST be generated as a preparatory prerequisite foundations module. This ensures the learner has foundational warm-up and mental models before tackling "${params.documentName}".`
-       : `- Anchor "${params.documentName}" directly as the primary lesson in Module 1.`
-   }
-   - Construct subsequent modules (Module ${targetModNum + 1}+) expanding on the document's concepts up to capstone production deployment.
+ - Module ${targetModNum} contains the uploaded source material as its primary anchor lesson.
+ ${
+ targetModIdx > 0
+ ? `- Because the course is "${params.difficulty}" and the source material contains intermediate/advanced topics (e.g. designated "Module-II" or requires prerequisites), Module 1 MUST be generated as a preparatory prerequisite foundations module. This ensures the learner has foundational warm-up and mental models before tackling "${params.documentName}".`
+ : `- Anchor "${params.documentName}" directly as the primary lesson in Module 1.`
+ }
+ - Construct subsequent modules (Module ${targetModNum + 1}+) expanding on the document's concepts up to capstone production deployment.
 3. SURROUNDING COMPANION CURRICULUM:
-   - Generate companion YouTube search specifications, active recall flashcards, Socratic dialogue dilemmas, and hands-on coding exercises centered around "${params.documentName}".
-   - Provide a 10-question pass-gate quiz (80% passing grade) for each module testing deep understanding.`
-    : `1. OPTION 1 FULL SYNTHESIS: Synthesize the entire multi-week curriculum based strictly on the concepts, terminology, and patterns in "${params.documentName}".
+ - Generate companion YouTube search specifications, active recall flashcards, Socratic dialogue dilemmas, and hands-on coding exercises centered around "${params.documentName}".
+ - Provide a 10-question pass-gate quiz (80% passing grade) for each module testing deep understanding.`
+ : `1. OPTION 1 FULL SYNTHESIS: Synthesize the entire multi-week curriculum based strictly on the concepts, terminology, and patterns in "${params.documentName}".
 2. ZERO HALLUCINATIONS: Every code snippet, mathematical formula, explanation, and quiz question must be genuine and verifiable. No generic placeholder text or dummy functions.
 3. Smooth progression: Foundations (Week 1) → Mechanics (Week 2) → Optimization (Week 3) → Capstone (Week 4+).`
 }
@@ -1219,22 +1219,22 @@ Return a valid JSON object matching the full Course schema with modules, weeks, 
 }
 
 export function buildVideoRankingPrompt(
-  spec: {
-    topic: string;
-    required_concepts: string[];
-    difficulty: string;
-    target_count: number;
-  },
-  candidateVideos: Array<{
-    videoId: string;
-    title: string;
-    channelTitle: string;
-    description: string;
-    durationMinutes: number;
-    rawDuration: string;
-  }>
+ spec: {
+ topic: string;
+ required_concepts: string[];
+ difficulty: string;
+ target_count: number;
+ },
+ candidateVideos: Array<{
+ videoId: string;
+ title: string;
+ channelTitle: string;
+ description: string;
+ durationMinutes: number;
+ rawDuration: string;
+ }>
 ): string {
-  return `
+ return `
 Apply the MENTORA MASTER SYSTEM PROMPT (Rules 12, 13, 14, 32).
 
 TASK: Evaluate and select the best ~7-8 videos from candidate search results for topic: "${spec.topic}".
@@ -1254,17 +1254,17 @@ EVALUATION CRITERIA:
 
 Return JSON with format:
 {
-  "youtube_videos": [
-    {
-      "title": "Original Title from Candidate",
-      "video_id": "Original videoId",
-      "url": "https://www.youtube.com/watch?v=videoId",
-      "channel": "Original Channel Name",
-      "duration_minutes": 10, // Must match candidate duration
-      "relevance_reason": "Why this video is great for the learner",
-      "xp": 10 // Equal to duration_minutes
-    }
-  ]
+ "youtube_videos": [
+ {
+ "title": "Original Title from Candidate",
+ "video_id": "Original videoId",
+ "url": "https://www.youtube.com/watch?v=videoId",
+ "channel": "Original Channel Name",
+ "duration_minutes": 10, // Must match candidate duration
+ "relevance_reason": "Why this video is great for the learner",
+ "xp": 10 // Equal to duration_minutes
+ }
+ ]
 }
 
 Select up to 8 top relevant videos. Do NOT invent new video IDs or URLs. Only use candidate videos provided.
@@ -1272,15 +1272,15 @@ Select up to 8 top relevant videos. Do NOT invent new video IDs or URLs. Only us
 }
 
 export function buildChatEditPrompt(
-  userRequest: string,
-  currentCourseContext: any
+ userRequest: string,
+ currentCourseContext: any
 ): string {
-  const modulesSummary = (currentCourseContext.modules || []).slice(0, 8).map((m: any, idx: number) => {
-    const subNames = (m.subtopics || []).slice(0, 7).map((s: any) => s.title).join(", ");
-    return `Module ${idx + 1} ("${m.title}"): ${subNames || "No subtopics"}`;
-  }).join("\n");
+ const modulesSummary = (currentCourseContext.modules || []).slice(0, 8).map((m: any, idx: number) => {
+ const subNames = (m.subtopics || []).slice(0, 7).map((s: any) => s.title).join(", ");
+ return `Module ${idx + 1} ("${m.title}"): ${subNames || "No subtopics"}`;
+ }).join("\n");
 
-  return `
+ return `
 Apply the MENTORA MASTER SYSTEM PROMPT (Rules 25, 26, 27, 28).
 
 TASK: Chat-Based Course Editing.
@@ -1308,69 +1308,69 @@ RULES:
 
 Return JSON format:
 {
-  "action_type": "edit_preview",
-  "change_type": "add_subtopic | update_subtopic | add_flashcards | update_quiz | add_module | update_module | update_metadata | recalibrate",
-  "target_location": {
-    "module_index": 0,
-    "module_title": "Module Title",
-    "subtopic_index": 0,
-    "target_field": "subtopic | flashcards | quiz | video | module_structure | metadata"
-  },
-  "applied_data": {
-    "new_subtopic": {
-      "title": "Topic Name",
-      "type": "reading",
-      "duration": "45 min",
-      "summary": "Clear in-depth summary...",
-      "sections": [
-        {
-          "heading": "Core Principles",
-          "body": "Detailed explanation...",
-          "code": "// Code example\\nconsole.log('ready');",
-          "analogy": "Vivid real-world analogy..."
-        }
-      ],
-      "keyTakeaways": ["Key point 1", "Key point 2"],
-      "exercisePrompt": "Hands-on prompt...",
-      "exerciseHint": "Clue...",
-      "exerciseSolution": "// Solution code..."
-    },
-    "new_flashcards": [
-      {
-        "question": "Question text?",
-        "answer": "Accurate explanation",
-        "tag": "Core Concept"
-      }
-    ],
-    "updated_module_title": "Optional new module title",
-    "updated_quiz": {
-      "title": "Pass Gate Quiz",
-      "passingScore": 8,
-      "questions": []
-    }
-  },
-  "proposed_change": {
-    "description": "Short explanation of the edit",
-    "before_snippet": "Previous state summary",
-    "after_snippet": "New state summary"
-  },
-  "consistency_analysis": {
-    "has_conflict": false,
-    "warning_message": ""
-  },
-  "chat_response": "✨ **Implemented!** [Explain the exact changes made to the course content]. Would you like any further refinements?"
+ "action_type": "edit_preview",
+ "change_type": "add_subtopic | update_subtopic | add_flashcards | update_quiz | add_module | update_module | update_metadata | recalibrate",
+ "target_location": {
+ "module_index": 0,
+ "module_title": "Module Title",
+ "subtopic_index": 0,
+ "target_field": "subtopic | flashcards | quiz | video | module_structure | metadata"
+ },
+ "applied_data": {
+ "new_subtopic": {
+ "title": "Topic Name",
+ "type": "reading",
+ "duration": "45 min",
+ "summary": "Clear in-depth summary...",
+ "sections": [
+ {
+ "heading": "Core Principles",
+ "body": "Detailed explanation...",
+ "code": "// Code example\\nconsole.log('ready');",
+ "analogy": "Vivid real-world analogy..."
+ }
+ ],
+ "keyTakeaways": ["Key point 1", "Key point 2"],
+ "exercisePrompt": "Hands-on prompt...",
+ "exerciseHint": "Clue...",
+ "exerciseSolution": "// Solution code..."
+ },
+ "new_flashcards": [
+ {
+ "question": "Question text?",
+ "answer": "Accurate explanation",
+ "tag": "Core Concept"
+ }
+ ],
+ "updated_module_title": "Optional new module title",
+ "updated_quiz": {
+ "title": "Pass Gate Quiz",
+ "passingScore": 8,
+ "questions": []
+ }
+ },
+ "proposed_change": {
+ "description": "Short explanation of the edit",
+ "before_snippet": "Previous state summary",
+ "after_snippet": "New state summary"
+ },
+ "consistency_analysis": {
+ "has_conflict": false,
+ "warning_message": ""
+ },
+ "chat_response": " **Implemented!** [Explain the exact changes made to the course content]. Would you like any further refinements?"
 }
 `;
 }
 
 export function buildDialogueEvaluationPrompt(params: {
-  scenario: string;
-  question: string;
-  expectedReasoning: string;
-  userAnswer: string;
-  hintCount: number;
+ scenario: string;
+ question: string;
+ expectedReasoning: string;
+ userAnswer: string;
+ hintCount: number;
 }): string {
-  return `
+ return `
 Apply the MENTORA MASTER SYSTEM PROMPT (Rules 15, 16, 17).
 
 TASK: Evaluate interactive dialogue answer.
@@ -1389,23 +1389,23 @@ EVALUATION RULES:
 
 Return JSON:
 {
-  "score_out_of_20": 16,
-  "is_correct": true,
-  "evaluation_summary": "Strong grasp of the concept...",
-  "what_was_correct": "Accurately identified...",
-  "what_was_missing": "Could have mentioned...",
-  "correct_explanation": "Complete ideal explanation...",
-  "xp_earned": 16
+ "score_out_of_20": 16,
+ "is_correct": true,
+ "evaluation_summary": "Strong grasp of the concept...",
+ "what_was_correct": "Accurately identified...",
+ "what_was_missing": "Could have mentioned...",
+ "correct_explanation": "Complete ideal explanation...",
+ "xp_earned": 16
 }
 `;
 }
 
 export function buildQuizEvaluationAndAnalysisPrompt(params: {
-  moduleTitle: string;
-  questions: any[];
-  userAnswers: Record<string, number>;
+ moduleTitle: string;
+ questions: any[];
+ userAnswers: Record<string, number>;
 }): string {
-  return `
+ return `
 Apply the MENTORA MASTER SYSTEM PROMPT (Rules 20, 21, 22, 23).
 
 TASK: Evaluate 10-Question Module Pass Gate Quiz.
@@ -1419,47 +1419,47 @@ ${JSON.stringify(params.userAnswers, null, 2)}
 
 Return JSON:
 {
-  "score": 8,
-  "total_questions": 10,
-  "percentage": 80,
-  "passed": true,
-  "strong_topics": [ ... ],
-  "weak_topics": [ ... ],
-  "incorrect_concepts": [
-    {
-      "question_id": "...",
-      "question_text": "...",
-      "chosen_answer": "...",
-      "correct_answer": "...",
-      "explanation": "..."
-    }
-  ],
-  "recommended_revision": [ "Specific topic or lesson to revise" ],
-  "xp_earned": 50,
-  "unlock_next_module": true
+ "score": 8,
+ "total_questions": 10,
+ "percentage": 80,
+ "passed": true,
+ "strong_topics": [ ... ],
+ "weak_topics": [ ... ],
+ "incorrect_concepts": [
+ {
+ "question_id": "...",
+ "question_text": "...",
+ "chosen_answer": "...",
+ "correct_answer": "...",
+ "explanation": "..."
+ }
+ ],
+ "recommended_revision": [ "Specific topic or lesson to revise" ],
+ "xp_earned": 50,
+ "unlock_next_module": true
 }
 `;
 }
 
 export function buildEndCourseAnalysisPrompt(params: {
-  courseTitle: string;
-  completedActivities: {
-    flashcardsCount: number;
-    videosWatchedCount: number;
-    lessonsReadCount: number;
-    dialoguesCompletedCount: number;
-    quizzesTaken: Array<{ module: string; score: number; passed: boolean }>;
-  };
-  xpBreakdown: {
-    flashcardXP: number;
-    videoXP: number;
-    dialogueXP: number;
-    readingXP: number;
-    quizXP: number;
-    totalXP: number;
-  };
+ courseTitle: string;
+ completedActivities: {
+ flashcardsCount: number;
+ videosWatchedCount: number;
+ lessonsReadCount: number;
+ dialoguesCompletedCount: number;
+ quizzesTaken: Array<{ module: string; score: number; passed: boolean }>;
+ };
+ xpBreakdown: {
+ flashcardXP: number;
+ videoXP: number;
+ dialogueXP: number;
+ readingXP: number;
+ quizXP: number;
+ totalXP: number;
+ };
 }): string {
-  return `
+ return `
 Apply the MENTORA MASTER SYSTEM PROMPT (Rule 24).
 
 TASK: Generate Course Exit / End Course Learning Analysis.
@@ -1472,36 +1472,36 @@ ${JSON.stringify(params.xpBreakdown, null, 2)}
 
 Return JSON:
 {
-  "course_title": "${params.courseTitle}",
-  "strong_points": [ "Topics learner understands well" ],
-  "weak_points": [ "Topics where learner struggled" ],
-  "completed_topics": [ ... ],
-  "incomplete_topics": [ ... ],
-  "quiz_performance": {
-    "module_performance": [ ... ],
-    "average_score_pct": 85
-  },
-  "dialogue_performance": {
-    "total_dialogues": 4,
-    "quality_rating": "Proficient"
-  },
-  "learning_activity": {
-    "flashcards_mastered": ${params.completedActivities.flashcardsCount},
-    "videos_watched": ${params.completedActivities.videosWatchedCount},
-    "lessons_read": ${params.completedActivities.lessonsReadCount},
-    "dialogues_completed": ${params.completedActivities.dialoguesCompletedCount}
-  },
-  "xp": {
-    "total_xp": ${params.xpBreakdown.totalXP},
-    "flashcard_xp": ${params.xpBreakdown.flashcardXP},
-    "video_xp": ${params.xpBreakdown.videoXP},
-    "dialogue_xp": ${params.xpBreakdown.dialogueXP},
-    "reading_xp": ${params.xpBreakdown.readingXP},
-    "quiz_xp": ${params.xpBreakdown.quizXP}
-  },
-  "recommendations": [
-    "Concrete recommendations on what to revise or improve next"
-  ]
+ "course_title": "${params.courseTitle}",
+ "strong_points": [ "Topics learner understands well" ],
+ "weak_points": [ "Topics where learner struggled" ],
+ "completed_topics": [ ... ],
+ "incomplete_topics": [ ... ],
+ "quiz_performance": {
+ "module_performance": [ ... ],
+ "average_score_pct": 85
+ },
+ "dialogue_performance": {
+ "total_dialogues": 4,
+ "quality_rating": "Proficient"
+ },
+ "learning_activity": {
+ "flashcards_mastered": ${params.completedActivities.flashcardsCount},
+ "videos_watched": ${params.completedActivities.videosWatchedCount},
+ "lessons_read": ${params.completedActivities.lessonsReadCount},
+ "dialogues_completed": ${params.completedActivities.dialoguesCompletedCount}
+ },
+ "xp": {
+ "total_xp": ${params.xpBreakdown.totalXP},
+ "flashcard_xp": ${params.xpBreakdown.flashcardXP},
+ "video_xp": ${params.xpBreakdown.videoXP},
+ "dialogue_xp": ${params.xpBreakdown.dialogueXP},
+ "reading_xp": ${params.xpBreakdown.readingXP},
+ "quiz_xp": ${params.xpBreakdown.quizXP}
+ },
+ "recommendations": [
+ "Concrete recommendations on what to revise or improve next"
+ ]
 }
 `;
 }

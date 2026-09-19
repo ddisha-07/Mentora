@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { MessageSquare, X, Users, PenSquare, Search, Flame, Trophy, Crown, Medal, Award } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
@@ -196,12 +197,15 @@ export default function CommunityPage() {
           {/* Toast Alert */}
           {toastMessage && (
             <div className="p-4 rounded-2xl bg-orange-950/90 border border-orange-500/70 text-orange-200 text-sm font-medium shadow-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-3">
-              <span className="flex items-center gap-2">💬 {toastMessage}</span>
+              <span className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-orange-400 shrink-0" />
+                <span>{toastMessage}</span>
+              </span>
               <button
                 onClick={() => setToastMessage(null)}
                 className="text-orange-400 hover:text-white font-bold ml-4"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -209,8 +213,9 @@ export default function CommunityPage() {
           {/* Header Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span>👥 PEER COHORTS & NETWORK</span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
+                <Users className="w-3.5 h-3.5" />
+                <span>PEER COHORTS & NETWORK</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Community & Squads
@@ -226,7 +231,8 @@ export default function CommunityPage() {
                 onClick={() => setComposerExpanded(!composerExpanded)}
                 className="px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all active:scale-95 flex items-center gap-2 bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] text-white hover:brightness-110 shadow-orange-500/20"
               >
-                <span>✏️ Share with Community</span>
+                <PenSquare className="w-3.5 h-3.5" />
+                <span>Share with Community</span>
               </button>
             </div>
           </div>
@@ -363,9 +369,7 @@ export default function CommunityPage() {
                     className="w-full px-3 py-1.5 pl-8 rounded-xl text-xs border outline-none"
                     style={{ background: cardBg, borderColor: cardBorder, color: textPrimary }}
                   />
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-orange-500">
-                    🔍
-                  </span>
+                  <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-orange-500" />
                 </div>
               </div>
 
@@ -460,7 +464,7 @@ export default function CommunityPage() {
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold border transition-all hover:bg-orange-500/10"
                         style={{ borderColor: cardBorder, color: textMuted }}
                       >
-                        <span>💬</span>
+                        <MessageSquare className="w-3.5 h-3.5" />
                         <span>{post.commentsCount} Comments</span>
                       </button>
 
@@ -488,7 +492,7 @@ export default function CommunityPage() {
               >
                 <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: cardBorder }}>
                   <span className="text-xs font-bold font-mono text-orange-500 uppercase tracking-wider flex items-center gap-1.5">
-                    <span>🔥</span> Active Study Cohorts
+                    <Flame className="w-3.5 h-3.5 text-orange-500" /> Active Study Cohorts
                   </span>
                   <span className="text-[10px] font-mono text-emerald-500 font-bold">LIVE</span>
                 </div>
@@ -532,7 +536,7 @@ export default function CommunityPage() {
               >
                 <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: cardBorder }}>
                   <span className="text-xs font-bold font-mono text-orange-500 uppercase tracking-wider flex items-center gap-1.5">
-                    <span>🏆</span> Top Contributors
+                    <Trophy className="w-3.5 h-3.5 text-orange-500" /> Top Contributors
                   </span>
                   <Link href="/dashboard/leaderboard" className="text-[11px] text-orange-500 font-semibold hover:underline">
                     View All
@@ -541,21 +545,24 @@ export default function CommunityPage() {
 
                 <div className="space-y-3">
                   {[
-                    { rank: 1, name: 'Sarah Lin', role: 'Staff Backend', xp: '1,420 XP', badge: '👑' },
-                    { rank: 2, name: 'Alex Rivera', role: 'Cloud Architect', xp: '1,290 XP', badge: '🥈' },
-                    { rank: 3, name: 'Marcus Vance', role: 'Tech Lead', xp: '1,150 XP', badge: '🥉' },
-                  ].map((user) => (
-                    <div key={user.rank} className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-sm">{user.badge}</span>
-                        <div>
-                          <p className="font-bold" style={{ color: textPrimary }}>{user.name}</p>
-                          <p className="text-[10px]" style={{ color: textMuted }}>{user.role}</p>
+                    { rank: 1, name: 'Sarah Lin', role: 'Staff Backend', xp: '1,420 XP', icon: Crown, color: 'text-amber-400' },
+                    { rank: 2, name: 'Alex Rivera', role: 'Cloud Architect', xp: '1,290 XP', icon: Medal, color: 'text-slate-300' },
+                    { rank: 3, name: 'Marcus Vance', role: 'Tech Lead', xp: '1,150 XP', icon: Award, color: 'text-amber-600' },
+                  ].map((user) => {
+                    const BadgeIcon = user.icon;
+                    return (
+                      <div key={user.rank} className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2.5">
+                          <BadgeIcon className={`w-4 h-4 ${user.color}`} />
+                          <div>
+                            <p className="font-bold" style={{ color: textPrimary }}>{user.name}</p>
+                            <p className="text-[10px]" style={{ color: textMuted }}>{user.role}</p>
+                          </div>
                         </div>
+                        <span className="font-mono font-bold text-orange-500">{user.xp}</span>
                       </div>
-                      <span className="font-mono font-bold text-orange-500">{user.xp}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

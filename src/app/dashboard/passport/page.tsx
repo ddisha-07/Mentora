@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { Shield, X, Link2, FileText, Check, Search, BarChart3, Medal, Building2, Zap, Gem, Flame, Share2 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
@@ -42,34 +43,23 @@ const verifiedSkills: VerifiedSkill[] = [
   },
   {
     id: 'vs3',
-    name: 'PostgreSQL Sharding & High-Throughput Storage',
-    category: 'Data & Storage',
+    name: 'Production Kubernetes & Cloud Resilience',
+    category: 'Infrastructure',
     score: 88,
     level: 'Advanced (Lvl 7)',
-    evaluatedAt: 'Aug 15, 2026',
-    hash: '0x1f4d...31fa',
-    evaluationsCount: 3,
+    evaluatedAt: 'Aug 14, 2026',
+    hash: '0x5c4d...11fe',
+    evaluationsCount: 2,
     status: 'verified',
   },
   {
     id: 'vs4',
-    name: 'Cloud Infrastructure & Kubernetes Microservices',
-    category: 'DevOps & Cloud',
+    name: 'Database Sharding & Query Optimization',
+    category: 'Databases',
     score: 85,
     level: 'Proficient (Lvl 6)',
-    evaluatedAt: 'Aug 08, 2026',
-    hash: '0x9e2a...44cd',
-    evaluationsCount: 3,
-    status: 'verified',
-  },
-  {
-    id: 'vs5',
-    name: 'Zero-Trust Security & Cloud IAM Policies',
-    category: 'Security',
-    score: 78,
-    level: 'Proficient (Lvl 6)',
-    evaluatedAt: 'Jul 29, 2026',
-    hash: '0x4c8e...721b',
+    evaluatedAt: 'Jul 30, 2026',
+    hash: '0x992a...442b',
     evaluationsCount: 2,
     status: 'verified',
   },
@@ -78,8 +68,8 @@ const verifiedSkills: VerifiedSkill[] = [
 export default function SkillPassportPage() {
   const { isBright } = useTheme();
   const [selectedProof, setSelectedProof] = useState<VerifiedSkill | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const bgPage = isBright ? '#FFF8F0' : '#111010';
   const cardBg = isBright ? '#FFFFFF' : '#1C1916';
@@ -87,19 +77,19 @@ export default function SkillPassportPage() {
   const textPrimary = isBright ? '#1C1917' : '#FFF8F0';
   const textMuted = isBright ? '#78716C' : 'rgba(255,248,240,0.55)';
 
-  const passportId = 'MP-8829-X7K-VALIDATED';
+  const passportId = 'MTR-PASS-884920';
 
   const copyVerificationLink = () => {
-    navigator.clipboard?.writeText?.(`https://mentora.io/verify/${passportId}`);
+    navigator.clipboard?.writeText(`https://mentora.io/verify/${passportId}`);
     setToastMessage('Public verification link copied to clipboard!');
     setTimeout(() => setToastMessage(null), 4000);
   };
 
   const handleExportPDF = () => {
-    setToastMessage('Exporting Skill Passport PDF credential certificate...');
+    setToastMessage('Exporting signed PDF certificate with embedded Merkle proof...');
     setTimeout(() => {
-      setToastMessage('PDF Certificate generated! Downloading to your device.');
-      setTimeout(() => setToastMessage(null), 4000);
+      setToastMessage('PDF Certificate generated and downloaded!');
+      setTimeout(() => setToastMessage(null), 3000);
     }, 1500);
   };
 
@@ -117,12 +107,15 @@ export default function SkillPassportPage() {
           {/* Toast Notification */}
           {toastMessage && (
             <div className="p-4 rounded-2xl bg-orange-950/90 border border-orange-500/70 text-orange-200 text-sm font-medium shadow-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-3">
-              <span className="flex items-center gap-2">🛡️ {toastMessage}</span>
+              <span className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-orange-400" />
+                {toastMessage}
+              </span>
               <button
                 onClick={() => setToastMessage(null)}
                 className="text-orange-400 hover:text-white font-bold ml-4"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -131,7 +124,8 @@ export default function SkillPassportPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span>🛡️ VERIFIABLE CREDENTIALS</span>
+                <Shield className="w-3.5 h-3.5" />
+                <span>VERIFIABLE CREDENTIALS</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Mentora Skill Passport
@@ -148,14 +142,16 @@ export default function SkillPassportPage() {
                 className="px-4 py-2.5 rounded-xl font-bold text-xs border transition-all hover:bg-orange-500/10 active:scale-95 flex items-center gap-2"
                 style={{ borderColor: cardBorder, color: textPrimary }}
               >
-                <span>🔗 Copy Public Link</span>
+                <Link2 className="w-3.5 h-3.5" />
+                <span>Copy Public Link</span>
               </button>
               <button
                 type="button"
                 onClick={handleExportPDF}
                 className="px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all active:scale-95 flex items-center gap-2 bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] text-white hover:brightness-110 shadow-orange-500/20"
               >
-                <span>📄 Export Certificate (PDF)</span>
+                <FileText className="w-3.5 h-3.5" />
+                <span>Export Certificate (PDF)</span>
               </button>
             </div>
           </div>
@@ -222,7 +218,7 @@ export default function SkillPassportPage() {
               {/* Holographic Badge Seal */}
               <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-black/40 border border-orange-500/30 shrink-0 text-center space-y-2">
                 <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-400 flex items-center justify-center text-3xl shadow-xl shadow-orange-500/30">
-                  🛡️
+                  <Shield className="w-10 h-10 text-white" />
                 </div>
                 <div>
                   <span className="text-xs font-black uppercase tracking-widest text-amber-300 block">
@@ -266,7 +262,7 @@ export default function SkillPassportPage() {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-base">✓</span>
+                      <Check className="w-4 h-4 text-emerald-500 shrink-0" />
                       <h4 className="font-bold text-sm sm:text-base group-hover:text-[#FF6B35] transition-colors" style={{ color: textPrimary }}>
                         {skill.name}
                       </h4>
@@ -289,10 +285,10 @@ export default function SkillPassportPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedProof(skill)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all hover:bg-orange-500/10 active:scale-95"
+                      className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all hover:bg-orange-500/10 active:scale-95 flex items-center gap-1.5"
                       style={{ borderColor: cardBorder, color: textPrimary }}
                     >
-                      Audit Proof 🔍
+                      Audit Proof <Search className="w-3 h-3 text-orange-500" />
                     </button>
                   </div>
                 </div>
@@ -309,7 +305,7 @@ export default function SkillPassportPage() {
               style={{ background: cardBg, borderColor: cardBorder }}
             >
               <h3 className="text-base font-bold flex items-center gap-2" style={{ color: textPrimary }}>
-                <span>📊</span> Domain Proficiency Distribution
+                <BarChart3 className="w-4 h-4 text-orange-500" /> Domain Proficiency Distribution
               </h3>
 
               <div className="space-y-3.5">
@@ -342,35 +338,38 @@ export default function SkillPassportPage() {
               style={{ background: cardBg, borderColor: cardBorder }}
             >
               <h3 className="text-base font-bold flex items-center gap-2" style={{ color: textPrimary }}>
-                <span>🎖️</span> Earned Credential Badges
+                <Medal className="w-4 h-4 text-orange-500" /> Earned Credential Badges
               </h3>
 
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { title: 'Architect Lvl 7', desc: 'Score > 85% in System Design', icon: '🏛️', date: 'Aug 2026' },
-                  { title: 'Evaluation Ace', desc: 'Zero failed quiz attempts', icon: '⚡', date: 'Jul 2026' },
-                  { title: 'Clean Code Guru', desc: 'TypeScript type mastery', icon: '💎', date: 'Jun 2026' },
-                  { title: '14-Day Streak', desc: 'Daily micro-drill completion', icon: '🔥', date: 'Aug 2026' },
-                ].map((b, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3.5 rounded-2xl border flex items-center gap-3"
-                    style={{
-                      background: isBright ? '#FAF4EE' : '#140c07',
-                      borderColor: cardBorder,
-                    }}
-                  >
-                    <span className="text-2xl">{b.icon}</span>
-                    <div>
-                      <h4 className="text-xs font-bold leading-tight" style={{ color: textPrimary }}>
-                        {b.title}
-                      </h4>
-                      <p className="text-[10px]" style={{ color: textMuted }}>
-                        {b.desc}
-                      </p>
+                  { title: 'Architect Lvl 7', desc: 'Score > 85% in System Design', icon: Building2, color: 'text-amber-400', date: 'Aug 2026' },
+                  { title: 'Evaluation Ace', desc: 'Zero failed quiz attempts', icon: Zap, color: 'text-amber-300', date: 'Jul 2026' },
+                  { title: 'Clean Code Guru', desc: 'TypeScript type mastery', icon: Gem, color: 'text-cyan-400', date: 'Jun 2026' },
+                  { title: '14-Day Streak', desc: 'Daily micro-drill completion', icon: Flame, color: 'text-orange-500', date: 'Aug 2026' },
+                ].map((b, idx) => {
+                  const BadgeIcon = b.icon;
+                  return (
+                    <div
+                      key={idx}
+                      className="p-3.5 rounded-2xl border flex items-center gap-3"
+                      style={{
+                        background: isBright ? '#FAF4EE' : '#140c07',
+                        borderColor: cardBorder,
+                      }}
+                    >
+                      <BadgeIcon className={`w-6 h-6 ${b.color} shrink-0`} />
+                      <div>
+                        <h4 className="text-xs font-bold leading-tight" style={{ color: textPrimary }}>
+                          {b.title}
+                        </h4>
+                        <p className="text-[10px]" style={{ color: textMuted }}>
+                          {b.desc}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div
@@ -419,7 +418,7 @@ export default function SkillPassportPage() {
                 className="w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold"
                 style={{ borderColor: cardBorder, color: textMuted }}
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
@@ -455,7 +454,7 @@ export default function SkillPassportPage() {
             style={{ background: cardBg, borderColor: cardBorder }}
           >
             <div className="w-16 h-16 rounded-2xl bg-orange-500/15 text-orange-500 mx-auto flex items-center justify-center text-3xl">
-              📱
+              <Share2 className="w-8 h-8" />
             </div>
             <h3 className="text-lg font-bold" style={{ color: textPrimary }}>
               Share Verifiable Skill Passport

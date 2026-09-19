@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { Brain, Sun, Moon, X, FileText, Sparkles } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 
 const FIELD_SUGGESTIONS = [
@@ -225,8 +226,8 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
               <div className="absolute inset-0 rounded-full border-4 border-orange-500/25 animate-ping" />
               <div className="w-full h-full rounded-full border-4 border-orange-500 border-t-transparent animate-spin" />
               <div className="absolute inset-2 rounded-full border-4 border-amber-400 border-b-transparent animate-spin duration-700" />
-              <div className="absolute inset-0 flex items-center justify-center text-3xl animate-pulse">
-                🧠
+              <div className="absolute inset-0 flex items-center justify-center animate-pulse">
+                <Brain className="w-8 h-8 text-orange-500" />
               </div>
             </div>
 
@@ -300,13 +301,14 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
             <button
               type="button"
               onClick={loadSampleProfile}
-              className={`text-xs font-mono font-semibold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 text-xs font-mono font-semibold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
                 isBright
                   ? 'bg-white hover:bg-orange-50 border-[#E5D7C8] text-[#EA580C]'
                   : 'bg-[#140e09] hover:bg-orange-950/40 border-orange-900/50 text-orange-400'
               }`}
             >
-              ✦ Load Sample Profile
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Load Sample Profile</span>
             </button>
 
             {/* Theme toggle */}
@@ -320,7 +322,7 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
               }`}
               title={isBright ? 'Switch to Dark Mode' : 'Switch to Bright Mode'}
             >
-              {isBright ? '🌙' : '☀️'}
+              {isBright ? <Moon className="w-4 h-4 text-stone-700" /> : <Sun className="w-4 h-4 text-amber-400" />}
             </button>
           </div>
         </div>
@@ -358,7 +360,7 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
           <div className="p-4 rounded-2xl bg-rose-950/60 border border-rose-800 text-rose-300 text-xs font-semibold flex items-center justify-between animate-in fade-in">
             <span>{errorMessage}</span>
             <button onClick={() => setErrorMessage(null)} className="text-white ml-3 hover:opacity-80">
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -420,7 +422,7 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
                   isBright ? 'text-[#44403C]' : 'text-zinc-200'
                 }`}
               >
-                <span>📄</span>
+                <FileText className="w-4 h-4 text-orange-400" />
                 <span>Upload CV / Resume Document</span>
               </label>
               <span className={`text-[11px] font-mono ${isBright ? 'text-stone-400' : 'text-zinc-500'}`}>
@@ -454,7 +456,7 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
               {cvFile ? (
                 <div className="flex items-center justify-between w-full max-w-md p-3 rounded-xl bg-orange-500/10 border border-orange-500/30">
                   <div className="flex items-center gap-3 truncate text-left">
-                    <span className="text-2xl">📑</span>
+                    <FileText className="w-6 h-6 text-orange-500 shrink-0" />
                     <div className="truncate">
                       <p className="text-xs font-bold font-mono truncate text-orange-500">
                         {cvFile.name}

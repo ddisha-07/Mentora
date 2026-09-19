@@ -67,7 +67,7 @@ EVALUATION RULES:
    - Does the student's answer address the desired core concept or show clear correct reasoning?
    - If YES:
      - Set "is_desired_answer": true
-     - Praise the student with specificity ("🎯 Spot on! That's exactly it...").
+     - Praise the student with specificity ("Spot on! That's exactly it...").
      - Explain why their reasoning is fundamentally sound and connect it to coding/computational thinking.
      - Set "bot_response" with this celebration and synthesis.
      - Set "follow_up_back_question": ""
