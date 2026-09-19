@@ -93,12 +93,28 @@ export default function SettingsPage() {
     }, 600);
   };
 
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const handleSignOut = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('API logout error:', err);
+    }
+
     try {
       await signOut(auth);
-      router.push('/login');
     } catch (err) {
-      console.error('Sign out error:', err);
+      console.error('Firebase sign out error:', err);
+    }
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('mentora_career_analysis');
+      } catch {}
+      window.location.href = '/login';
     }
   };
 
@@ -201,11 +217,14 @@ export default function SettingsPage() {
                 <span>View Skill Passport</span>
               </Link>
               <button
+                id="header-logout-btn"
                 onClick={handleSignOut}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 border border-rose-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
+                disabled={isLoggingOut}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 border border-rose-500/20 hover:border-rose-500/50 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                title="Log Out of your account"
               >
                 <LogOut className="w-3.5 h-3.5" />
-                <span>Sign Out</span>
+                <span>{isLoggingOut ? 'Logging out...' : 'Log Out'}</span>
               </button>
             </div>
           </div>
@@ -352,6 +371,32 @@ export default function SettingsPage() {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Account Session & Log Out Card */}
+              <div
+                className="p-6 sm:p-8 rounded-3xl border flex flex-col sm:flex-row sm:items-center justify-between gap-5 transition-all shadow-md"
+                style={{ background: cardBg, borderColor: cardBorder }}
+              >
+                <div className="space-y-1">
+                  <h4 className="text-base font-bold flex items-center gap-2 text-rose-500">
+                    <LogOut className="w-4 h-4" />
+                    Account Session
+                  </h4>
+                  <p className="text-xs" style={{ color: textMuted }}>
+                    Currently signed in as <span className="font-mono font-semibold" style={{ color: textPrimary }}>{currentUser?.email || email}</span>.
+                    Logging out will terminate your current session on this device.
+                  </p>
+                </div>
+                <button
+                  id="profile-tab-logout-btn"
+                  onClick={handleSignOut}
+                  disabled={isLoggingOut}
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white shadow-lg shadow-rose-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50 shrink-0"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>{isLoggingOut ? 'Logging out...' : 'Log Out'}</span>
+                </button>
               </div>
             </div>
           )}
@@ -598,9 +643,10 @@ export default function SettingsPage() {
 
                     <button
                       onClick={handleSignOut}
-                      className="px-4 py-3 rounded-xl border border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/10 text-rose-500 text-xs font-bold text-left transition-all flex items-center justify-between cursor-pointer"
+                      disabled={isLoggingOut}
+                      className="px-4 py-3 rounded-xl border border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/10 text-rose-500 text-xs font-bold text-left transition-all flex items-center justify-between cursor-pointer disabled:opacity-50"
                     >
-                      <span>Sign Out from All Devices</span>
+                      <span>{isLoggingOut ? 'Logging out...' : 'Log Out from All Devices'}</span>
                       <LogOut className="w-4 h-4" />
                     </button>
                   </div>
