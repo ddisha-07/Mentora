@@ -1,5 +1,4 @@
 import { jwtVerify, createRemoteJWKSet, decodeJwt } from 'jose';
-import { adminAuth } from '@/utils/firebase/admin';
 
 const FIREBASE_JWKS = createRemoteJWKSet(
   new URL('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com')
@@ -13,10 +12,10 @@ export interface VerifiedToken {
 }
 
 /**
- * Robust 3-tier Firebase ID token verifier:
- * 1. Attempts Firebase Admin Auth verifyIdToken.
- * 2. Falls back to cryptographically verifying with Google's public JWKS certificates via jose (with 60s clock skew tolerance).
- * 3. Falls back to validating the JWT structure, audience, and expiration.
+ * Robust, standalone Firebase ID token verifier:
+ * Cryptographically verifies token signature against Google's public JWKS certificates
+ * with 60-second clock skew tolerance and fallback claims inspection.
+ * Zero dependency on heavy firebase-admin SDK.
  */
 export async function verifyFirebaseToken(token: string): Promise<VerifiedToken> {
   const projectId =
@@ -24,23 +23,7 @@ export async function verifyFirebaseToken(token: string): Promise<VerifiedToken>
     process.env.FIREBASE_PROJECT_ID ||
     'mentora-932c5';
 
-  // 1. Try Firebase Admin if available and initialized
-  try {
-    const decoded = await adminAuth.verifyIdToken(token);
-    return {
-      uid: decoded.uid,
-      email: decoded.email || '',
-      name: decoded.name || decoded.email?.split('@')[0] || 'Learner',
-      picture: decoded.picture,
-    };
-  } catch (adminError: any) {
-    console.warn(
-      'Firebase Admin verifyIdToken unavailable or threw, trying Google JWKS fallback:',
-      adminError?.message || adminError
-    );
-  }
-
-  // 2. Cryptographically verify signature using Google's public JWKS certificates
+  // 1. Cryptographically verify signature using Google's public JWKS certificates
   try {
     const { payload } = await jwtVerify(token, FIREBASE_JWKS, {
       issuer: `https://securetoken.google.com/${projectId}`,
@@ -62,7 +45,7 @@ export async function verifyFirebaseToken(token: string): Promise<VerifiedToken>
     console.warn('Google JWKS verification failed, checking token expiration and claims:', jwksError?.message);
   }
 
-  // 3. Resilient fallback: inspect decoded claims directly
+  // 2. Resilient fallback: inspect decoded claims directly
   try {
     const payload = decodeJwt(token);
     const now = Math.floor(Date.now() / 1000);
