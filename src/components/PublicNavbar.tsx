@@ -1,24 +1,62 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
 
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
 export default function PublicNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showDashboardBtn, setShowDashboardBtn] = useState(false);
   const pathname = usePathname();
   const { isBright, toggleTheme } = useTheme();
 
-  // Content matches website, with Admin removed as requested
+  useIsomorphicLayoutEffect(() => {
+    let mounted = true;
+
+    // Immediately check if the user has logged in and visited dashboard in this session
+    const hasVisitedDashboard =
+      typeof window !== 'undefined' &&
+      sessionStorage.getItem('mentora_dashboard_active') === 'true';
+
+    if (!hasVisitedDashboard) {
+      setShowDashboardBtn(false);
+      return;
+    }
+
+    // Immediately show DASHBOARD button without waiting for background network check
+    setShowDashboardBtn(true);
+
+    // Silently verify with server in the background to ensure session is still valid
+    fetch('/api/auth/session')
+      .then((res) => {
+        if (mounted && !res.ok) {
+          setShowDashboardBtn(false);
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('mentora_dashboard_active');
+          }
+        }
+      })
+      .catch(() => {
+        // Keep current state on transient network failure
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [pathname]);
+
+  // Content matches website, with Admin and Kai removed as requested
   const navLinks = [
     { name: 'HOME', href: '/' },
     { name: 'ABOUT', href: '/about' },
     { name: 'BLOGS', href: '/blogs' },
     { name: 'FAQS', href: '/faqs' },
     { name: 'CONTACT US', href: '/contact' },
-    { name: 'KAI', href: '/dashboard/kai' },
   ];
 
   return (
@@ -86,27 +124,43 @@ export default function PublicNavbar() {
               <span className="select-none">{isBright ? '☀️' : '🌙'}</span>
             </button>
 
-            {/* Login Link */}
-            <Link
-              href="/login"
-              className={`text-[11px] font-mono font-bold tracking-widest uppercase transition-opacity ${
-                isBright ? 'text-black hover:opacity-75' : 'text-zinc-300 hover:text-white'
-              }`}
-            >
-              LOGIN
-            </Link>
+            {showDashboardBtn ? (
+              <Link
+                href="/dashboard"
+                className={`px-4.5 py-2 text-[11px] font-mono font-black tracking-widest uppercase transition-all duration-150 active:scale-95 flex items-center gap-1.5 ${
+                  isBright
+                    ? 'bg-black text-white hover:bg-zinc-900 shadow-md'
+                    : 'bg-[#FF5500] text-black hover:bg-[#ff6514] font-black shadow-lg shadow-orange-600/30'
+                }`}
+              >
+                <span>DASHBOARD</span>
+                <span>→</span>
+              </Link>
+            ) : (
+              <>
+                {/* Login Link */}
+                <Link
+                  href="/login"
+                  className={`text-[11px] font-mono font-bold tracking-widest uppercase transition-opacity ${
+                    isBright ? 'text-black hover:opacity-75' : 'text-zinc-300 hover:text-white'
+                  }`}
+                >
+                  LOGIN
+                </Link>
 
-            {/* Motion.dev style Sharp Black Rectangular CTA Button */}
-            <Link
-              href="/register"
-              className={`px-4.5 py-2 text-[11px] font-mono font-black tracking-widest uppercase transition-all duration-150 active:scale-95 ${
-                isBright
-                  ? 'bg-black text-white hover:bg-zinc-900 shadow-md'
-                  : 'bg-[#FF5500] text-black hover:bg-[#ff6514] font-black shadow-lg shadow-orange-600/30'
-              }`}
-            >
-              JOIN NOW →
-            </Link>
+                {/* Motion.dev style Sharp Black Rectangular CTA Button */}
+                <Link
+                  href="/register"
+                  className={`px-4.5 py-2 text-[11px] font-mono font-black tracking-widest uppercase transition-all duration-150 active:scale-95 ${
+                    isBright
+                      ? 'bg-black text-white hover:bg-zinc-900 shadow-md'
+                      : 'bg-[#FF5500] text-black hover:bg-[#ff6514] font-black shadow-lg shadow-orange-600/30'
+                  }`}
+                >
+                  JOIN NOW →
+                </Link>
+              </>
+            )}
 
           </div>
 
@@ -167,22 +221,36 @@ export default function PublicNavbar() {
           </div>
 
           <div className="border-t border-black/10 pt-4 flex flex-col gap-3">
-            <Link
-              href="/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-[11px] font-mono font-bold tracking-widest uppercase"
-            >
-              LOGIN
-            </Link>
-            <Link
-              href="/register"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`text-center py-2.5 text-[11px] font-mono font-black tracking-widest uppercase ${
-                isBright ? 'bg-black text-white' : 'bg-[#FF5500] text-black'
-              }`}
-            >
-              JOIN NOW →
-            </Link>
+            {showDashboardBtn ? (
+              <Link
+                href="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`text-center py-2.5 text-[11px] font-mono font-black tracking-widest uppercase ${
+                  isBright ? 'bg-black text-white' : 'bg-[#FF5500] text-black'
+                }`}
+              >
+                DASHBOARD →
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[11px] font-mono font-bold tracking-widest uppercase"
+                >
+                  LOGIN
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`text-center py-2.5 text-[11px] font-mono font-black tracking-widest uppercase ${
+                    isBright ? 'bg-black text-white' : 'bg-[#FF5500] text-black'
+                  }`}
+                >
+                  JOIN NOW →
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
