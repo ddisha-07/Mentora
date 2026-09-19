@@ -66,6 +66,10 @@ function LoginForm() {
         throw new Error(data.error || 'Failed to create session');
       }
       
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('mentora_dashboard_active', 'true');
+      }
+      
       window.location.href = '/dashboard';
     } catch (err: any) {
       console.warn('Google Sign-In caught:', err?.code || err?.message);
@@ -99,6 +103,10 @@ function LoginForm() {
           throw new Error('No account found for this user. Please create an account first.');
         }
         throw new Error(data.error || 'Failed to create session');
+      }
+      
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('mentora_dashboard_active', 'true');
       }
       
       window.location.href = '/dashboard';

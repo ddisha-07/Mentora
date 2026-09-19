@@ -8,39 +8,45 @@ import { useTheme } from '@/context/ThemeContext';
 
 export default function PublicNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showDashboardBtn, setShowDashboardBtn] = useState(false);
   const pathname = usePathname();
   const { isBright, toggleTheme } = useTheme();
 
   useEffect(() => {
     let mounted = true;
 
-    // 1. Check API session endpoint
+    // Only show DASHBOARD button if the user has logged in and visited dashboard in this session
+    const hasVisitedDashboard =
+      typeof window !== 'undefined' &&
+      sessionStorage.getItem('mentora_dashboard_active') === 'true';
+
+    if (!hasVisitedDashboard) {
+      setShowDashboardBtn(false);
+      return;
+    }
+
+    // Verify with server to confirm session is still valid
     fetch('/api/auth/session')
       .then((res) => {
-        if (res.ok && mounted) {
-          setIsLoggedIn(true);
+        if (mounted) {
+          if (res.ok) {
+            setShowDashboardBtn(true);
+          } else {
+            setShowDashboardBtn(false);
+            if (typeof window !== 'undefined') {
+              sessionStorage.removeItem('mentora_dashboard_active');
+            }
+          }
         }
       })
-      .catch(() => {});
-
-    // 2. Listen to Firebase client auth state for immediate responsiveness
-    import('@/utils/firebase/client')
-      .then(({ auth }) => {
-        import('firebase/auth').then(({ onAuthStateChanged }) => {
-          onAuthStateChanged(auth, (user) => {
-            if (mounted && user) {
-              setIsLoggedIn(true);
-            }
-          });
-        });
-      })
-      .catch(() => {});
+      .catch(() => {
+        if (mounted) setShowDashboardBtn(false);
+      });
 
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [pathname]);
 
   // Content matches website, with Admin removed as requested
   const navLinks = [
@@ -117,7 +123,7 @@ export default function PublicNavbar() {
               <span className="select-none">{isBright ? '☀️' : '🌙'}</span>
             </button>
 
-            {isLoggedIn ? (
+            {showDashboardBtn ? (
               <Link
                 href="/dashboard"
                 className={`px-4.5 py-2 text-[11px] font-mono font-black tracking-widest uppercase transition-all duration-150 active:scale-95 flex items-center gap-1.5 ${
@@ -214,7 +220,7 @@ export default function PublicNavbar() {
           </div>
 
           <div className="border-t border-black/10 pt-4 flex flex-col gap-3">
-            {isLoggedIn ? (
+            {showDashboardBtn ? (
               <Link
                 href="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}

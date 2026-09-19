@@ -158,11 +158,11 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
 
       const result = await response.json();
 
-      if (result.data) {
-        // Persist structured analysis result for Page 3 (/dashboard)
-        if (typeof window !== 'undefined') {
+      if (typeof window !== 'undefined') {
+        if (result.data) {
           localStorage.setItem('mentora_career_analysis', JSON.stringify(result.data));
         }
+        sessionStorage.setItem('mentora_dashboard_active', 'true');
       }
 
       // Smooth brief timeout so user sees the progress animation smoothly

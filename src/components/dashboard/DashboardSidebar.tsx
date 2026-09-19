@@ -152,6 +152,13 @@ export default function DashboardSidebar() {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Mark dashboard as active in sessionStorage so public navbar knows user is in active session
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('mentora_dashboard_active', 'true');
+    }
+  }, []);
+
   // Keyboard shortcut: Esc to collapse expanded sidebar
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {

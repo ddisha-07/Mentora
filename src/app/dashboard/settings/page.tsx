@@ -112,6 +112,7 @@ export default function SettingsPage() {
 
     if (typeof window !== 'undefined') {
       try {
+        sessionStorage.removeItem('mentora_dashboard_active');
         localStorage.removeItem('mentora_career_analysis');
       } catch {}
       window.location.href = '/login';
