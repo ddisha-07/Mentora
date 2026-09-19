@@ -90,18 +90,150 @@ const tasks = [
 ];
 
 const recommendedCourses = [
-  { id: 'rc1', title: 'Advanced TypeScript Patterns', level: 'Advanced', duration: '8h 30m', rating: 4.9, students: '12.4k', color: '#3B82F6', tag: 'Trending' },
-  { id: 'rc2', title: 'Docker & Kubernetes Essentials', level: 'Intermediate', duration: '6h 15m', rating: 4.8, students: '9.2k', color: '#10B981', tag: 'New' },
-  { id: 'rc3', title: 'GraphQL API Design', level: 'Intermediate', duration: '5h 45m', rating: 4.7, students: '7.8k', color: '#F59E0B', tag: 'Recommended' },
-  { id: 'rc4', title: 'Redis & Caching Strategies', level: 'Advanced', duration: '4h 20m', rating: 4.8, students: '5.1k', color: '#EF4444', tag: 'Hot' },
-  { id: 'rc5', title: 'Microservices Architecture', level: 'Advanced', duration: '10h 00m', rating: 4.9, students: '18.2k', color: '#8B5CF6', tag: 'Top Rated' },
+  {
+    id: 'rc1',
+    title: 'Advanced TypeScript Patterns & Metaprogramming',
+    level: 'Advanced',
+    duration: '8h 30m',
+    rating: 4.9,
+    students: '12.4k',
+    color: '#3B82F6',
+    tag: 'Beginner',
+    tagBg: '#0084FF',
+    author: 'Mentora Studio',
+    category: 'Development',
+    techLogo: 'TS',
+    bannerBg: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 45%, #2dd4bf 100%)',
+    bannerText: 'ADVANCED TYPESCRIPT PATTERNS',
+    illustrationType: 'typescript',
+  },
+  {
+    id: 'rc2',
+    title: 'Docker & Kubernetes Essentials Bootcamp',
+    level: 'Intermediate',
+    duration: '6h 15m',
+    rating: 4.8,
+    students: '9.2k',
+    color: '#10B981',
+    tag: 'Beginner',
+    tagBg: '#0084FF',
+    author: 'Mentora Studio',
+    category: 'DevOps',
+    techLogo: '🐳',
+    bannerBg: 'linear-gradient(135deg, #c2410c 0%, #ea580c 45%, #fb923c 100%)',
+    bannerText: 'DOCKER & KUBERNETES ESSENTIALS',
+    illustrationType: 'docker',
+  },
+  {
+    id: 'rc3',
+    title: 'GraphQL API Design & Schema Federation',
+    level: 'Intermediate',
+    duration: '5h 45m',
+    rating: 4.9,
+    students: '7.8k',
+    color: '#F59E0B',
+    tag: 'Beginner',
+    tagBg: '#0084FF',
+    author: 'Mentora Studio',
+    category: 'Backend',
+    techLogo: 'JS',
+    bannerBg: 'linear-gradient(135deg, #312e81 0%, #4338ca 45%, #6366f1 100%)',
+    bannerText: 'GRAPHQL API DESIGN COURSE',
+    illustrationType: 'graphql',
+  },
+  {
+    id: 'rc4',
+    title: 'Redis & High-Speed Caching Strategies',
+    level: 'Advanced',
+    duration: '4h 20m',
+    rating: 4.8,
+    students: '5.1k',
+    color: '#EF4444',
+    tag: 'Beginner',
+    tagBg: '#0084FF',
+    author: 'Mentora Studio',
+    category: 'Database',
+    techLogo: '📈',
+    bannerBg: 'linear-gradient(135deg, #a16207 0%, #ca8a04 45%, #fde047 100%)',
+    bannerText: 'REDIS & CACHING STRATEGIES',
+    illustrationType: 'redis',
+  },
+  {
+    id: 'rc5',
+    title: 'Microservices Architecture & Event Mesh',
+    level: 'Advanced',
+    duration: '10h 00m',
+    rating: 4.9,
+    students: '18.2k',
+    color: '#8B5CF6',
+    tag: 'Beginner',
+    tagBg: '#0084FF',
+    author: 'Mentora Studio',
+    category: 'System Architecture',
+    techLogo: '⚙️',
+    bannerBg: 'linear-gradient(135deg, #581c87 0%, #7e22ce 45%, #a855f7 100%)',
+    bannerText: 'MICROSERVICES ARCHITECTURE',
+    illustrationType: 'microservices',
+  },
 ];
 
 const learningJourneys = [
-  { id: 'j1', name: 'Full-Stack Web Development', modules: 24, done: 9, progress: 37, status: 'active', lastModule: 'Node.js & REST APIs' },
-  { id: 'j2', name: 'Cloud Architecture (AWS)', modules: 18, done: 4, progress: 22, status: 'active', lastModule: 'EC2 & Load Balancing' },
-  { id: 'j3', name: 'Data Structures & Algorithms', modules: 30, done: 18, progress: 60, status: 'active', lastModule: 'Dynamic Programming' },
-  { id: 'j4', name: 'DevOps & CI/CD Pipeline', modules: 15, done: 1, progress: 7, status: 'new', lastModule: 'Introduction to DevOps' },
+  {
+    id: 'j1',
+    name: 'Full-Stack Web Development',
+    subtitle: 'Follow these easy and simple steps',
+    modules: 24,
+    done: 9,
+    progress: 37,
+    status: 'active',
+    lastModule: 'Node.js & REST APIs',
+    gradientLight: ['#0284C7', '#0369A1'],
+    gradientDark: ['#0284C7', '#075985'],
+    textColor: '#FFFFFF',
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  {
+    id: 'j2',
+    name: 'Cloud Architecture (AWS)',
+    subtitle: 'Master scalable cloud resilience',
+    modules: 18,
+    done: 4,
+    progress: 22,
+    status: 'active',
+    lastModule: 'EC2 & Load Balancing',
+    gradientLight: ['#C084FC', '#9333EA'],
+    gradientDark: ['#9333EA', '#7E22CE'],
+    textColor: '#FFFFFF',
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  {
+    id: 'j3',
+    name: 'Data Structures & Algorithms',
+    subtitle: 'Optimize code & problem solving',
+    modules: 30,
+    done: 18,
+    progress: 60,
+    status: 'active',
+    lastModule: 'Dynamic Programming',
+    gradientLight: ['#FBBF24', '#D97706'],
+    gradientDark: ['#D97706', '#B45309'],
+    textColor: '#FFFFFF',
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  {
+    id: 'j4',
+    name: 'DevOps & CI/CD Pipeline',
+    subtitle: 'Automate build & deploy workflows',
+    modules: 15,
+    done: 1,
+    progress: 7,
+    status: 'new',
+    lastModule: 'Introduction to DevOps',
+    gradientLight: ['#F87171', '#DC2626'],
+    gradientDark: ['#DC2626', '#991B1B'],
+    textColor: '#FFFFFF',
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
 ];
 
 // ─── Mini Sparkline Chart ─────────────────────────────────────────────────────
@@ -142,6 +274,176 @@ function ProgressBar({ value, color = '#FF6B35', height = 6 }: { value: number; 
         className="h-full rounded-full transition-all duration-700"
         style={{ width: `${value}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)` }}
       />
+    </div>
+  );
+}
+
+// ─── Journey Isometric 3D Icon Component ──────────────────────────────────
+function JourneyIsometricIcon({ type }: { type: string }) {
+  if (type === 'j1') {
+    return (
+      <svg viewBox="0 0 80 80" fill="none" className="w-full h-full drop-shadow-md">
+        <path d="M40 10 L68 25 L40 40 L12 25 Z" fill="white" opacity="0.9" />
+        <path d="M12 25 L40 40 L40 62 L12 47 Z" fill="white" opacity="0.6" />
+        <path d="M40 40 L68 25 L68 47 L40 62 Z" fill="white" opacity="0.75" />
+        <circle cx="40" cy="25" r="7" fill="#0284C7" />
+        <path d="M37 25 L39 27 L43 23" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (type === 'j2') {
+    return (
+      <svg viewBox="0 0 80 80" fill="none" className="w-full h-full drop-shadow-md">
+        <path d="M40 12 Q58 12 62 26 Q72 28 70 40 Q72 54 58 56 Q54 62 40 62 Q26 62 22 56 Q10 54 12 40 Q10 28 20 26 Q24 12 40 12 Z" fill="white" opacity="0.85" />
+        <path d="M30 35 Q40 25 50 35 L44 48 Q40 42 36 48 Z" fill="#7E22CE" opacity="0.8" />
+        <circle cx="40" cy="46" r="4" fill="white" />
+      </svg>
+    );
+  }
+  if (type === 'j3') {
+    return (
+      <svg viewBox="0 0 80 80" fill="none" className="w-full h-full drop-shadow-md">
+        <path d="M20 20 L60 20 L60 48 L20 48 Z" fill="white" opacity="0.9" />
+        <rect x="26" y="38" width="7" height="6" fill="#D97706" />
+        <rect x="36" y="30" width="7" height="14" fill="#B45309" />
+        <rect x="46" y="24" width="7" height="20" fill="#78350F" />
+        <path d="M12 48 L68 48 L60 56 L20 56 Z" fill="white" opacity="0.65" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 80 80" fill="none" className="w-full h-full drop-shadow-md">
+      <circle cx="40" cy="40" r="26" fill="white" opacity="0.9" />
+      <circle cx="40" cy="40" r="18" fill="#DC2626" />
+      <circle cx="40" cy="40" r="11" fill="white" />
+      <circle cx="40" cy="40" r="5" fill="#DC2626" />
+      <path d="M52 24 L64 12" stroke="white" strokeWidth="3" strokeLinecap="round" />
+      <path d="M60 12 L64 12 L64 16" stroke="white" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// ─── Course Thumbnail Banner Header Component ─────────────────────────────
+function CourseBannerGraphic({
+  type,
+  bannerText,
+  techLogo,
+  tag,
+}: {
+  type: string;
+  bannerText: string;
+  techLogo: string;
+  tag: string;
+}) {
+  return (
+    <div className="relative w-full h-32 rounded-t-2xl overflow-hidden flex flex-col justify-between p-3 select-none">
+      {/* Background Grid Pattern */}
+      <div
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, rgba(255,255,255,0.25) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255,255,255,0.25) 1px, transparent 1px)
+          `,
+          backgroundSize: '16px 16px',
+        }}
+      />
+
+      {/* Radial ambient glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at 85% 15%, rgba(255,255,255,0.3) 0%, transparent 60%)',
+        }}
+      />
+
+      {/* Top Header Row: Pill Badge on Left, Tech Logo on Right */}
+      <div className="relative z-10 flex items-center justify-between w-full">
+        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#0084FF] text-white shadow-md uppercase tracking-wider">
+          {tag}
+        </span>
+        <div className="w-6 h-6 rounded-md bg-black/35 backdrop-blur-sm border border-white/20 flex items-center justify-center text-[10px] font-black text-white shadow-sm">
+          {techLogo}
+        </div>
+      </div>
+
+      {/* Main Banner Visual Content (Left: Styled Title Text, Right: Vector Graphic) */}
+      <div className="relative z-10 flex items-end justify-between gap-1 mt-auto">
+        <div className="max-w-[55%] pb-1">
+          <p className="text-[11px] font-black leading-tight tracking-wider text-white uppercase drop-shadow-md">
+            {bannerText}
+          </p>
+        </div>
+
+        {/* Right-side Vector Artwork */}
+        <div className="w-20 h-16 relative flex items-center justify-center">
+          {type === 'typescript' && (
+            <svg viewBox="0 0 100 80" fill="none" className="w-full h-full drop-shadow-md">
+              <rect x="10" y="10" width="76" height="50" rx="5" fill="#0F172A" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
+              <rect x="16" y="18" width="28" height="4" rx="2" fill="#38BDF8" />
+              <rect x="16" y="26" width="44" height="4" rx="2" fill="#818CF8" opacity="0.9" />
+              <rect x="22" y="34" width="34" height="4" rx="2" fill="#93C5FD" opacity="0.7" />
+              <rect x="16" y="42" width="24" height="4" rx="2" fill="#38BDF8" />
+              <path d="M5 62 Q 48 70 91 62 L 86 70 Q 48 76 10 70 Z" fill="#334155" />
+              <rect x="40" y="62" width="16" height="3" rx="1.5" fill="#94A3B8" />
+              <circle cx="74" cy="30" r="11" fill="#3178C6" stroke="white" strokeWidth="1" />
+              <text x="74" y="34" textAnchor="middle" fill="white" fontSize="8.5" fontWeight="900">TS</text>
+            </svg>
+          )}
+
+          {type === 'docker' && (
+            <svg viewBox="0 0 100 80" fill="none" className="w-full h-full drop-shadow-md">
+              <rect x="15" y="22" width="20" height="14" rx="2" fill="#0284C7" stroke="white" strokeWidth="1" />
+              <rect x="39" y="22" width="20" height="14" rx="2" fill="#0EA5E9" stroke="white" strokeWidth="1" />
+              <rect x="63" y="22" width="20" height="14" rx="2" fill="#38BDF8" stroke="white" strokeWidth="1" />
+              <rect x="27" y="6" width="20" height="14" rx="2" fill="#7DD3FC" stroke="white" strokeWidth="1" />
+              <rect x="51" y="6" width="20" height="14" rx="2" fill="#0284C7" stroke="white" strokeWidth="1" />
+              <path d="M5 46 Q 48 64 91 46 L 84 60 Q 48 72 12 60 Z" fill="#0369A1" stroke="white" strokeWidth="1" />
+            </svg>
+          )}
+
+          {type === 'graphql' && (
+            <svg viewBox="0 0 100 80" fill="none" className="w-full h-full drop-shadow-md">
+              <line x1="50" y1="12" x2="20" y2="48" stroke="#E10098" strokeWidth="2" />
+              <line x1="50" y1="12" x2="80" y2="48" stroke="#E10098" strokeWidth="2" />
+              <line x1="20" y1="48" x2="80" y2="48" stroke="#E10098" strokeWidth="2" />
+              <line x1="50" y1="12" x2="50" y2="65" stroke="#F59E0B" strokeWidth="1.5" strokeDasharray="2 2" />
+              <circle cx="50" cy="12" r="9" fill="#E10098" stroke="white" strokeWidth="1.5" />
+              <circle cx="20" cy="48" r="8" fill="#8B5CF6" stroke="white" strokeWidth="1.5" />
+              <circle cx="80" cy="48" r="8" fill="#3B82F6" stroke="white" strokeWidth="1.5" />
+              <circle cx="50" cy="65" r="7" fill="#F59E0B" stroke="white" strokeWidth="1.5" />
+            </svg>
+          )}
+
+          {type === 'redis' && (
+            <svg viewBox="0 0 100 80" fill="none" className="w-full h-full drop-shadow-md">
+              <ellipse cx="40" cy="16" rx="26" ry="7" fill="#EF4444" stroke="white" strokeWidth="1" />
+              <path d="M14 16 v 9 cy 25 rx 26 ry 7 v -9" fill="#DC2626" />
+              <ellipse cx="40" cy="25" rx="26" ry="7" fill="#EF4444" stroke="white" strokeWidth="1" />
+              <path d="M14 25 v 9 cy 34 rx 26 ry 7 v -9" fill="#B91C1C" />
+              <ellipse cx="40" cy="34" rx="26" ry="7" fill="#EF4444" stroke="white" strokeWidth="1" />
+              <path d="M14 34 v 9 cy 43 rx 26 ry 7 v -9" fill="#991B1B" />
+              <ellipse cx="40" cy="43" rx="26" ry="7" fill="#B91C1C" stroke="white" strokeWidth="1" />
+              <g transform="translate(54, 18)">
+                <circle cx="13" cy="13" r="12" fill="#F97316" stroke="white" strokeWidth="1.5" />
+                <path d="M14 4 L7 14 L13 14 L12 22 L20 11 L14 11 Z" fill="white" />
+              </g>
+            </svg>
+          )}
+
+          {type === 'microservices' && (
+            <svg viewBox="0 0 100 80" fill="none" className="w-full h-full drop-shadow-md">
+              <rect x="28" y="8" width="44" height="20" rx="4" fill="#6366F1" stroke="white" strokeWidth="1" />
+              <line x1="50" y1="28" x2="22" y2="48" stroke="#818CF8" strokeWidth="1.5" />
+              <line x1="50" y1="28" x2="50" y2="48" stroke="#818CF8" strokeWidth="1.5" />
+              <line x1="50" y1="28" x2="78" y2="48" stroke="#818CF8" strokeWidth="1.5" />
+              <rect x="6" y="48" width="32" height="18" rx="4" fill="#4F46E5" stroke="white" strokeWidth="1" />
+              <rect x="42" y="48" width="32" height="18" rx="4" fill="#4F46E5" stroke="white" strokeWidth="1" />
+              <rect x="78" y="48" width="18" height="18" rx="4" fill="#4F46E5" stroke="white" strokeWidth="1" />
+            </svg>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -583,219 +885,354 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          {/* ── 4. Today's Tasks ──────────────────────────────────────────── */}
-          <section id="todays-tasks">
-            <div className="flex items-center justify-between mb-3">
-              <p style={{ ...sectionLabelStyle, marginBottom: 0 }}>Today&apos;s Tasks</p>
-              <span className="text-xs font-medium" style={{ color: textMuted }}>
-                {Object.values(checkedTasks).filter(Boolean).length}/{tasks.length} done
-              </span>
+
+
+          {/* ── 5. Recommended Courses Container Card ──────────────────────── */}
+          <section
+            id="recommended-courses"
+            className="relative rounded-3xl p-6 overflow-hidden transition-all duration-300"
+            style={{
+              background: isBright
+                ? 'linear-gradient(135deg, #FFF1E8 0%, #FFF8F2 50%, #FFEBE0 100%)'
+                : 'linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(28, 25, 22, 0.95) 50%, rgba(255, 107, 53, 0.04) 100%)',
+              border: isBright ? '1px solid rgba(255, 107, 53, 0.2)' : '1px solid rgba(255, 107, 53, 0.18)',
+              boxShadow: isBright
+                ? '0 10px 30px rgba(234, 88, 12, 0.08), 0 2px 8px rgba(0, 0, 0, 0.03)'
+                : '0 10px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+            }}
+          >
+            {/* 3D Decorative Overlapping Background Ribbon Artwork (Top Right) */}
+            <div className="absolute -top-10 -right-10 w-96 h-96 pointer-events-none opacity-40 overflow-hidden">
+              <svg viewBox="0 0 300 300" fill="none" className="w-full h-full">
+                <rect
+                  x="70"
+                  y="20"
+                  width="130"
+                  height="210"
+                  rx="65"
+                  transform="rotate(35 135 125)"
+                  fill={isBright ? 'url(#grad-ribbon-light-1)' : 'url(#grad-ribbon-dark-1)'}
+                />
+                <rect
+                  x="145"
+                  y="60"
+                  width="125"
+                  height="200"
+                  rx="62"
+                  transform="rotate(35 207 160)"
+                  fill={isBright ? 'url(#grad-ribbon-light-2)' : 'url(#grad-ribbon-dark-2)'}
+                />
+                <defs>
+                  <linearGradient id="grad-ribbon-light-1" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#FF9E7A" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#FF6B35" stopOpacity="0.3" />
+                  </linearGradient>
+                  <linearGradient id="grad-ribbon-light-2" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#FFC2A8" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#FF8C5A" stopOpacity="0.25" />
+                  </linearGradient>
+                  <linearGradient id="grad-ribbon-dark-1" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#FF6B35" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#C94E20" stopOpacity="0.08" />
+                  </linearGradient>
+                  <linearGradient id="grad-ribbon-dark-2" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#FF8C5A" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#1C1916" stopOpacity="0.04" />
+                  </linearGradient>
+                </defs>
+              </svg>
             </div>
-            <div
-              className="rounded-2xl overflow-hidden"
-              style={{ background: cardBg, border: `1px solid ${cardBorder}`, boxShadow: cardShadow }}
-            >
-              {tasks.map((task, i) => {
-                const isChecked = checkedTasks[task.id];
-                const priorityColor = task.priority === 'high' ? '#EF4444' : task.priority === 'medium' ? '#F59E0B' : textSub as string;
-                return (
-                  <div
-                    key={task.id}
-                    id={`task-${task.id}`}
-                    className="flex items-center gap-3 px-4 py-3 transition-all duration-150 hover:bg-white/[0.02] cursor-pointer"
-                    style={{ borderBottom: i < tasks.length - 1 ? `1px solid ${cardBorder}` : undefined }}
-                    onClick={() => setCheckedTasks((prev) => ({ ...prev, [task.id]: !prev[task.id] }))}
-                  >
-                    {/* Checkbox */}
-                    <div
-                      className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 transition-all duration-200"
-                      style={{
-                        background: isChecked
-                          ? 'linear-gradient(135deg, #FF6B35, #E85D2C)'
-                          : 'transparent',
-                        border: isChecked ? 'none' : `1.5px solid ${cardBorder}`,
-                      }}
-                    >
-                      {isChecked && (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={3} className="w-3 h-3">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      )}
-                    </div>
 
-                    {/* Task name */}
-                    <span
-                      className="flex-1 text-sm font-medium transition-all duration-200"
-                      style={{
-                        color: isChecked ? textSub : textPrimary,
-                        textDecoration: isChecked ? 'line-through' : 'none',
-                      }}
-                    >
-                      {task.task}
-                    </span>
-
-                    {/* Priority dot */}
-                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: priorityColor }} />
-
-                    {/* Due tag */}
-                    <span
-                      className="text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0"
-                      style={{
-                        background: task.due === 'Today' ? 'rgba(255,107,53,0.1)' : 'rgba(255,255,255,0.05)',
-                        color: task.due === 'Today' ? '#FF6B35' : textMuted,
-                        border: `1px solid ${task.due === 'Today' ? 'rgba(255,107,53,0.2)' : cardBorder}`,
-                      }}
-                    >
-                      {task.due}
-                    </span>
-                  </div>
-                );
-              })}
+            {/* Header Row */}
+            <div className="relative z-10 flex items-center justify-between mb-4">
+              <div>
+                <span className="text-[10px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/25 uppercase">
+                  ✦ FEATURED FOR YOU
+                </span>
+                <h2 className="text-xl font-black tracking-tight mt-1 mb-0" style={{ color: textPrimary }}>
+                  Recommended For You
+                </h2>
+              </div>
+              <a
+                href="#"
+                className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#FF6B35]/30 text-[#FF6B35] bg-[#FF6B35]/10 hover:bg-[#FF6B35] hover:text-white transition-all duration-200"
+              >
+                See all →
+              </a>
             </div>
-          </section>
 
-          {/* ── 5. Recommended Courses ────────────────────────────────────── */}
-          <section id="recommended-courses">
-            <div className="flex items-center justify-between mb-3">
-              <p style={{ ...sectionLabelStyle, marginBottom: 0 }}>Recommended For You</p>
-              <a href="#" className="text-xs font-medium" style={{ color: '#FF6B35' }}>See all →</a>
-            </div>
-            <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none' }}>
+            {/* Nested Cards Grid / Scroll */}
+            <div className="relative z-10 flex gap-4 overflow-x-auto pb-2 pt-1" style={{ scrollbarWidth: 'none' }}>
               {recommendedCourses.map((course) => (
                 <div
                   key={course.id}
                   id={`course-${course.id}`}
-                  className="flex-shrink-0 w-52 rounded-2xl p-4 transition-all duration-200 hover:scale-[1.03] hover:-translate-y-1 cursor-pointer"
+                  className="flex-shrink-0 w-[240px] rounded-2xl flex flex-col transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 cursor-pointer overflow-hidden group"
                   style={{
                     background: cardBg,
                     border: `1px solid ${cardBorder}`,
                     boxShadow: cardShadow,
                   }}
                 >
-                  {/* Color accent top */}
-                  <div
-                    className="w-full h-1.5 rounded-full mb-3"
-                    style={{ background: `linear-gradient(90deg, ${course.color}, ${course.color}88)` }}
-                  />
-                  {/* Tag */}
-                  <span
-                    className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                    style={{ background: `${course.color}18`, color: course.color, border: `1px solid ${course.color}30` }}
-                  >
-                    {course.tag}
-                  </span>
-                  <h4 className="mt-2 text-sm font-bold leading-tight" style={{ color: textPrimary }}>
-                    {course.title}
-                  </h4>
-                  <p className="text-xs mt-1" style={{ color: textMuted }}>{course.level} · {course.duration}</p>
-                  <div className="flex items-center gap-1 mt-2">
-                    <span style={{ color: '#F59E0B', fontSize: '11px' }}>★</span>
-                    <span className="text-xs font-semibold" style={{ color: textPrimary }}>{course.rating}</span>
-                    <span className="text-xs" style={{ color: textMuted }}>({course.students})</span>
+                  {/* Top Visual Banner (Thumbnail matching image 2 style) */}
+                  <div style={{ background: course.bannerBg }}>
+                    <CourseBannerGraphic
+                      type={course.illustrationType}
+                      bannerText={course.bannerText}
+                      techLogo={course.techLogo}
+                      tag={course.tag}
+                    />
                   </div>
-                  <button
-                    className="mt-3 w-full py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 hover:opacity-90"
-                    style={{ background: `${course.color}18`, color: course.color, border: `1px solid ${course.color}30` }}
-                  >
-                    Enroll Free
-                  </button>
+
+                  {/* Bottom Card Body */}
+                  <div className="p-3.5 flex flex-col justify-between flex-1">
+                    <div>
+                      {/* Course Title */}
+                      <h4
+                        className="text-xs font-bold leading-snug line-clamp-2 min-h-[34px] transition-colors group-hover:text-[#FF6B35]"
+                        style={{ color: textPrimary }}
+                      >
+                        {course.title}
+                      </h4>
+
+                      {/* Author & Category metadata line */}
+                      <p className="text-[11px] mt-2 font-medium" style={{ color: textMuted }}>
+                        By <span className="font-semibold" style={{ color: textPrimary }}>{course.author}</span> in{' '}
+                        <span style={{ color: textMuted }}>{course.category}</span>
+                      </p>
+
+                      {/* Star Rating line */}
+                      <div className="flex items-center gap-1 mt-2.5">
+                        <div className="flex text-[#F59E0B] text-[11px] gap-[1px]">
+                          <span>★</span>
+                          <span>★</span>
+                          <span>★</span>
+                          <span>★</span>
+                          <span>★</span>
+                        </div>
+                        <span className="text-xs font-bold ml-1" style={{ color: textPrimary }}>
+                          {course.rating.toFixed(1).replace('.', ',')}
+                        </span>
+                        <span className="text-[10px]" style={{ color: textMuted }}>
+                          ({course.students})
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action Button */}
+                    <button
+                      className="mt-3.5 w-full py-2 rounded-full text-xs font-bold transition-all duration-200 border flex items-center justify-center gap-1.5 shadow-sm group-hover:shadow-md"
+                      style={{
+                        borderColor: isBright ? 'rgba(234,88,12,0.35)' : 'rgba(255,107,53,0.35)',
+                        color: '#FF6B35',
+                        background: isBright ? 'rgba(255,107,53,0.04)' : 'rgba(255,107,53,0.08)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#FF6B35';
+                        e.currentTarget.style.color = '#FFFFFF';
+                        e.currentTarget.style.borderColor = '#FF6B35';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = isBright ? 'rgba(255,107,53,0.04)' : 'rgba(255,107,53,0.08)';
+                        e.currentTarget.style.color = '#FF6B35';
+                        e.currentTarget.style.borderColor = isBright ? 'rgba(234,88,12,0.35)' : 'rgba(255,107,53,0.35)';
+                      }}
+                    >
+                      Start Learning
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           </section>
 
-          {/* ── 6. My Learning Journeys (full-width) ─────────────────────── */}
-          <section id="my-learning-journeys" className="pb-6">
-            <div className="flex items-center justify-between mb-3">
-              <p style={{ ...sectionLabelStyle, marginBottom: 0 }}>My Learning Journeys</p>
-              <button
-                id="btn-toggle-journeys"
-                onClick={() => setJourneysExpanded((v) => !v)}
-                className="flex items-center gap-1.5 text-xs font-medium transition-colors"
-                style={{ color: textMuted }}
-              >
-                {journeysExpanded ? 'Collapse' : 'Expand'}
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  className="w-3.5 h-3.5 transition-transform duration-300"
-                  style={{ transform: journeysExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <polyline points="18 15 12 9 6 15" />
-                </svg>
-              </button>
+          {/* ── 6. My Learning Journeys (Outer Container Card matching theme) ── */}
+          <section
+            id="my-learning-journeys"
+            className="relative rounded-3xl p-6 overflow-hidden transition-all duration-300 pb-6 mb-6"
+            style={{
+              background: isBright
+                ? 'linear-gradient(135deg, #FFF1E8 0%, #FFF8F2 50%, #FFEBE0 100%)'
+                : 'linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(28, 25, 22, 0.95) 50%, rgba(255, 107, 53, 0.04) 100%)',
+              border: isBright ? '1px solid rgba(255, 107, 53, 0.2)' : '1px solid rgba(255, 107, 53, 0.18)',
+              boxShadow: isBright
+                ? '0 10px 30px rgba(234, 88, 12, 0.08), 0 2px 8px rgba(0, 0, 0, 0.03)'
+                : '0 10px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+            }}
+          >
+            {/* 3D Decorative Overlapping Background Ribbon Artwork (Top Right) */}
+            <div className="absolute -top-10 -right-10 w-96 h-96 pointer-events-none opacity-35 overflow-hidden">
+              <svg viewBox="0 0 300 300" fill="none" className="w-full h-full">
+                <rect
+                  x="70"
+                  y="20"
+                  width="130"
+                  height="210"
+                  rx="65"
+                  transform="rotate(35 135 125)"
+                  fill={isBright ? 'url(#grad-ribbon-jlight-1)' : 'url(#grad-ribbon-jdark-1)'}
+                />
+                <rect
+                  x="145"
+                  y="60"
+                  width="125"
+                  height="200"
+                  rx="62"
+                  transform="rotate(35 207 160)"
+                  fill={isBright ? 'url(#grad-ribbon-jlight-2)' : 'url(#grad-ribbon-jdark-2)'}
+                />
+                <defs>
+                  <linearGradient id="grad-ribbon-jlight-1" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#FF9E7A" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#FF6B35" stopOpacity="0.3" />
+                  </linearGradient>
+                  <linearGradient id="grad-ribbon-jlight-2" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#FFC2A8" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#FF8C5A" stopOpacity="0.25" />
+                  </linearGradient>
+                  <linearGradient id="grad-ribbon-jdark-1" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#FF6B35" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#C94E20" stopOpacity="0.08" />
+                  </linearGradient>
+                  <linearGradient id="grad-ribbon-jdark-2" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#FF8C5A" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#1C1916" stopOpacity="0.04" />
+                  </linearGradient>
+                </defs>
+              </svg>
             </div>
 
+            {/* Header Row */}
+            <div className="relative z-10 flex items-center justify-between mb-4">
+              <div>
+                <span className="text-[10px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/25 uppercase">
+                  ✦ ROADMAP & PATHWAYS
+                </span>
+                <h2 className="text-xl font-black tracking-tight mt-1 mb-0" style={{ color: textPrimary }}>
+                  My Learning Journeys
+                </h2>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/25">
+                  4 Active Pathways
+                </span>
+                <button
+                  id="btn-toggle-journeys"
+                  onClick={() => setJourneysExpanded((v) => !v)}
+                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-[#FF6B35]/30 text-[#FF6B35] bg-[#FF6B35]/10 hover:bg-[#FF6B35] hover:text-white transition-all duration-200"
+                >
+                  {journeysExpanded ? 'Collapse' : 'Expand'}
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                    className="w-3.5 h-3.5 transition-transform duration-300"
+                    style={{ transform: journeysExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                  >
+                    <polyline points="18 15 12 9 6 15" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Expanded Content Box */}
             <div
-              className="rounded-2xl overflow-hidden transition-all duration-500"
+              className="relative z-10 transition-all duration-500 overflow-hidden space-y-3"
               style={{
-                background: cardBg,
-                border: `1px solid ${cardBorder}`,
-                boxShadow: cardShadow,
                 maxHeight: journeysExpanded ? '2000px' : '0px',
                 opacity: journeysExpanded ? 1 : 0,
               }}
             >
-              {/* Table header */}
-              <div
-                className="grid grid-cols-[2fr_1fr_1fr_120px] gap-4 px-5 py-3 text-xs font-semibold uppercase tracking-wider"
-                style={{ color: textMuted, borderBottom: `1px solid ${cardBorder}` }}
-              >
-                <span>Journey</span>
-                <span>Modules</span>
-                <span>Status</span>
-                <span>Progress</span>
-              </div>
-
-              {learningJourneys.map((j, i) => {
-                const statusColor = j.status === 'active' ? '#10B981' : '#F59E0B';
-                const progressColor = j.progress > 50 ? '#10B981' : j.progress > 20 ? '#FF6B35' : '#F59E0B';
-                return (
+              {/* Journey Cards Grid (2 per row) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                {learningJourneys.map((j) => (
                   <div
                     key={j.id}
                     id={`journey-${j.id}`}
-                    className="grid grid-cols-[2fr_1fr_1fr_120px] gap-4 px-5 py-4 items-center transition-all duration-150 hover:bg-white/[0.02] cursor-pointer"
-                    style={{ borderBottom: i < learningJourneys.length - 1 ? `1px solid ${cardBorder}` : undefined }}
+                    className="rounded-3xl p-4.5 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 cursor-pointer shadow-lg group flex flex-col justify-between"
+                    style={{
+                      background: isBright
+                        ? `linear-gradient(135deg, ${j.gradientLight[0]}, ${j.gradientLight[1]})`
+                        : `linear-gradient(135deg, ${j.gradientDark[0]}, ${j.gradientDark[1]})`,
+                      color: j.textColor,
+                      border: `1px solid ${j.borderColor}`,
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                    }}
                   >
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold truncate" style={{ color: textPrimary }}>{j.name}</p>
-                      <p className="text-xs mt-0.5 truncate" style={{ color: textMuted }}>Last: {j.lastModule}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold" style={{ color: textPrimary }}>{j.done}/{j.modules}</p>
-                      <p className="text-xs" style={{ color: textMuted }}>modules done</p>
-                    </div>
-                    <div>
-                      <span
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
-                        style={{ background: `${statusColor}18`, color: statusColor, border: `1px solid ${statusColor}30` }}
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusColor }} />
-                        {j.status === 'active' ? 'Active' : 'New'}
-                      </span>
-                    </div>
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-bold" style={{ color: progressColor }}>{j.progress}%</span>
+                    {/* Top Row: Isometric Icon + Title/Subtitle + Right White Rounded Box */}
+                    <div className="flex items-start justify-between gap-3">
+                      {/* Left Isometric Icon */}
+                      <div className="w-11 h-11 relative flex-shrink-0 flex items-center justify-center">
+                        <JourneyIsometricIcon type={j.id} />
                       </div>
-                      <ProgressBar value={j.progress} color={progressColor} height={5} />
+
+                      {/* Middle: Course Name & Subtitle */}
+                      <div className="flex-1 min-w-0 pr-1">
+                        <h3 className="text-sm font-black leading-tight tracking-tight text-white drop-shadow-sm group-hover:underline">
+                          {j.name}
+                        </h3>
+                        <p className="text-[11px] mt-1 font-medium text-white/80 line-clamp-1">
+                          {j.subtitle}
+                        </p>
+                      </div>
+
+                      {/* Right: Small White Box with Module Completed Count */}
+                      <div className="flex flex-col items-center flex-shrink-0">
+                        <div className="w-12 h-12 rounded-xl bg-white shadow-lg flex flex-col items-center justify-center text-slate-900 p-0.5">
+                          <span className="text-sm font-black leading-none text-[#0F172A]">
+                            {j.done}<span className="text-[9px] font-bold opacity-60">/{j.modules}</span>
+                          </span>
+                          <span className="text-[7.5px] font-black uppercase tracking-wider text-slate-500 mt-0.5">
+                            Modules
+                          </span>
+                        </div>
+                        <span className="text-[8px] font-extrabold mt-1 text-white/80 uppercase tracking-wider">
+                          {j.status === 'active' ? 'Enrolled' : 'New Track'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Bottom Row: Graph Bar with percentage right beside + Enroll Link */}
+                    <div className="mt-4 pt-1 flex items-center justify-between gap-3">
+                      {/* Graph Bar + Percentage */}
+                      <div className="flex-1 flex items-center gap-2">
+                        <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-white/30 backdrop-blur-sm p-[1px]">
+                          <div
+                            className="h-full rounded-full transition-all duration-700 bg-white shadow-sm"
+                            style={{ width: `${j.progress}%` }}
+                          />
+                        </div>
+                        <span className="text-[11px] font-black text-white min-w-[28px]">
+                          {j.progress}%
+                        </span>
+                      </div>
+
+                      {/* Action Link */}
+                      <div className="flex items-center gap-1 text-[11px] font-extrabold text-white transition-transform group-hover:translate-x-1">
+                        <span>Continue</span>
+                        <span>→</span>
+                      </div>
                     </div>
                   </div>
-                );
-              })}
+                ))}
+              </div>
 
-              {/* Footer */}
+              {/* Bottom Footer Bar */}
               <div
-                className="px-5 py-3 flex items-center justify-between"
-                style={{ borderTop: `1px solid ${cardBorder}` }}
+                className="rounded-2xl px-5 py-3.5 flex items-center justify-between mt-3"
+                style={{
+                  background: cardBg,
+                  border: `1px solid ${cardBorder}`,
+                  boxShadow: cardShadow,
+                }}
               >
-                <span className="text-xs" style={{ color: textMuted }}>4 active journeys · 32 total modules completed</span>
+                <span className="text-xs font-medium" style={{ color: textMuted }}>
+                  ⚡ <strong style={{ color: textPrimary }}>4 active journeys</strong> · 32 total modules completed
+                </span>
                 <Link
                   href="/dashboard/journeys"
-                  className="text-xs font-semibold transition-colors"
-                  style={{ color: '#FF6B35' }}
+                  className="text-xs font-bold px-3 py-1.5 rounded-full text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white border border-[#FF6B35]/30 transition-all duration-200"
                 >
                   Browse More Journeys →
                 </Link>
