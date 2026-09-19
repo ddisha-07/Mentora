@@ -36,7 +36,7 @@ export async function GET(
         try {
           const userCoursesSnap = await adminDb.collection('courses').where('createdBy', '==', userId).get();
           if (!userCoursesSnap.empty) {
-            const sorted = userCoursesSnap.docs.sort((a, b) => {
+            const sorted = userCoursesSnap.docs.sort((a: any, b: any) => {
               const timeA = a.data().createdAt?.toMillis?.() || new Date(a.data().createdAt || 0).getTime();
               const timeB = b.data().createdAt?.toMillis?.() || new Date(b.data().createdAt || 0).getTime();
               return timeB - timeA;
@@ -81,8 +81,8 @@ export async function GET(
       .get();
 
     const moduleList = modulesSnap.docs
-      .map(doc => ({ id: doc.id, ...doc.data() as any }))
-      .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+      .map((doc: any) => ({ id: doc.id, ...doc.data() as any }))
+      .sort((a: any, b: any) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
     if (moduleList.length === 0) {
       return NextResponse.json({

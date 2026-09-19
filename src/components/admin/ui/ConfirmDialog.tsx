@@ -45,10 +45,10 @@ export default function ConfirmDialog({
       }
     >
       <div className="flex gap-3">
-        <div className="w-9 h-9 rounded-full bg-red-500/12 border border-red-500/25 flex items-center justify-center shrink-0">
-          <AlertTriangle size={16} className="text-red-400" />
+        <div className="w-9 h-9 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+          <AlertTriangle size={16} className="text-red-500" />
         </div>
-        <p className="text-sm text-ink-300 leading-relaxed">{description}</p>
+        <p className="text-sm text-slate-600 dark:text-ink-300 leading-relaxed">{description}</p>
       </div>
     </Modal>
   );

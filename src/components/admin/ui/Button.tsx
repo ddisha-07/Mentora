@@ -6,13 +6,13 @@ import { classNames } from "@/lib/admin/utils";
 
 const variants: Record<string, string> = {
   primary:
-    "bg-ember-500 text-base-950 font-semibold hover:bg-ember-400 shadow-ember",
+    "bg-ember-500 text-white font-semibold hover:bg-ember-600 shadow-ember",
   secondary:
-    "glass text-ink-100 hover:bg-white/[0.06]",
+    "border border-slate-200 dark:border-white/10 text-slate-700 dark:text-ink-100 bg-white dark:bg-white/[0.04] hover:bg-slate-50 dark:hover:bg-white/[0.08]",
   ghost:
-    "text-ink-300 hover:text-ink-100 hover:bg-white/[0.05]",
+    "text-slate-600 dark:text-ink-300 hover:text-slate-900 dark:hover:text-ink-100 hover:bg-slate-100 dark:hover:bg-white/[0.05]",
   danger:
-    "bg-red-500/15 text-red-300 border border-red-500/30 hover:bg-red-500/25",
+    "bg-red-600 hover:bg-red-700 text-white font-semibold shadow-sm",
 };
 
 const sizes: Record<string, string> = {

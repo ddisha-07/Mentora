@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
+import * as courseService from '@/lib/admin/services/courseService';
 
 interface FannedCourse {
   id: string;
@@ -207,8 +208,148 @@ const historyItems: HistoryItem[] = [
   },
 ];
 
+const CARD_PALETTES = [
+  {
+    cardColor: 'from-[#321c10] via-[#22140b] to-[#140c06]',
+    accentGradient: 'from-orange-500 via-amber-500 to-yellow-500',
+  },
+  {
+    cardColor: 'from-[#1a2336] via-[#121927] to-[#0c101a]',
+    accentGradient: 'from-blue-500 via-indigo-500 to-cyan-400',
+  },
+  {
+    cardColor: 'from-[#102b20] via-[#0c1e16] to-[#07130e]',
+    accentGradient: 'from-emerald-500 via-teal-500 to-green-400',
+  },
+  {
+    cardColor: 'from-[#302416] via-[#21180e] to-[#140e08]',
+    accentGradient: 'from-amber-600 via-orange-600 to-yellow-500',
+  },
+  {
+    cardColor: 'from-[#28153c] via-[#1b0d29] to-[#0f0717]',
+    accentGradient: 'from-purple-500 via-violet-500 to-indigo-400',
+  },
+  {
+    cardColor: 'from-[#34141d] via-[#240c13] to-[#14060a]',
+    accentGradient: 'from-rose-500 via-pink-500 to-orange-400',
+  },
+];
+
+function getCourseArtworkIcon(category = '', title = ''): string {
+  const text = `${category} ${title}`.toLowerCase();
+  if (text.includes('ai') || text.includes('machine learning') || text.includes('neural') || text.includes('deep learning')) return '🧠';
+  if (text.includes('type') || text.includes('react') || text.includes('frontend') || text.includes('web')) return '👾';
+  if (text.includes('postgres') || text.includes('sql') || text.includes('database') || text.includes('data')) return '💾';
+  if (text.includes('k8s') || text.includes('kubernetes') || text.includes('cloud') || text.includes('docker') || text.includes('devops')) return '☸️';
+  if (text.includes('security') || text.includes('cyber') || text.includes('auth')) return '🛡️';
+  if (text.includes('python')) return '🐍';
+  if (text.includes('design') || text.includes('ui') || text.includes('ux')) return '🎨';
+  if (text.includes('mobile') || text.includes('ios') || text.includes('android')) return '📱';
+  return '⚡';
+}
+
+function getInstructorInitials(name = ''): string {
+  if (!name) return 'MF';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+}
+
+function parseLevelNumber(lvl: any): number {
+  if (typeof lvl === 'number') return Math.min(9, Math.max(1, lvl));
+  if (typeof lvl === 'string') {
+    const lower = lvl.toLowerCase();
+    if (lower.includes('begin')) return 3;
+    if (lower.includes('inter')) return 5;
+    if (lower.includes('adv')) return 8;
+    if (lower.includes('expert') || lower.includes('master')) return 9;
+    const num = parseInt(lvl, 10);
+    if (!isNaN(num)) return Math.min(9, Math.max(1, num));
+  }
+  return 4;
+}
+
+function mapAdminCourseToFanned(adminCourse: any, index: number): FannedCourse {
+  const palette = CARD_PALETTES[index % CARD_PALETTES.length];
+  const totalMods = Array.isArray(adminCourse.modules) && adminCourse.modules.length > 0
+    ? adminCourse.modules.length
+    : 6;
+
+  const rawModules = Array.isArray(adminCourse.modules) && adminCourse.modules.length > 0
+    ? adminCourse.modules
+    : [
+        { id: `${adminCourse.id}-m1`, title: 'Core Foundations & Setup', duration: '45m', isQuiz: false, completed: true },
+        { id: `${adminCourse.id}-m2`, title: 'Architecture & Implementation', duration: '1h 00m', isQuiz: false, completed: false },
+        { id: `${adminCourse.id}-m3`, title: 'Diagnostic Milestone Check', duration: '25m', isQuiz: true, completed: false },
+        { id: `${adminCourse.id}-m4`, title: 'Production Best Practices', duration: '50m', isQuiz: false, completed: false },
+        { id: `${adminCourse.id}-m5`, title: 'Mastery Certification Audit', duration: '35m', isQuiz: true, completed: false },
+      ];
+
+  const modules = rawModules.map((m: any, mIdx: number) => ({
+    id: m.id || `${adminCourse.id}-m${mIdx + 1}`,
+    title: m.title || `Module ${mIdx + 1}: Key Principles`,
+    duration: m.duration || m.readTime || (m.video?.duration) || `${35 + (mIdx * 10) % 35}m`,
+    isQuiz: Boolean(m.isQuiz || (Array.isArray(m.flashcards) && m.flashcards.length > 0) || mIdx % 3 === 2),
+    completed: Boolean(m.completed || mIdx === 0),
+  }));
+
+  const instructorName = typeof adminCourse.instructor === 'object' && adminCourse.instructor?.name
+    ? adminCourse.instructor.name
+    : typeof adminCourse.instructor === 'string' && adminCourse.instructor.trim()
+    ? adminCourse.instructor
+    : adminCourse.author?.trim()
+    ? adminCourse.author
+    : 'Mentora Faculty';
+
+  const instructorHandle = typeof adminCourse.instructor === 'object' && adminCourse.instructor?.handle
+    ? adminCourse.instructor.handle
+    : `@${instructorName.toLowerCase().replace(/\s+/g, '_')}`;
+
+  const instructorAvatar = typeof adminCourse.instructor === 'object' && adminCourse.instructor?.avatar
+    ? adminCourse.instructor.avatar
+    : getInstructorInitials(instructorName);
+
+  const quizzesCount = modules.filter((m: any) => m.isQuiz).length || Math.max(2, Math.floor(totalMods * 0.4));
+  const xpPoints = adminCourse.xp || (totalMods * 175 + 400);
+
+  let durationStr = adminCourse.duration || `${(totalMods * 1.1).toFixed(1)} hrs`;
+  if (typeof durationStr === 'string' && durationStr.toLowerCase().includes('week')) {
+    const weeks = parseInt(durationStr, 10) || 4;
+    durationStr = `${(weeks * 2.5).toFixed(1)} hrs`;
+  }
+
+  return {
+    id: String(adminCourse.id),
+    title: adminCourse.title || 'Untitled Track',
+    subtitle: adminCourse.category || (adminCourse.level ? `${adminCourse.level} Track` : 'Career Track'),
+    instructor: {
+      name: instructorName,
+      handle: instructorHandle,
+      avatar: instructorAvatar,
+      verified: true,
+    },
+    level: parseLevelNumber(adminCourse.level),
+    progressPercent: adminCourse.progressPercent !== undefined
+      ? Number(adminCourse.progressPercent)
+      : (adminCourse.enrolled ? Math.min(80, (adminCourse.enrolled % 50) + 25) : 35),
+    quizzesCount,
+    totalModules: totalMods,
+    duration: durationStr,
+    xpPoints,
+    cardColor: palette.cardColor,
+    accentGradient: palette.accentGradient,
+    tag: adminCourse.category ? adminCourse.category : 'Published',
+    artworkIcon: getCourseArtworkIcon(adminCourse.category, adminCourse.title),
+    description: adminCourse.description || 'Master real-world skills, high-scale patterns, and verified milestone gates with Mentora.',
+    modules,
+  };
+}
+
 export default function CoursesPage() {
   const { isBright } = useTheme();
+  const [allCourses, setAllCourses] = useState<FannedCourse[]>(fannedCourses);
   const [selectedCourseIndex, setSelectedCourseIndex] = useState<number>(0);
   const [hoveredCourseIndex, setHoveredCourseIndex] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'recommended' | 'saved'>('recommended');
@@ -219,11 +360,75 @@ export default function CoursesPage() {
   const [enrollModalOpen, setEnrollModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const displayedCourses = viewMode === 'saved'
-    ? fannedCourses.filter((c) => savedCourseIds.includes(c.id))
-    : fannedCourses;
+  useEffect(() => {
+    let isMounted = true;
 
-  const activeCourse = displayedCourses[selectedCourseIndex] || displayedCourses[0] || fannedCourses[0];
+    async function loadPublishedCourses() {
+      try {
+        const stored = await courseService.getCourses();
+        if (!isMounted) return;
+
+        const published = (stored || []).filter((c: any) => c.status === 'Published');
+        if (published.length === 0) return;
+
+        const mapped = published.map((c: any, idx: number) =>
+          mapAdminCourseToFanned(c, idx)
+        );
+
+        // Deduplicate against static demo courses by id or normalized title
+        const publishedIds = new Set(mapped.map((c) => c.id.toLowerCase()));
+        const publishedTitles = new Set(mapped.map((c) => c.title.toLowerCase().trim()));
+
+        const remainingDemo = fannedCourses.filter(
+          (c) => !publishedIds.has(c.id.toLowerCase()) && !publishedTitles.has(c.title.toLowerCase().trim())
+        );
+
+        setAllCourses([...mapped, ...remainingDemo]);
+      } catch (err) {
+        console.error('Failed to load published courses:', err);
+      }
+    }
+
+    loadPublishedCourses();
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'mentora_admin_courses_v2') {
+        loadPublishedCourses();
+      }
+    };
+
+    const handleCustomUpdate = () => {
+      loadPublishedCourses();
+    };
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('mentora_courses_updated', handleCustomUpdate);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('mentora_courses_updated', handleCustomUpdate);
+    };
+  }, []);
+
+  const baseCourses = viewMode === 'saved'
+    ? allCourses.filter((c) => savedCourseIds.includes(c.id))
+    : allCourses;
+
+  const displayedCourses = searchQuery.trim()
+    ? baseCourses.filter((c) =>
+        c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.subtitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.tag.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.instructor.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : baseCourses;
+
+  const safeActiveIndex = (selectedCourseIndex >= 0 && selectedCourseIndex < displayedCourses.length)
+    ? selectedCourseIndex
+    : 0;
+
+  const activeCourse = displayedCourses[safeActiveIndex] || allCourses[0] || fannedCourses[0];
 
   const bgPage = isBright ? '#FAF4EE' : '#120D09';
   const cardBg = isBright ? '#FFFFFF' : '#1A130D';
@@ -396,9 +601,14 @@ export default function CoursesPage() {
                       </button>
                     </div>
                   ) : (
-                    <div className="relative flex items-center min-w-[620px] sm:min-w-[700px] h-full">
+                    <div
+                      className="relative flex items-center h-full"
+                      style={{
+                        minWidth: `${Math.max(700, (displayedCourses.length - 1) * 125 + 280)}px`,
+                      }}
+                    >
                       {displayedCourses.map((course, idx) => {
-                        const isSelected = idx === selectedCourseIndex;
+                        const isSelected = idx === safeActiveIndex;
                         const isHovered = hoveredCourseIndex === idx && !isSelected;
                         const isCardSaved = savedCourseIds.includes(course.id);
 
@@ -406,7 +616,7 @@ export default function CoursesPage() {
                         // The remaining cards move towards the right in slots 1, 2, 3...
                         const otherIndices = displayedCourses
                           .map((_, i) => i)
-                          .filter((i) => i !== selectedCourseIndex);
+                          .filter((i) => i !== safeActiveIndex);
                         const slot = isSelected ? 0 : otherIndices.indexOf(idx) + 1;
 
                         // Slot-based offset: slot 0 is at 0px, each subsequent slot moves 125px to the right
@@ -944,7 +1154,7 @@ export default function CoursesPage() {
             </div>
 
             <div className="space-y-3">
-              {fannedCourses.map((c) => (
+              {allCourses.map((c) => (
                 <div
                   key={c.id}
                   className="p-4 rounded-2xl border flex items-center justify-between gap-3"

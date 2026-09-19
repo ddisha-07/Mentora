@@ -9,9 +9,16 @@ interface TopbarProps {
   subtitle?: string;
   onMenuClick?: () => void;
   actions?: ReactNode;
+  showNotifications?: boolean;
 }
 
-export default function Topbar({ title, subtitle, onMenuClick, actions }: TopbarProps) {
+export default function Topbar({
+  title,
+  subtitle,
+  onMenuClick,
+  actions,
+  showNotifications = false,
+}: TopbarProps) {
   const layout = useAdminLayout();
   const handleMenuClick = onMenuClick || layout.openMobileMenu;
 
@@ -32,12 +39,14 @@ export default function Topbar({ title, subtitle, onMenuClick, actions }: Topbar
       </div>
       <div className="flex items-center gap-3 shrink-0">
         {actions}
-        <button
-          className="w-9 h-9 rounded-lg glass flex items-center justify-center text-ink-300 hover:text-ink-100 transition-colors focus-ring"
-          aria-label="Notifications"
-        >
-          <Bell size={16} />
-        </button>
+        {showNotifications && (
+          <button
+            className="w-9 h-9 rounded-lg glass flex items-center justify-center text-ink-300 hover:text-ink-100 transition-colors focus-ring"
+            aria-label="Notifications"
+          >
+            <Bell size={16} />
+          </button>
+        )}
       </div>
     </header>
   );

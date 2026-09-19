@@ -20,7 +20,7 @@ export default function Badge({ children, tone = "neutral", className }: BadgePr
   return (
     <span
       className={classNames(
-        "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border",
+        "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border whitespace-nowrap shrink-0",
         tones[tone] || tones.neutral,
         className
       )}

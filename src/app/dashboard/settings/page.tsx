@@ -74,7 +74,7 @@ export default function SettingsPage() {
   const [weeklyEmailDigest, setWeeklyEmailDigest] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
       if (user) {
         setCurrentUser(user);
         if (user.displayName) setName(user.displayName);

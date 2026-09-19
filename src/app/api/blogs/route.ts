@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     try {
       const blogsSnap = await adminDb.collection('blogs').orderBy('num', 'asc').get();
       if (!blogsSnap.empty) {
-        results = blogsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        results = blogsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
       }
     } catch (dbErr) {
       console.warn("Database query failed in /api/blogs GET, using fallback:", dbErr);

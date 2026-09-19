@@ -106,7 +106,7 @@ export async function POST(
       const userRef = adminDb.collection('users').doc(resolvedUserId);
       
       try {
-        await adminDb.runTransaction(async (t) => {
+        await adminDb.runTransaction(async (t: any) => {
           const userDocSnap = await t.get(userRef);
           if (userDocSnap.exists) {
             const currentPoints = userDocSnap.data()?.totalPoints || 0;

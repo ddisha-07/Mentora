@@ -18,7 +18,10 @@ import {
   X,
   ArrowLeft,
   Newspaper,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 const nav = [
   { to: "/admin", label: "Overview", icon: LayoutGrid, exact: true },
@@ -40,6 +43,7 @@ interface SidebarProps {
 
 export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const { isBright, toggleTheme } = useTheme();
 
   return (
     <>
@@ -115,6 +119,25 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
               <ArrowLeft size={14} />
               <span>Back to App Dashboard</span>
             </Link>
+
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="w-full flex items-center justify-between px-3 py-2 text-xs text-ink-500 hover:text-ink-100 hover:bg-white/[0.04] rounded-lg transition-colors cursor-pointer"
+              title={isBright ? "Switch to Dark Mode" : "Switch to Light Mode"}
+            >
+              <div className="flex items-center gap-2">
+                {isBright ? (
+                  <Sun size={14} className="text-amber-500" />
+                ) : (
+                  <Moon size={14} className="text-ember-400" />
+                )}
+                <span>{isBright ? "Light Mode" : "Dark Mode"}</span>
+              </div>
+              <span className="text-[11px] px-1.5 py-0.5 rounded bg-white/[0.06] text-ink-300">
+                {isBright ? "☀️" : "🌙"}
+              </span>
+            </button>
 
             <div className="glass rounded-xl p-3.5 flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-ember-500/15 border border-ember-500/25 flex items-center justify-center text-ember-400 text-xs font-semibold">

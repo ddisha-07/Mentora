@@ -45,7 +45,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${pixelifySans.variable} ${pressStart2P.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${pixelifySans.variable} ${pressStart2P.variable} h-full antialiased dark`}
     >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -59,9 +59,15 @@ export default function RootLayout({
             __html: `
               try {
                 if (localStorage.getItem('mentora_theme') === 'bright') {
+                  document.documentElement.classList.remove('dark');
                   document.documentElement.classList.add('bright');
                   document.documentElement.setAttribute('data-theme', 'bright');
                   document.documentElement.style.colorScheme = 'light';
+                } else {
+                  document.documentElement.classList.remove('bright');
+                  document.documentElement.classList.add('dark');
+                  document.documentElement.setAttribute('data-theme', 'dark');
+                  document.documentElement.style.colorScheme = 'dark';
                 }
               } catch (e) {}
             `,

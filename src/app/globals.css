@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #080604;
@@ -20,6 +21,7 @@
   --color-base-700: #1e2023;
 
   --color-ink-100: #f5f5f4;
+  --color-ink-200: #e2e8f0;
   --color-ink-300: #c8c8cc;
   --color-ink-500: #8b8b90;
   --color-ink-700: #5c5c62;
@@ -116,13 +118,13 @@ body {
    ========================================================================== */
 html.bright {
   --background: #FAF4EE;
-  --foreground: #1C1917;
+  --foreground: #000000;
   color-scheme: light;
 }
 
 html.bright body {
   background-color: #FAF4EE !important;
-  color: #1C1917 !important;
+  color: #000000 !important;
 }
 
 html.bright .drop-shadow-pixel-bold {
@@ -148,11 +150,11 @@ html.bright .bg-\[\#080604\],
 html.bright .bg-\[\#070503\],
 html.bright .bg-\[\#060403\] {
   background-color: #FAF4EE !important;
-  color: #1C1917 !important;
+  color: #000000 !important;
 }
 
 html.bright .text-\[\#fff7ed\] {
-  color: #1C1917 !important;
+  color: #000000 !important;
 }
 
 /* Headings in Bright Mode */
@@ -161,29 +163,35 @@ html.bright h2:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
 html.bright h3:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
 html.bright h4:not([class*="bg-clip-text"]):not([class*="text-transparent"]),
 html.bright h5:not([class*="bg-clip-text"]):not([class*="text-transparent"]) {
-  color: #1C1917 !important;
+  color: #000000 !important;
 }
 
 /* Secondary and Muted Text in Bright Mode */
 html.bright .text-zinc-400,
 html.bright .text-zinc-300 {
-  color: #57534E !important;
+  color: #334155 !important;
 }
 
 html.bright .text-zinc-500 {
-  color: #78716C !important;
+  color: #475569 !important;
 }
 
 html.bright .text-zinc-200,
 html.bright .text-zinc-100 {
-  color: #292524 !important;
+  color: #000000 !important;
 }
 
-/* Body and Label text originally white in dark mode */
+/* Body and Label text originally white in dark mode MUST BE SOLID BLACK IN BRIGHT MODE */
 html.bright p.text-white,
 html.bright label.text-white,
-html.bright div.text-white:not([class*="bg-"]):not([class*="from-"]) {
-  color: #1C1917 !important;
+html.bright span.text-white:not([class*="bg-"]):not([class*="from-"]):not([class*="text-white"]),
+html.bright div.text-white:not([class*="bg-"]):not([class*="from-"]),
+html.bright a.text-white:not([class*="bg-"]):not([class*="from-"]),
+html.bright h1.text-white,
+html.bright h2.text-white,
+html.bright h3.text-white,
+html.bright h4.text-white {
+  color: #000000 !important;
 }
 
 /* Buttons and Pills on Vibrant Backgrounds MUST ALWAYS RETAIN CRISP WHITE TEXT */
@@ -198,8 +206,8 @@ html.bright button[class*="from-orange"],
 html.bright button[class*="from-amber"],
 html.bright a[class*="from-orange"],
 html.bright a[class*="from-amber"],
-html.bright button.text-white,
-html.bright a.text-white,
+html.bright button.bg-slate-900,
+html.bright button.bg-black,
 html.bright .btn-white-text {
   color: #FFFFFF !important;
 }
@@ -339,4 +347,74 @@ html.bright .bg-orange-950 {
   -webkit-mask-position: center;
   mask-position: center;
 }
+
+/* Admin Tokens & Glass Surfaces in Bright Mode */
+html.bright .text-ink-100 {
+  color: #1C1917 !important;
+}
+html.bright .text-ink-300 {
+  color: #44403C !important;
+}
+html.bright .text-ink-500 {
+  color: #78716C !important;
+}
+html.bright .text-ink-700 {
+  color: #A8A29E !important;
+}
+html.bright .border-line-soft {
+  border-color: #E8DACD !important;
+}
+html.bright .border-line-med {
+  border-color: #DDD0C2 !important;
+}
+html.bright .glass {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: #E8DACD !important;
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05) !important;
+}
+html.bright .glass-strong {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: #DFD1C4 !important;
+  box-shadow: 0 4px 25px -4px rgba(0, 0, 0, 0.07) !important;
+}
+
+/* ========================================================================= */
+/* SLEEK MODERN SCROLLBAR (NO DEFAULT OS ARROWS OR CLUNKY BARS) */
+/* ========================================================================= */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 140, 0.25);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 140, 140, 0.45);
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 

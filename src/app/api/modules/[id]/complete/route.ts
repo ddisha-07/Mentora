@@ -31,10 +31,10 @@ export async function POST(
       .get();
       
     const allModules = allModulesSnap.docs
-      .map(doc => ({ id: doc.id, ...doc.data() } as any))
-      .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+      .map((doc: any) => ({ id: doc.id, ...doc.data() } as any))
+      .sort((a: any, b: any) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
-    const currentIndex = allModules.findIndex((m) => m.id === currentModule.id);
+    const currentIndex = allModules.findIndex((m: any) => m.id === currentModule.id);
     const nextModule = currentIndex >= 0 && currentIndex + 1 < allModules.length
       ? allModules[currentIndex + 1]
       : null;

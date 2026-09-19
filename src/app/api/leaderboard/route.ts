@@ -14,25 +14,20 @@ export async function GET(request: NextRequest) {
         // Ignore invalid session
       }
     }
-
-    // Fetch users ordered by totalPoints (assuming we maintain this field on user document)
-    // For now, if the field doesn't exist, we'll fetch all and calculate/sort in memory,
-    // but in a production NoSQL app, you'd want to maintain this counter via Cloud Functions or transactions.
-    
     const usersSnapshot = await adminDb.collection('users').orderBy('totalPoints', 'desc').get();
     
     // In case we don't have totalPoints index yet, let's just fetch all and sort
-    let allUsers = [];
+    let allUsers: any[] = [];
     if (usersSnapshot.empty) {
        const snapshot = await adminDb.collection('users').get();
-       allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+       allUsers = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
        allUsers.sort((a: any, b: any) => (b.totalPoints || 0) - (a.totalPoints || 0));
     } else {
-       allUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+       allUsers = usersSnapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
     }
 
     // Assign sequential ranks and badges
-    const leaderboard = allUsers.map((entry: any, index) => {
+    const leaderboard = allUsers.map((entry: any, index: number) => {
       const rank = index + 1;
       const totalPoints = entry.totalPoints || 0;
       let badge = 'Active Learner';
@@ -55,9 +50,9 @@ export async function GET(request: NextRequest) {
         lastEarnedAt: entry.lastEarnedAt || null,
         isCurrentUser: currentUserId === entry.id,
       };
-    }).filter(u => u.totalPoints > 0); // Only show users with >0 points on leaderboard
+    }).filter((u: any) => u.totalPoints > 0); // Only show users with >0 points on leaderboard
 
-    const currentUserRank = leaderboard.find((u) => u.isCurrentUser) || null;
+    const currentUserRank = leaderboard.find((u: any) => u.isCurrentUser) || null;
 
     return NextResponse.json({
       leaderboard,

@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { ToastProvider } from "@/context/admin/ToastContext";
 import { AdminDataProvider } from "@/context/admin/AdminDataContext";
 import { AdminLayoutProvider } from "@/context/admin/AdminLayoutContext";
+import { XpProvider } from "@/context/XpContext";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 
 export const metadata = {
@@ -12,11 +13,13 @@ export const metadata = {
 export default function AdminRootLayout({ children }: { children: ReactNode }) {
   return (
     <ToastProvider>
-      <AdminDataProvider>
-        <AdminLayoutProvider>
-          <AdminLayout>{children}</AdminLayout>
-        </AdminLayoutProvider>
-      </AdminDataProvider>
+      <XpProvider>
+        <AdminDataProvider>
+          <AdminLayoutProvider>
+            <AdminLayout>{children}</AdminLayout>
+          </AdminLayoutProvider>
+        </AdminDataProvider>
+      </XpProvider>
     </ToastProvider>
   );
 }

@@ -5,20 +5,30 @@ import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import { useAdminLayout } from "@/context/admin/AdminLayoutContext";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const { mobileOpen, setMobileOpen } = useAdminLayout();
+  const { isBright } = useTheme();
   const pathname = usePathname();
 
   return (
     <div
-      className="flex min-h-screen text-ink-100 font-sans"
+      className={`flex min-h-screen font-sans transition-colors duration-200 ${
+        isBright ? "text-[#1C1917]" : "text-ink-100"
+      }`}
       style={{
-        background: `
-          radial-gradient(1200px 600px at 85% -10%, rgba(255, 122, 26, 0.10), transparent 60%),
-          radial-gradient(900px 500px at -10% 20%, rgba(255, 122, 26, 0.05), transparent 55%),
-          #08090a
-        `,
+        background: isBright
+          ? `
+            radial-gradient(1200px 600px at 85% -10%, rgba(255, 122, 26, 0.08), transparent 60%),
+            radial-gradient(900px 500px at -10% 20%, rgba(255, 122, 26, 0.04), transparent 55%),
+            #FAF4EE
+          `
+          : `
+            radial-gradient(1200px 600px at 85% -10%, rgba(255, 122, 26, 0.10), transparent 60%),
+            radial-gradient(900px 500px at -10% 20%, rgba(255, 122, 26, 0.05), transparent 55%),
+            #08090a
+          `,
       }}
     >
       <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />

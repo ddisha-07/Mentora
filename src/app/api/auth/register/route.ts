@@ -21,7 +21,6 @@ export async function POST(request: NextRequest) {
     if (userDoc.exists) {
       return NextResponse.json({ error: 'User already exists' }, { status: 409 });
     }
-
     const resolvedName = fullName?.trim() || email?.split('@')[0] || 'Learner';
     const allowedRoles = ['employee', 'admin', 'mentor', 'manager', 'learner'];
     const resolvedRole = role && allowedRoles.includes(role) ? role : 'employee';

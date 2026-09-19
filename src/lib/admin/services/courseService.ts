@@ -1,92 +1,216 @@
+// src/lib/admin/services/courseService.ts
+
 import { mockCourses } from "../data/mockCourses";
 import { uid, delay } from "../utils";
+import { getTopicTileTemplate, isTemplateThumbnail } from "./courseGenerationEngine";
 
-let _courses = [...mockCourses];
+const STORAGE_KEY = "mentora_admin_courses_v2";
 
-export async function getCourses() {
-  await delay();
-  return [..._courses];
+// Helper to get courses from persistent localStorage or mock initial data
+function loadCoursesFromStorage(): any[] {
+  if (typeof window === "undefined") return [...mockCourses];
+
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+    // First time load: seed from mockCourses and persist
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(mockCourses));
+    return [...mockCourses];
+  } catch (err) {
+    console.error("Failed to load courses from localStorage:", err);
+    return [...mockCourses];
+  }
 }
 
-export async function addCourse(courseDraft: any) {
-  await delay();
+function persistCourses(courses: any[]) {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(courses));
+    } catch (err) {
+      console.error("Failed to persist courses to localStorage:", err);
+    }
+  }
+}
+
+export async function fetchCourses(): Promise<any[]> {
+  await delay(200);
+  return loadCoursesFromStorage();
+}
+
+export async function getCourses(): Promise<any[]> {
+  return fetchCourses();
+}
+
+export async function createCourse(courseDraft: any): Promise<any> {
+  await delay(250);
+  const courses = loadCoursesFromStorage();
+  const courseId = courseDraft.id || uid("crs");
+
+  // Derive dynamic topic template for consistent aesthetic styling if fields are not specified
+  const tileTemplate = getTopicTileTemplate({
+    title: courseDraft.title,
+    category: courseDraft.category,
+    description: courseDraft.description,
+  });
+
+  const hasCustomThumbnail = Boolean(courseDraft.thumbnail?.trim() && !isTemplateThumbnail(courseDraft.thumbnail));
+
   const newCourse = {
-    id: uid("crs"),
-    status: "Draft",
-    enrolled: 0,
-    modules: [],
+    id: courseId,
+    status: courseDraft.status || "Draft",
+    enrolled: courseDraft.enrolled || 0,
+    modules: courseDraft.modules || [],
+    resources: courseDraft.resources || null,
     updatedAt: new Date().toISOString().slice(0, 10),
-    coverColor: "#ff7a1a",
+    coverColor: courseDraft.coverColor?.trim() || tileTemplate.accentColor,
+    description: courseDraft.description?.trim() || tileTemplate.description,
+    level: courseDraft.level || "Beginner",
+    duration: courseDraft.duration !== undefined ? courseDraft.duration : "",
+    thumbnail: hasCustomThumbnail ? courseDraft.thumbnail.trim() : "",
+    hasCustomThumbnail,
     ...courseDraft,
   };
-  _courses = [newCourse, ..._courses];
+
+  // Ensure fallbacks are applied if courseDraft had empty strings
+  if (!newCourse.thumbnail?.trim()) newCourse.thumbnail = tileTemplate.thumbnail;
+  if (!newCourse.description?.trim()) newCourse.description = tileTemplate.description;
+  if (!newCourse.coverColor?.trim()) newCourse.coverColor = tileTemplate.accentColor;
+
+  // Check if course already exists (e.g. updating an existing draft)
+  const existingIdx = courses.findIndex((c) => c.id === newCourse.id);
+  let updatedCourses: any[];
+
+  if (existingIdx >= 0) {
+    updatedCourses = [...courses];
+    updatedCourses[existingIdx] = newCourse;
+  } else {
+    updatedCourses = [newCourse, ...courses];
+  }
+
+  persistCourses(updatedCourses);
   return newCourse;
 }
 
-export async function updateCourse(id: string, patch: any) {
-  await delay();
-  _courses = _courses.map((c) =>
-    c.id === id ? { ...c, ...patch, updatedAt: new Date().toISOString().slice(0, 10) } : c
+export const addCourse = createCourse;
+
+export async function updateCourse(id: string, patch: any): Promise<any> {
+  await delay(150);
+  const courses = loadCoursesFromStorage();
+
+  const updatedCourses = courses.map((c) =>
+    c.id === id
+      ? { ...c, ...patch, updatedAt: new Date().toISOString().slice(0, 10) }
+      : c
   );
-  return _courses.find((c) => c.id === id);
+
+  persistCourses(updatedCourses);
+  return updatedCourses.find((c) => c.id === id);
 }
 
-export async function deleteCourse(id: string) {
-  await delay();
-  _courses = _courses.filter((c) => c.id !== id);
+export async function deleteCourse(id: string): Promise<{ id: string }> {
+  await delay(150);
+  const courses = loadCoursesFromStorage();
+  const filtered = courses.filter((c) => c.id !== id);
+  persistCourses(filtered);
   return { id };
 }
 
-export async function setCourseStatus(id: string, status: string) {
+export async function setCourseStatus(id: string, status: string): Promise<any> {
   return updateCourse(id, { status });
 }
 
-export async function addModule(courseId: string, moduleDraft: any) {
-  await delay(200);
-  const newModule = { id: uid("mod"), lessons: [], ...moduleDraft };
-  _courses = _courses.map((c) =>
-    c.id === courseId ? { ...c, modules: [...c.modules, newModule] } : c
+export async function addModule(courseId: string, moduleDraft: any): Promise<any> {
+  await delay(150);
+  const courses = loadCoursesFromStorage();
+  const newModule = { id: uid("mod"), lessons: [], subtopics: [], ...moduleDraft };
+
+  const updatedCourses = courses.map((c) =>
+    c.id === courseId ? { ...c, modules: [...(c.modules || []), newModule] } : c
   );
+
+  persistCourses(updatedCourses);
   return newModule;
 }
 
-export async function deleteModule(courseId: string, moduleId: string) {
-  await delay(200);
-  _courses = _courses.map((c) =>
-    c.id === courseId ? { ...c, modules: c.modules.filter((m: any) => m.id !== moduleId) } : c
+export async function deleteModule(courseId: string, moduleId: string): Promise<{ moduleId: string }> {
+  await delay(150);
+  const courses = loadCoursesFromStorage();
+
+  const updatedCourses = courses.map((c) =>
+    c.id === courseId
+      ? { ...c, modules: (c.modules || []).filter((m: any) => m.id !== moduleId) }
+      : c
   );
+
+  persistCourses(updatedCourses);
   return { moduleId };
 }
 
-export async function addLesson(courseId: string, moduleId: string, lessonDraft: any) {
-  await delay(200);
-  const newLesson = { id: uid("les"), duration: "10 min", ...lessonDraft };
-  _courses = _courses.map((c) =>
-    c.id === courseId
-      ? {
-          ...c,
-          modules: c.modules.map((m: any) =>
-            m.id === moduleId ? { ...m, lessons: [...m.lessons, newLesson] } : m
-          ),
-        }
-      : c
-  );
-  return newLesson;
-}
+export async function addLesson(courseId: string, moduleId: string, lessonDraft: any): Promise<any> {
+  await delay(150);
+  const courses = loadCoursesFromStorage();
+  const newLesson = {
+    id: uid("les"),
+    duration: "10 min",
+    type: "reading",
+    summary: lessonDraft.summary || `Lesson on ${lessonDraft.title}`,
+    sections: [
+      {
+        heading: "Core Concepts",
+        body: "Practical guidelines and step-by-step concepts.",
+      },
+    ],
+    keyTakeaways: [`Understand and apply ${lessonDraft.title}.`],
+    ...lessonDraft,
+  };
 
-export async function deleteLesson(courseId: string, moduleId: string, lessonId: string) {
-  await delay(200);
-  _courses = _courses.map((c) =>
+  const updatedCourses = courses.map((c) =>
     c.id === courseId
       ? {
           ...c,
-          modules: c.modules.map((m: any) =>
+          modules: (c.modules || []).map((m: any) =>
             m.id === moduleId
-              ? { ...m, lessons: m.lessons.filter((l: any) => l.id !== lessonId) }
+              ? {
+                  ...m,
+                  lessons: [...(m.lessons || []), newLesson],
+                  subtopics: [...(m.subtopics || []), newLesson],
+                }
               : m
           ),
         }
       : c
   );
+
+  persistCourses(updatedCourses);
+  return newLesson;
+}
+
+export async function deleteLesson(courseId: string, moduleId: string, lessonId: string): Promise<{ lessonId: string }> {
+  await delay(150);
+  const courses = loadCoursesFromStorage();
+
+  const updatedCourses = courses.map((c) =>
+    c.id === courseId
+      ? {
+          ...c,
+          modules: (c.modules || []).map((m: any) =>
+            m.id === moduleId
+              ? {
+                  ...m,
+                  lessons: (m.lessons || []).filter((l: any) => l.id !== lessonId),
+                  subtopics: (m.subtopics || []).filter((s: any) => s.id !== lessonId),
+                }
+              : m
+          ),
+        }
+      : c
+  );
+
+  persistCourses(updatedCourses);
   return { lessonId };
 }

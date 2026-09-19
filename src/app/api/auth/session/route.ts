@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
     const decodedIdToken = await adminAuth.verifyIdToken(idToken);
     const expiresIn = 60 * 60 * 24 * 5 * 1000;
     const sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
-
     const response = NextResponse.json({ status: 'success' }, { status: 200 });
     response.cookies.set('mentora_session', sessionCookie, {
       maxAge: expiresIn / 1000,
