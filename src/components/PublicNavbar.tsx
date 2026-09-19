@@ -70,21 +70,8 @@ export default function PublicNavbar() {
             })}
           </nav>
 
-          {/* Right: Search icon, Theme toggle, Login, & Motion.dev style sharp black CTA */}
+          {/* Right: Theme toggle, Login, & Motion.dev style sharp black CTA */}
           <div className="hidden sm:flex items-center gap-6">
-            
-            {/* Search Icon */}
-            <button
-              type="button"
-              aria-label="Search"
-              className={`p-1 transition-opacity ${
-                isBright ? 'text-black hover:opacity-70' : 'text-zinc-300 hover:text-white'
-              }`}
-            >
-              <svg className="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
 
             {/* Theme Toggle Button */}
             <button

@@ -18,7 +18,7 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check hash fragment first (OAuth errors from Supabase redirect with #error=...&error_description=...)
+    // Check hash fragment first (OAuth errors redirect with #error=...&error_description=...)
     if (typeof window !== 'undefined' && window.location.hash) {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const hashErrorDesc = hashParams.get('error_description');
@@ -63,7 +63,7 @@ function LoginForm() {
         throw new Error(data.error || 'Failed to create session');
       }
       
-      router.push('/dashboard');
+      window.location.href = '/dashboard';
     } catch (err: any) {
       console.warn('Google Sign-In caught:', err?.code || err?.message);
       setError(formatAuthError(err));
@@ -95,7 +95,7 @@ function LoginForm() {
         throw new Error(data.error || 'Failed to create session');
       }
       
-      router.push('/dashboard');
+      window.location.href = '/dashboard';
     } catch (err: any) {
       console.warn('Sign-In caught:', err?.code || err?.message);
       setError(formatAuthError(err));

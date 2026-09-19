@@ -8,12 +8,12 @@ import { getStorage } from 'firebase/storage';
 import type { FirebaseStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyDzlxOn2FzxekutHTZGxX9fxmR9p1viDBM',
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'mentora-932c5.firebaseapp.com',
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'mentora-932c5',
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'mentora-932c5.firebasestorage.app',
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '9752105435',
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:9752105435:web:e9c703150efb677e0cd7fe',
 };
 
 // Safe client-side app initialization that won't crash during SSR / build prerendering
@@ -22,20 +22,7 @@ function getClientApp(): FirebaseApp {
     return getApp();
   }
 
-  // If apiKey is missing (e.g. during build-time static generation or CI without env vars),
-  // provide a fallback configuration to prevent compilation/prerendering crashes
-  const effectiveConfig = firebaseConfig.apiKey
-    ? firebaseConfig
-    : {
-        apiKey: 'dummy-api-key-for-build',
-        authDomain: 'dummy.firebaseapp.com',
-        projectId: 'dummy-project',
-        storageBucket: 'dummy.appspot.com',
-        messagingSenderId: '000000000000',
-        appId: '1:000000000000:web:0000000000000000',
-      };
-
-  return initializeApp(effectiveConfig);
+  return initializeApp(firebaseConfig);
 }
 
 const app: FirebaseApp = getClientApp();

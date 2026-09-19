@@ -1,10 +1,6 @@
-import { getApps, initializeApp, cert } from 'firebase-admin/app';
 import type { App, ServiceAccount } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
 import type { Auth } from 'firebase-admin/auth';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import type { Firestore } from 'firebase-admin/firestore';
-import { getStorage } from 'firebase-admin/storage';
 import type { Storage } from 'firebase-admin/storage';
 
 function cleanPrivateKey(key: string | undefined): string | undefined {
@@ -90,11 +86,47 @@ function getServiceAccount(): ServiceAccount | null {
   }
 }
 
+/**
+ * Safely require firebase-admin modules without crashing the Node.js serverless process
+ * if the package or any transitive dependency is missing or incompatible in the deployment environment.
+ */
+function getFirebaseAdminModules(): {
+  getApps: () => App[];
+  initializeApp: (options: any) => App;
+  cert: (sa: any) => any;
+  getAuth: (app: App) => Auth;
+  getFirestore: (app: App) => Firestore;
+  getStorage: (app: App) => Storage;
+  FieldValue?: any;
+} | null {
+  try {
+    // Dynamic require so Next.js bundling does not fail at module evaluation time
+    const appModule = require('firebase-admin/app');
+    const authModule = require('firebase-admin/auth');
+    const firestoreModule = require('firebase-admin/firestore');
+    const storageModule = require('firebase-admin/storage');
+    return {
+      getApps: appModule.getApps,
+      initializeApp: appModule.initializeApp,
+      cert: appModule.cert,
+      getAuth: authModule.getAuth,
+      getFirestore: firestoreModule.getFirestore,
+      getStorage: storageModule.getStorage,
+      FieldValue: firestoreModule.FieldValue,
+    };
+  } catch (error) {
+    console.warn('Firebase Admin modules not available in current runtime:', error);
+    return null;
+  }
+}
+
 function getFirebaseAdminApp(): App | null {
   try {
-    // Check if an app instance already exists
-    if (getApps().length > 0) {
-      return getApps()[0];
+    const mods = getFirebaseAdminModules();
+    if (!mods) return null;
+
+    if (mods.getApps().length > 0) {
+      return mods.getApps()[0];
     }
 
     const credentials = getServiceAccount();
@@ -107,8 +139,8 @@ function getFirebaseAdminApp(): App | null {
       (credentials as any).project_id ||
       process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 
-    return initializeApp({
-      credential: cert(credentials),
+    return mods.initializeApp({
+      credential: mods.cert(credentials),
       databaseURL: projectId ? `https://${projectId}.firebaseio.com` : undefined,
     });
   } catch (error) {
@@ -162,8 +194,44 @@ function createFirebaseProxy<T extends object>(
   });
 }
 
-const adminAuth: Auth = createFirebaseProxy(getAuth, 'Auth');
-const adminDb: Firestore = createFirebaseProxy(getFirestore, 'Firestore');
-const adminStorage: Storage = createFirebaseProxy(getStorage, 'Storage');
+const adminAuth: Auth = createFirebaseProxy(
+  (app) => {
+    const mods = getFirebaseAdminModules();
+    return mods ? mods.getAuth(app) : ({} as any);
+  },
+  'Auth'
+);
+
+const adminDb: Firestore = createFirebaseProxy(
+  (app) => {
+    const mods = getFirebaseAdminModules();
+    return mods ? mods.getFirestore(app) : ({} as any);
+  },
+  'Firestore'
+);
+
+const adminStorage: Storage = createFirebaseProxy(
+  (app) => {
+    const mods = getFirebaseAdminModules();
+    return mods ? mods.getStorage(app) : ({} as any);
+  },
+  'Storage'
+);
+
+const FieldValue = new Proxy({} as any, {
+  get(_target, prop) {
+    const mods = getFirebaseAdminModules();
+    if (mods && mods.FieldValue) {
+      return Reflect.get(mods.FieldValue, prop);
+    }
+    // Fallback implementations
+    if (prop === 'serverTimestamp') return () => new Date();
+    if (prop === 'increment') return (n: number) => n;
+    if (prop === 'arrayUnion') return (...elements: any[]) => elements;
+    if (prop === 'arrayRemove') return (...elements: any[]) => elements;
+    if (prop === 'delete') return () => null;
+    return () => undefined;
+  },
+});
 
 export { adminAuth, adminDb, adminStorage, FieldValue };

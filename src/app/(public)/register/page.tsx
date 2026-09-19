@@ -49,7 +49,7 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Failed to finish Google sign up');
       }
       
-      router.push('/onboarding');
+      window.location.href = '/onboarding';
     } catch (err: any) {
       console.error('Google Sign-Up Error:', err);
       setError(formatAuthError(err));
@@ -88,7 +88,7 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Failed to create account');
       }
 
-      router.push('/onboarding');
+      window.location.href = '/onboarding';
     } catch (err: any) {
       console.error('Registration Error:', err);
       setError(formatAuthError(err));
