@@ -60,6 +60,9 @@ function LoginForm() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if (res.status === 404 || data.notRegistered) {
+          throw new Error('No account found for this user. Please create an account first.');
+        }
         throw new Error(data.error || 'Failed to create session');
       }
       
@@ -92,6 +95,9 @@ function LoginForm() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if (res.status === 404 || data.notRegistered) {
+          throw new Error('No account found for this user. Please create an account first.');
+        }
         throw new Error(data.error || 'Failed to create session');
       }
       
@@ -158,7 +164,17 @@ function LoginForm() {
                     : 'bg-rose-950/60 border-rose-800 text-rose-300'
                 }`}
               >
-                {error}
+                <div>{error}</div>
+                {(error.includes('create an account') || error.includes('registered')) && (
+                  <div className="mt-2 pt-2 border-t border-rose-200/50 dark:border-rose-800/50">
+                    <Link
+                      href="/register"
+                      className="font-bold underline hover:opacity-85 text-orange-500"
+                    >
+                      Click here to create an account →
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
 

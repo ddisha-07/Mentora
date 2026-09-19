@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -8,8 +8,39 @@ import { useTheme } from '@/context/ThemeContext';
 
 export default function PublicNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
   const { isBright, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    let mounted = true;
+
+    // 1. Check API session endpoint
+    fetch('/api/auth/session')
+      .then((res) => {
+        if (res.ok && mounted) {
+          setIsLoggedIn(true);
+        }
+      })
+      .catch(() => {});
+
+    // 2. Listen to Firebase client auth state for immediate responsiveness
+    import('@/utils/firebase/client')
+      .then(({ auth }) => {
+        import('firebase/auth').then(({ onAuthStateChanged }) => {
+          onAuthStateChanged(auth, (user) => {
+            if (mounted && user) {
+              setIsLoggedIn(true);
+            }
+          });
+        });
+      })
+      .catch(() => {});
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Content matches website, with Admin removed as requested
   const navLinks = [
@@ -86,27 +117,43 @@ export default function PublicNavbar() {
               <span className="select-none">{isBright ? '☀️' : '🌙'}</span>
             </button>
 
-            {/* Login Link */}
-            <Link
-              href="/login"
-              className={`text-[11px] font-mono font-bold tracking-widest uppercase transition-opacity ${
-                isBright ? 'text-black hover:opacity-75' : 'text-zinc-300 hover:text-white'
-              }`}
-            >
-              LOGIN
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/dashboard"
+                className={`px-4.5 py-2 text-[11px] font-mono font-black tracking-widest uppercase transition-all duration-150 active:scale-95 flex items-center gap-1.5 ${
+                  isBright
+                    ? 'bg-black text-white hover:bg-zinc-900 shadow-md'
+                    : 'bg-[#FF5500] text-black hover:bg-[#ff6514] font-black shadow-lg shadow-orange-600/30'
+                }`}
+              >
+                <span>DASHBOARD</span>
+                <span>→</span>
+              </Link>
+            ) : (
+              <>
+                {/* Login Link */}
+                <Link
+                  href="/login"
+                  className={`text-[11px] font-mono font-bold tracking-widest uppercase transition-opacity ${
+                    isBright ? 'text-black hover:opacity-75' : 'text-zinc-300 hover:text-white'
+                  }`}
+                >
+                  LOGIN
+                </Link>
 
-            {/* Motion.dev style Sharp Black Rectangular CTA Button */}
-            <Link
-              href="/register"
-              className={`px-4.5 py-2 text-[11px] font-mono font-black tracking-widest uppercase transition-all duration-150 active:scale-95 ${
-                isBright
-                  ? 'bg-black text-white hover:bg-zinc-900 shadow-md'
-                  : 'bg-[#FF5500] text-black hover:bg-[#ff6514] font-black shadow-lg shadow-orange-600/30'
-              }`}
-            >
-              JOIN NOW →
-            </Link>
+                {/* Motion.dev style Sharp Black Rectangular CTA Button */}
+                <Link
+                  href="/register"
+                  className={`px-4.5 py-2 text-[11px] font-mono font-black tracking-widest uppercase transition-all duration-150 active:scale-95 ${
+                    isBright
+                      ? 'bg-black text-white hover:bg-zinc-900 shadow-md'
+                      : 'bg-[#FF5500] text-black hover:bg-[#ff6514] font-black shadow-lg shadow-orange-600/30'
+                  }`}
+                >
+                  JOIN NOW →
+                </Link>
+              </>
+            )}
 
           </div>
 
@@ -167,22 +214,36 @@ export default function PublicNavbar() {
           </div>
 
           <div className="border-t border-black/10 pt-4 flex flex-col gap-3">
-            <Link
-              href="/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-[11px] font-mono font-bold tracking-widest uppercase"
-            >
-              LOGIN
-            </Link>
-            <Link
-              href="/register"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`text-center py-2.5 text-[11px] font-mono font-black tracking-widest uppercase ${
-                isBright ? 'bg-black text-white' : 'bg-[#FF5500] text-black'
-              }`}
-            >
-              JOIN NOW →
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`text-center py-2.5 text-[11px] font-mono font-black tracking-widest uppercase ${
+                  isBright ? 'bg-black text-white' : 'bg-[#FF5500] text-black'
+                }`}
+              >
+                DASHBOARD →
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[11px] font-mono font-bold tracking-widest uppercase"
+                >
+                  LOGIN
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`text-center py-2.5 text-[11px] font-mono font-black tracking-widest uppercase ${
+                    isBright ? 'bg-black text-white' : 'bg-[#FF5500] text-black'
+                  }`}
+                >
+                  JOIN NOW →
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

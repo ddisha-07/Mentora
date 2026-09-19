@@ -167,7 +167,7 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
 
       // Smooth brief timeout so user sees the progress animation smoothly
       setTimeout(() => {
-        router.push('/dashboard');
+        window.location.href = '/dashboard';
       }, 1200);
     } catch (err: any) {
       console.error('Onboarding submission error:', err);
