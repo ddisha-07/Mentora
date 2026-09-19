@@ -50,14 +50,13 @@ export default function PublicNavbar() {
     };
   }, [pathname]);
 
-  // Content matches website, with Admin removed as requested
+  // Content matches website, with Admin and Kai removed as requested
   const navLinks = [
     { name: 'HOME', href: '/' },
     { name: 'ABOUT', href: '/about' },
     { name: 'BLOGS', href: '/blogs' },
     { name: 'FAQS', href: '/faqs' },
     { name: 'CONTACT US', href: '/contact' },
-    { name: 'KAI', href: '/dashboard/kai' },
   ];
 
   return (
