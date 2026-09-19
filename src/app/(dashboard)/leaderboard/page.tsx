@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Trophy, RotateCw, Zap, Crown, Medal, Award, Search, X, Check, BookOpen } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
@@ -64,7 +65,7 @@ const defaultLeaderboard: LeaderboardUser[] = [
     experienceLevel: 'advanced',
     totalPoints: 3840,
     activitiesCount: 34,
-    badge: '👑 Grandmaster',
+    badge: 'Grandmaster',
     lastEarnedAt: '2026-09-09',
     isCurrentUser: false,
   },
@@ -77,7 +78,7 @@ const defaultLeaderboard: LeaderboardUser[] = [
     experienceLevel: 'advanced',
     totalPoints: 3210,
     activitiesCount: 28,
-    badge: '🥈 Elite Scholar',
+    badge: 'Elite Scholar',
     lastEarnedAt: '2026-09-08',
     isCurrentUser: false,
   },
@@ -90,7 +91,7 @@ const defaultLeaderboard: LeaderboardUser[] = [
     experienceLevel: 'advanced',
     totalPoints: 2980,
     activitiesCount: 25,
-    badge: '🥉 High Achiever',
+    badge: 'High Achiever',
     lastEarnedAt: '2026-09-08',
     isCurrentUser: false,
   },
@@ -103,7 +104,7 @@ const defaultLeaderboard: LeaderboardUser[] = [
     experienceLevel: 'intermediate',
     totalPoints: 2450,
     activitiesCount: 18,
-    badge: '⭐ Master',
+    badge: 'Master',
     lastEarnedAt: '2026-09-10',
     isCurrentUser: true,
   },
@@ -116,7 +117,7 @@ const defaultLeaderboard: LeaderboardUser[] = [
     experienceLevel: 'advanced',
     totalPoints: 2150,
     activitiesCount: 19,
-    badge: '⭐ Master',
+    badge: 'Master',
     lastEarnedAt: '2026-09-07',
     isCurrentUser: false,
   },
@@ -129,7 +130,7 @@ const defaultLeaderboard: LeaderboardUser[] = [
     experienceLevel: 'advanced',
     totalPoints: 1920,
     activitiesCount: 16,
-    badge: '🚀 Rising Star',
+    badge: 'Rising Star',
     lastEarnedAt: '2026-09-06',
     isCurrentUser: false,
   },
@@ -142,7 +143,7 @@ const defaultLeaderboard: LeaderboardUser[] = [
     experienceLevel: 'intermediate',
     totalPoints: 1740,
     activitiesCount: 15,
-    badge: '🚀 Rising Star',
+    badge: 'Rising Star',
     lastEarnedAt: '2026-09-05',
     isCurrentUser: false,
   },
@@ -155,7 +156,7 @@ const defaultLeaderboard: LeaderboardUser[] = [
     experienceLevel: 'intermediate',
     totalPoints: 1550,
     activitiesCount: 14,
-    badge: '🚀 Rising Star',
+    badge: 'Rising Star',
     lastEarnedAt: '2026-09-05',
     isCurrentUser: false,
   },
@@ -305,7 +306,7 @@ export default function LeaderboardPage() {
       };
 
       setQuizResult(result);
-      setNotification(`🎉 Score 100%! Awarded +100 points on the Leaderboard!`);
+      setNotification(`Score 100%! Awarded +100 points on the Leaderboard!`);
       setTimeout(() => setNotification(null), 6000);
 
       // Optimistically update current user points
@@ -372,7 +373,7 @@ export default function LeaderboardPage() {
                 onClick={() => setNotification(null)}
                 className="text-orange-400 hover:text-white font-bold ml-4"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -380,8 +381,9 @@ export default function LeaderboardPage() {
           {/* Navigation & Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span>🏆 GLOBAL STANDINGS</span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
+                <Trophy className="w-3.5 h-3.5" />
+                <span>GLOBAL STANDINGS</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Learner Leaderboard
@@ -399,13 +401,15 @@ export default function LeaderboardPage() {
                 className="px-4 py-2.5 rounded-xl border text-xs font-semibold transition-all hover:bg-orange-500/10 flex items-center gap-2"
                 style={{ borderColor: cardBorder, color: textPrimary }}
               >
-                <span className={loading ? 'animate-spin' : ''}>🔄</span> Refresh
+                <RotateCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                <span>Refresh</span>
               </button>
               <button
                 onClick={openQuizModal}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] hover:brightness-110 text-white font-bold text-xs shadow-lg shadow-orange-500/20 active:scale-95 transition-all flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] hover:brightness-110 text-white font-bold text-xs shadow-lg shadow-orange-500/20 active:scale-95 transition-all flex items-center gap-1.5"
               >
-                <span>⚡ Take Skill Quiz (+100 pts)</span>
+                <Zap className="w-3.5 h-3.5" />
+                <span>Take Skill Quiz (+100 pts)</span>
               </button>
             </div>
           </div>
@@ -473,7 +477,8 @@ export default function LeaderboardPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: textPrimary }}>
-                  <span>👑</span> Podium Leaders
+                  <Crown className="w-5 h-5 text-amber-500" />
+                  <span>Podium Leaders</span>
                 </h2>
                 <span className="text-xs text-orange-500 font-mono font-semibold">LIVE RANKINGS</span>
               </div>
@@ -490,8 +495,9 @@ export default function LeaderboardPage() {
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-2xl font-black text-zinc-400">#2</span>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-zinc-500/15 text-zinc-300 border border-zinc-500/30">
-                      🥈 Silver
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-zinc-500/15 text-zinc-300 border border-zinc-500/30 inline-flex items-center gap-1.5">
+                      <Medal className="w-3.5 h-3.5 text-zinc-300" />
+                      <span>Silver</span>
                     </span>
                   </div>
                   <div className="w-16 h-16 rounded-2xl bg-zinc-800 border-2 border-zinc-400 flex items-center justify-center text-xl font-bold text-white mx-auto mb-3 shadow-md">
@@ -526,8 +532,9 @@ export default function LeaderboardPage() {
                   </div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-3xl font-black text-amber-500">#1</span>
-                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-500/20 text-amber-500 border border-amber-500/40 flex items-center gap-1">
-                      👑 Grandmaster
+                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-500/20 text-amber-500 border border-amber-500/40 flex items-center gap-1.5">
+                      <Crown className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Grandmaster</span>
                     </span>
                   </div>
                   <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-400 border-2 border-amber-300 flex items-center justify-center text-2xl font-black text-slate-950 mx-auto mb-3 shadow-lg shadow-amber-500/30">
@@ -556,8 +563,9 @@ export default function LeaderboardPage() {
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-2xl font-black text-amber-600">#3</span>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-700/20 text-amber-600 border border-amber-700/40">
-                      🥉 Bronze
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-700/20 text-amber-600 border border-amber-700/40 inline-flex items-center gap-1.5">
+                      <Award className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Bronze</span>
                     </span>
                   </div>
                   <div className="w-16 h-16 rounded-2xl bg-amber-950/80 border-2 border-amber-700 flex items-center justify-center text-xl font-bold text-amber-400 mx-auto mb-3 shadow-md">
@@ -599,7 +607,9 @@ export default function LeaderboardPage() {
                   color: textPrimary,
                 }}
               />
-              <span className="absolute left-3 top-2.5 text-xs text-orange-500">🔍</span>
+              <span className="absolute left-3 top-2.5 text-xs text-orange-500">
+                <Search className="w-3.5 h-3.5" />
+              </span>
             </div>
 
             {/* Role Filter Tabs */}
@@ -692,9 +702,9 @@ export default function LeaderboardPage() {
                         {/* Rank Column */}
                         <td className="py-4 px-4 sm:px-6">
                           <div className="flex items-center gap-1.5">
-                            {isTop1 && <span>🥇</span>}
-                            {isTop2 && <span>🥈</span>}
-                            {isTop3 && <span>🥉</span>}
+                            {isTop1 && <Crown className="w-4 h-4 text-amber-500 shrink-0" />}
+                            {isTop2 && <Medal className="w-4 h-4 text-zinc-400 shrink-0" />}
+                            {isTop3 && <Award className="w-4 h-4 text-amber-600 shrink-0" />}
                             <span
                               className={`font-mono font-bold ${
                                 isTop1
@@ -827,7 +837,7 @@ export default function LeaderboardPage() {
                 className="w-8 h-8 rounded-full border flex items-center justify-center text-sm font-bold transition-colors hover:bg-orange-500 hover:text-white"
                 style={{ borderColor: cardBorder, color: textMuted }}
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
@@ -848,7 +858,13 @@ export default function LeaderboardPage() {
                       : 'bg-rose-950/40 border-rose-500/60 text-rose-200'
                   }`}
                 >
-                  <div className="text-4xl">{quizResult.passed ? '🎉' : '📚'}</div>
+                  <div className="flex justify-center">
+                    {quizResult.passed ? (
+                      <Award className="w-12 h-12 text-emerald-400" />
+                    ) : (
+                      <BookOpen className="w-12 h-12 text-rose-400" />
+                    )}
+                  </div>
                   <h4 className="text-xl font-black" style={{ color: quizResult.passed ? '#34D399' : '#F87171' }}>
                     {quizResult.passed ? 'Evaluation Passed!' : 'Evaluation Incomplete'}
                   </h4>
@@ -860,8 +876,9 @@ export default function LeaderboardPage() {
                   </div>
                   <p className="text-xs max-w-md mx-auto leading-relaxed">{quizResult.message}</p>
                   {quizResult.passed && (
-                    <div className="inline-block bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 rounded-full text-xs font-bold text-emerald-400">
-                      ✓ +{quizResult.pointsAwarded} Leaderboard Points Recorded
+                    <div className="inline-flex items-center gap-1.5 bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 rounded-full text-xs font-bold text-emerald-400">
+                      <Check className="w-3.5 h-3.5" />
+                      <span>+{quizResult.pointsAwarded} Leaderboard Points Recorded</span>
                     </div>
                   )}
                 </div>

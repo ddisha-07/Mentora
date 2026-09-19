@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Zap, Crown, Medal, Award } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 
 // ─── Real-Time Mini Calendar Widget ─────────────────────────────────────────
@@ -330,7 +331,7 @@ const dailyCardDeck: DailyDeckCard[] = [
     activities: [
       { id: 'a4', type: 'community', text: 'Posted in Community', sub: '"How to scale microservices?"', time: '4:30 PM', dateGroup: 'yesterday', xp: '+25 XP' },
       { id: 'a5', type: 'completion', text: 'Completed Skill Gap Assessment', sub: 'Cloud Architecture track', time: '1:10 PM', dateGroup: 'yesterday', xp: '+300 XP' },
-      { id: 'a6', type: 'streak', text: '14-Day Learning Streak! 🔥', sub: 'Maintained daily practice momentum', time: '9:00 AM', dateGroup: 'yesterday', xp: '+100 XP' },
+      { id: 'a6', type: 'streak', text: '14-Day Learning Streak!', sub: 'Maintained daily practice momentum', time: '9:00 AM', dateGroup: 'yesterday', xp: '+100 XP' },
     ],
   },
   {
@@ -487,8 +488,8 @@ function StackedActivityDeck() {
                     <p className="text-xs opacity-85 font-medium">{card.dateLabel}</p>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs font-extrabold px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm">
-                      ⚡ +{card.totalXP} XP
+                    <span className="text-xs font-extrabold px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm inline-flex items-center gap-1">
+                      <Zap className="w-3 h-3" /> +{card.totalXP} XP
                     </span>
                     <p className="text-[10px] mt-0.5 opacity-80">{card.completedCount} activities</p>
                   </div>
@@ -549,8 +550,6 @@ function StackedActivityDeck() {
     </div>
   );
 }
-
-const rankMedals: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
 const ClockIcon = ({ color }: { color: string }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} className="w-3 h-3 flex-shrink-0">
@@ -837,8 +836,16 @@ export default function DashboardRightPanel() {
                   borderBottom: i < leaderboard.length - 1 ? `1px solid ${cardBorder}` : undefined,
                 }}
               >
-                <span className="w-7 text-center text-xs font-bold flex-shrink-0" style={{ color: entry.rank <= 3 ? '#FF6B35' : textMuted }}>
-                  {rankMedals[entry.rank] || `#${entry.rank}`}
+                <span className="w-7 flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ color: entry.rank <= 3 ? '#FF6B35' : textMuted }}>
+                  {entry.rank === 1 ? (
+                    <Crown className="w-4 h-4 text-amber-400" />
+                  ) : entry.rank === 2 ? (
+                    <Medal className="w-4 h-4 text-slate-300" />
+                  ) : entry.rank === 3 ? (
+                    <Award className="w-4 h-4 text-amber-600" />
+                  ) : (
+                    `#${entry.rank}`
+                  )}
                 </span>
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"

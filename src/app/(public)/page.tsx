@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
+import { Check } from 'lucide-react';
 
 const platformFeatures = [
   {
@@ -336,7 +337,7 @@ export default function HomePage() {
                   : 'bg-[#120b06] border-orange-900/40 text-zinc-300'
               }`}
             >
-              <span className="text-orange-500 font-bold">✓</span> AI-Powered Skill Diagnostic
+              <Check className="w-3.5 h-3.5 text-orange-500 font-bold" /> AI-Powered Skill Diagnostic
             </div>
             <div
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full border shadow-xs ${
@@ -345,7 +346,7 @@ export default function HomePage() {
                   : 'bg-[#120b06] border-orange-900/40 text-zinc-300'
               }`}
             >
-              <span className="text-amber-500 font-bold">✓</span> 3-Tier Gated Roadmap
+              <Check className="w-3.5 h-3.5 text-amber-500 font-bold" /> 3-Tier Gated Roadmap
             </div>
             <div
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full border shadow-xs ${
@@ -354,7 +355,7 @@ export default function HomePage() {
                   : 'bg-[#120b06] border-orange-900/40 text-zinc-300'
               }`}
             >
-              <span className="text-orange-500 font-bold">✓</span> Verifiable Skill Passport
+              <Check className="w-3.5 h-3.5 text-orange-500 font-bold" /> Verifiable Skill Passport
             </div>
           </div>
         </div>

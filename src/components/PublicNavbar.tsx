@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
+import { Sun, Moon } from 'lucide-react';
 
 const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' ? useLayoutEffect : useEffect;
@@ -117,11 +118,11 @@ export default function PublicNavbar() {
               onClick={toggleTheme}
               aria-label={isBright ? 'Switch to Dark Mode' : 'Switch to Bright Mode'}
               title={isBright ? 'Switch to Dark Mode' : 'Switch to Bright Mode'}
-              className={`p-1 text-base transition-transform active:scale-90 ${
-                isBright ? 'text-black hover:opacity-75' : 'text-amber-400 hover:opacity-90'
+              className={`p-1.5 rounded-lg transition-transform active:scale-90 ${
+                isBright ? 'text-black hover:bg-black/10' : 'text-amber-400 hover:bg-white/10'
               }`}
             >
-              <span className="select-none">{isBright ? '☀️' : '🌙'}</span>
+              {isBright ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
             </button>
 
             {showDashboardBtn ? (
@@ -169,9 +170,9 @@ export default function PublicNavbar() {
             <button
               type="button"
               onClick={toggleTheme}
-              className={`p-1 text-sm ${isBright ? 'text-black' : 'text-amber-400'}`}
+              className={`p-1.5 rounded-lg ${isBright ? 'text-black' : 'text-amber-400'}`}
             >
-              {isBright ? '☀️' : '🌙'}
+              {isBright ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
             </button>
 
             <button

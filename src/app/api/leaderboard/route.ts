@@ -31,11 +31,11 @@ export async function GET(request: NextRequest) {
       const rank = index + 1;
       const totalPoints = entry.totalPoints || 0;
       let badge = 'Active Learner';
-      if (rank === 1) badge = '👑 Grandmaster';
-      else if (rank === 2) badge = '🥈 Elite Scholar';
-      else if (rank === 3) badge = '🥉 High Achiever';
-      else if (totalPoints >= 1000) badge = '⭐ Master';
-      else if (totalPoints >= 500) badge = '🚀 Rising Star';
+      if (rank === 1) badge = 'Grandmaster';
+      else if (rank === 2) badge = 'Elite Scholar';
+      else if (rank === 3) badge = 'High Achiever';
+      else if (totalPoints >= 1000) badge = 'Master';
+      else if (totalPoints >= 500) badge = 'Rising Star';
 
       return {
         rank,

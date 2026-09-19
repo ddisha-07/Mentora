@@ -24,7 +24,10 @@ import {
   Award,
   Zap,
   Clock,
-  Laptop
+  Laptop,
+  X,
+  HelpCircle,
+  Microscope
 } from 'lucide-react';
 
 const GithubIcon = () => (
@@ -149,7 +152,7 @@ export default function SettingsPage() {
                 onClick={() => setToastMessage(null)}
                 className="text-orange-400 hover:text-white font-bold ml-4"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -463,41 +466,51 @@ export default function SettingsPage() {
                     {[
                       {
                         id: 'concise',
-                        title: '⚡ Fast & Concise',
+                        title: 'Fast & Concise',
+                        icon: Zap,
+                        iconColor: 'text-amber-400',
                         desc: 'Direct bullet points, production code snippets, and minimal prose.',
                       },
                       {
                         id: 'socratic',
-                        title: '🤔 Socratic Mentor',
+                        title: 'Socratic Mentor',
+                        icon: HelpCircle,
+                        iconColor: 'text-orange-400',
                         desc: 'Guides you through architecture trade-offs with probing questions.',
                       },
                       {
                         id: 'deep-dive',
-                        title: '🔬 Deep-Dive Architect',
+                        title: 'Deep-Dive Architect',
+                        icon: Microscope,
+                        iconColor: 'text-cyan-400',
                         desc: 'Comprehensive post-mortems, edge-case analysis, and RFC benchmarks.',
                       },
-                    ].map((mode) => (
-                      <div
-                        key={mode.id}
-                        onClick={() => setKaiPersona(mode.id as any)}
-                        className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                          kaiPersona === mode.id
-                            ? 'border-[#FF6B35] bg-orange-500/10 shadow-sm'
-                            : 'hover:border-orange-500/30'
-                        }`}
-                        style={{
-                          background: kaiPersona === mode.id ? undefined : inputBg,
-                          borderColor: kaiPersona === mode.id ? undefined : inputBorder,
-                        }}
-                      >
-                        <h5 className="text-xs font-bold" style={{ color: textPrimary }}>
-                          {mode.title}
-                        </h5>
-                        <p className="text-[11px] mt-1" style={{ color: textMuted }}>
-                          {mode.desc}
-                        </p>
-                      </div>
-                    ))}
+                    ].map((mode) => {
+                      const ModeIcon = mode.icon;
+                      return (
+                        <div
+                          key={mode.id}
+                          onClick={() => setKaiPersona(mode.id as any)}
+                          className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                            kaiPersona === mode.id
+                              ? 'border-[#FF6B35] bg-orange-500/10 shadow-sm'
+                              : 'hover:border-orange-500/30'
+                          }`}
+                          style={{
+                            background: kaiPersona === mode.id ? undefined : inputBg,
+                            borderColor: kaiPersona === mode.id ? undefined : inputBorder,
+                          }}
+                        >
+                          <h5 className="text-xs font-bold flex items-center gap-1.5" style={{ color: textPrimary }}>
+                            <ModeIcon className={`w-3.5 h-3.5 ${mode.iconColor}`} />
+                            {mode.title}
+                          </h5>
+                          <p className="text-[11px] mt-1" style={{ color: textMuted }}>
+                            {mode.desc}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

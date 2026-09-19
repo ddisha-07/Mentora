@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { Check, X, Lock, Unlock, Clock } from 'lucide-react';
 
 interface Module {
   id: string;
@@ -71,7 +72,7 @@ export default function JourneyRoadmapPage() {
       if (!res.ok) throw new Error('Failed to complete module');
       const data = await res.json();
 
-      setNotification(`✓ Completed: "${data.completedModule?.title || 'Module'}". Next module unlocked!`);
+      setNotification(`Completed: "${data.completedModule?.title || 'Module'}". Next module unlocked!`);
       setTimeout(() => setNotification(null), 4000);
 
       // Refresh roadmap to get updated sequence
@@ -140,12 +141,15 @@ export default function JourneyRoadmapPage() {
         {/* Floating Notification Toast */}
         {notification && (
           <div className="p-4 rounded-xl bg-emerald-950/90 border border-emerald-500/60 text-emerald-200 text-sm font-medium shadow-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-4 duration-300">
-            <span>{notification}</span>
+            <span className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-emerald-400" />
+              <span>{notification}</span>
+            </span>
             <button
               onClick={() => setNotification(null)}
               className="text-emerald-400 hover:text-white font-bold ml-4"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -190,8 +194,18 @@ export default function JourneyRoadmapPage() {
                         <h2 className="text-lg font-bold text-white flex items-center gap-2">
                           Level {lvlGroup.level}: {lvlGroup.name}
                         </h2>
-                        <span className="text-xs text-slate-400">
-                          {isFullyUnlocked ? '🔓 Level Accessible' : '🔒 Level Gated'}
+                        <span className="text-xs text-slate-400 inline-flex items-center gap-1.5 mt-0.5">
+                          {isFullyUnlocked ? (
+                            <>
+                              <Unlock className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>Level Accessible</span>
+                            </>
+                          ) : (
+                            <>
+                              <Lock className="w-3.5 h-3.5 text-slate-500" />
+                              <span>Level Gated</span>
+                            </>
+                          )}
                         </span>
                       </div>
                     </div>
@@ -236,14 +250,24 @@ export default function JourneyRoadmapPage() {
                                     : 'bg-slate-900 text-slate-500 border border-slate-800'
                                 }`}
                               >
-                                {isCompleted && <span>✓ Completed</span>}
+                                {isCompleted && (
+                                  <span className="inline-flex items-center gap-1">
+                                    <Check className="w-3 h-3" />
+                                    <span>Completed</span>
+                                  </span>
+                                )}
                                 {isAvailable && (
                                   <>
                                     <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
                                     <span>Available</span>
                                   </>
                                 )}
-                                {isLocked && <span>🔒 Locked</span>}
+                                {isLocked && (
+                                  <span className="inline-flex items-center gap-1">
+                                    <Lock className="w-3 h-3" />
+                                    <span>Locked</span>
+                                  </span>
+                                )}
                               </span>
                             </div>
 
@@ -261,8 +285,9 @@ export default function JourneyRoadmapPage() {
                             <span className="px-2 py-0.5 rounded bg-slate-800/80 text-slate-300 text-[11px]">
                               {module.skill}
                             </span>
-                            <span className="text-slate-400 font-medium">
-                              ⏱ {module.estimatedHours} hrs
+                            <span className="text-slate-400 font-medium inline-flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              <span>{module.estimatedHours} hrs</span>
                             </span>
                           </div>
 
@@ -308,9 +333,9 @@ export default function JourneyRoadmapPage() {
                 </div>
                 <button
                   onClick={() => setSelectedModule(null)}
-                  className="text-slate-400 hover:text-white text-lg font-bold"
+                  className="text-slate-400 hover:text-white p-1"
                 >
-                  ✕
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
@@ -351,12 +376,12 @@ export default function JourneyRoadmapPage() {
                 )}
                 {selectedModule.status === 'completed' && (
                   <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1">
-                    ✓ Module Completed
+                    <Check className="w-3.5 h-3.5" /> Module Completed
                   </span>
                 )}
                 {selectedModule.status === 'locked' && (
                   <span className="text-xs text-slate-500 flex items-center gap-1">
-                    🔒 Complete previous modules to unlock
+                    <Lock className="w-3.5 h-3.5" /> Complete previous modules to unlock
                   </span>
                 )}
               </div>

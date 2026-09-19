@@ -7,6 +7,7 @@ import {
   FolderPlus, FilePlus2, Users2, Eye, Sparkles, UploadCloud,
   FileText, CheckCircle2, X, Image as ImageIcon, Globe, Bookmark,
   Target, Award, Play, Video,
+  Clock, Rocket, Film, Zap, Brain, Library,
 } from "lucide-react";
 import Topbar from "@/components/admin/layout/Topbar";
 import GlassCard from "@/components/admin/ui/GlassCard";
@@ -950,7 +951,7 @@ export default function CoursesPage() {
                   disabled={saving || !isFormValid}
                   className="font-bold bg-gradient-to-r from-amber-500 to-ember-500 text-white shadow-ember/20 cursor-pointer"
                 >
-                  Proceed to Edit Studio 🚀
+                  Proceed to Edit Studio
                 </Button>
               </div>
             </div>
@@ -983,7 +984,7 @@ export default function CoursesPage() {
                     disabled={saving || !isFormValid}
                     className="font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/20 cursor-pointer"
                   >
-                    {saving ? "Generating Course with Mentora AI..." : "Generate Course with Mentora AI 🚀"}
+                    {saving ? "Generating Course with Mentora AI..." : "Generate Course with Mentora AI"}
                   </Button>
                 ) : (
                   <Button
@@ -996,7 +997,7 @@ export default function CoursesPage() {
                       ? "Calibrating Studio..."
                       : !uploadedFile
                       ? "Upload Document First"
-                      : "Generate & Open in AI Studio 🚀"}
+                      : "Generate & Open in AI Studio"}
                   </Button>
                 )}
               </div>
@@ -1271,12 +1272,13 @@ export default function CoursesPage() {
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-ink-200 text-xs px-1.5 py-0.5 rounded cursor-pointer transition-colors"
                   title="Clear URL and keep empty"
                 >
-                  ✕
+                  <X size={12} />
                 </button>
               )}
             </div>
-            <p className={`text-[11px] mt-1.5 ${isBright ? "text-slate-400" : "text-ink-500"}`}>
-              ✨ Leave empty to automatically generate a distinct, topic-matched visual template & cover.
+            <p className={`text-[11px] mt-1.5 flex items-center gap-1 ${isBright ? "text-slate-400" : "text-ink-500"}`}>
+              <Sparkles size={12} className="text-amber-500 shrink-0" />
+              <span>Leave empty to automatically generate a distinct, topic-matched visual template & cover.</span>
             </p>
           </Field>
 
@@ -1422,8 +1424,8 @@ export default function CoursesPage() {
                             <div className="flex items-center gap-2">
                               <p className="text-xs font-semibold truncate">{uploadedFile.name}</p>
                               {uploadedFile.isVideo && (
-                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/30 shrink-0">
-                                  🎬 Video
+                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/30 shrink-0 flex items-center gap-1">
+                                  <Film size={11} /> Video
                                 </span>
                               )}
                             </div>
@@ -1486,7 +1488,7 @@ export default function CoursesPage() {
                           >
                             <div>
                               <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-base">⚡</span>
+                                <Zap size={16} className="text-amber-500" />
                                 <span
                                   className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                                     docMode === "full"
@@ -1525,7 +1527,7 @@ export default function CoursesPage() {
                           >
                             <div>
                               <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-base">{uploadedFile.isVideo ? "🎬" : "📖"}</span>
+                                {uploadedFile.isVideo ? <Film size={16} className="text-amber-500" /> : <BookOpen size={16} className="text-amber-500" />}
                                 <span
                                   className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                                     docMode === "integrate"
@@ -1578,7 +1580,7 @@ export default function CoursesPage() {
                                     : "bg-white/5 text-ink-300 border-white/10 hover:bg-white/10"
                                 }`}
                               >
-                                <span>🍿</span> Video {uploadedFile.isVideo && "(Recommended)"}
+                                <Video size={13} /> Video {uploadedFile.isVideo && "(Recommended)"}
                               </button>
                               <button
                                 type="button"
@@ -1591,7 +1593,7 @@ export default function CoursesPage() {
                                     : "bg-white/5 text-ink-300 border-white/10 hover:bg-white/10"
                                 }`}
                               >
-                                <span>📖</span> Reading
+                                <BookOpen size={13} /> Reading
                               </button>
                               <button
                                 type="button"
@@ -1604,7 +1606,7 @@ export default function CoursesPage() {
                                     : "bg-white/5 text-ink-300 border-white/10 hover:bg-white/10"
                                 }`}
                               >
-                                <span>📑</span> Reference
+                                <FileText size={13} /> Reference
                               </button>
                             </div>
 
@@ -1644,12 +1646,16 @@ export default function CoursesPage() {
                               <div className="flex-1 space-y-1">
                                 {docMode === "full" ? (
                                   <p className="leading-relaxed">
-                                    <strong className="font-bold">⚡ Full AI Synthesis:</strong> Mentora AI will synthesize a complete, topic-accurate {parseDurationWeeks(draft.duration)}-week curriculum derived strictly from &ldquo;{uploadedFile.name}&rdquo; with zero hallucinations.
+                                    <strong className="font-bold inline-flex items-center gap-1 mr-1">
+                                      <Zap size={13} className="text-amber-500" /> Full AI Synthesis:
+                                    </strong>
+                                    Mentora AI will synthesize a complete, topic-accurate {parseDurationWeeks(draft.duration)}-week curriculum derived strictly from &ldquo;{uploadedFile.name}&rdquo; with zero hallucinations.
                                   </p>
                                 ) : (
                                   <div className="space-y-0.5">
                                     <p className="font-bold text-amber-500 flex items-center gap-1.5">
-                                      <span>🧠 Smart Flow Placement:</span>
+                                      <Brain size={14} className="text-amber-500" />
+                                      <span>Smart Flow Placement:</span>
                                       <span className="text-[10px] px-2 py-0.2 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/30">
                                         Module {placementAnalysis?.targetModuleNumber || 1}
                                       </span>
@@ -1869,14 +1875,14 @@ function CourseCurriculum({
           {/* Quick Action bar & Metadata */}
           <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-line-soft">
             <div className="flex items-center gap-2 text-xs font-medium">
-              <span className={`px-2.5 py-1 rounded-lg border ${isBright ? "bg-slate-50 border-slate-200 text-slate-700" : "bg-[#161a24] border-white/10 text-ink-300"}`}>
-                ⏱ {course.duration || "4 Weeks"}
+              <span className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${isBright ? "bg-slate-50 border-slate-200 text-slate-700" : "bg-[#161a24] border-white/10 text-ink-300"}`}>
+                <Clock size={13} /> {course.duration || "4 Weeks"}
               </span>
-              <span className={`px-2.5 py-1 rounded-lg border ${isBright ? "bg-amber-50 border-amber-200 text-amber-700 font-semibold" : "bg-amber-500/10 border-amber-500/30 text-amber-400 font-semibold"}`}>
-                🎯 {course.level || "Beginner"}
+              <span className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${isBright ? "bg-amber-50 border-amber-200 text-amber-700 font-semibold" : "bg-amber-500/10 border-amber-500/30 text-amber-400 font-semibold"}`}>
+                <Target size={13} /> {course.level || "Beginner"}
               </span>
-              <span className={`px-2.5 py-1 rounded-lg border ${isBright ? "bg-slate-50 border-slate-200 text-slate-700" : "bg-[#161a24] border-white/10 text-ink-300"}`}>
-                📚 {modules.length} Modules
+              <span className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${isBright ? "bg-slate-50 border-slate-200 text-slate-700" : "bg-[#161a24] border-white/10 text-ink-300"}`}>
+                <Library size={13} /> {modules.length} Modules
               </span>
             </div>
 

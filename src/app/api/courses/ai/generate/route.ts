@@ -380,10 +380,10 @@ export async function POST(req: NextRequest) {
         const anchorSubtopic: any = {
           id: `sub-anchor-${targetIdx + 1}`,
           title: isVideoDoc
-            ? `🎥 Visual Masterclass Walkthrough: ${formattedDoc}`
+            ? `Visual Masterclass Walkthrough: ${formattedDoc}`
             : params.documentInfo.integrationType === "reference"
-            ? `📑 Reference Guide & Cheat Sheet: ${formattedDoc}`
-            : `📄 Core Document Study: ${formattedDoc}`,
+            ? `Reference Guide & Cheat Sheet: ${formattedDoc}`
+            : `Core Document Study: ${formattedDoc}`,
           type: isVideoDoc ? "video" : "reading",
           duration: isVideoDoc ? "15 min" : "20 min",
           summary: isVideoDoc

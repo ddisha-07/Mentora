@@ -2,7 +2,23 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Target,
+  Compass,
+  Bot,
+  TrendingUp,
+  Zap,
+  Briefcase,
+  Clock,
+  Brain,
+  Sparkles,
+  Rocket,
+  BarChart3,
+  Check,
+  X,
+} from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 
 export default function AboutPage() {
@@ -10,27 +26,27 @@ export default function AboutPage() {
 
   const coreCapabilities = [
     {
-      icon: '🎯',
+      icon: <Target className="w-5 h-5 text-orange-500" />,
       title: 'Learn What Matters',
       desc: 'Discover skills and topics laser-focused on your current role and immediate target promotions.',
     },
     {
-      icon: '🧭',
+      icon: <Compass className="w-5 h-5 text-orange-500" />,
       title: 'Follow Your Journey',
       desc: 'Structured, level-gated learning paths built around your goals—no more random tutorial hopping.',
     },
     {
-      icon: '🤖',
+      icon: <Bot className="w-5 h-5 text-orange-500" />,
       title: 'AI-Powered Guidance',
       desc: '24/7 contextual AI companion to clarify tough concepts, review code, and instantly unblock you.',
     },
     {
-      icon: '📈',
+      icon: <TrendingUp className="w-5 h-5 text-orange-500" />,
       title: 'Track Your Growth',
       desc: 'Live dashboard tracking skills, XP, streaks, milestones, and your verifiable Skill Passport.',
     },
     {
-      icon: '⚡',
+      icon: <Zap className="w-5 h-5 text-orange-500" />,
       title: 'Bite-Sized Steps',
       desc: 'High-density 5–8 minute micro-drills engineered to fit seamlessly into demanding workdays.',
     },
@@ -129,12 +145,12 @@ export default function AboutPage() {
     ((currentIndex % coreCapabilities.length) + coreCapabilities.length) % coreCapabilities.length;
 
   const personalizationVectors = [
-    { label: 'Your Role', detail: 'What you currently do', icon: '💼' },
-    { label: 'Your Experience', detail: 'Where you are in your career', icon: '⏳' },
-    { label: 'Your Skills', detail: 'What you already know', icon: '🧠' },
-    { label: 'Your Interests', detail: 'What you want to explore', icon: '✨' },
-    { label: 'Your Goals', detail: 'Where you want to go', icon: '🚀' },
-    { label: 'Your Progress', detail: 'What you should learn next', icon: '📊' },
+    { label: 'Your Role', detail: 'What you currently do', icon: <Briefcase className="w-5 h-5 text-orange-500" /> },
+    { label: 'Your Experience', detail: 'Where you are in your career', icon: <Clock className="w-5 h-5 text-orange-500" /> },
+    { label: 'Your Skills', detail: 'What you already know', icon: <Brain className="w-5 h-5 text-orange-500" /> },
+    { label: 'Your Interests', detail: 'What you want to explore', icon: <Sparkles className="w-5 h-5 text-orange-500" /> },
+    { label: 'Your Goals', detail: 'Where you want to go', icon: <Rocket className="w-5 h-5 text-orange-500" /> },
+    { label: 'Your Progress', detail: 'What you should learn next', icon: <BarChart3 className="w-5 h-5 text-orange-500" /> },
   ];
 
   return (
@@ -250,7 +266,7 @@ export default function AboutPage() {
                 }`}
               >
                 <div className="flex items-center gap-2 text-rose-500 font-bold text-xs font-mono uppercase">
-                  <span>✕</span>
+                  <X className="w-3.5 h-3.5" />
                   <span>Traditional Platforms</span>
                 </div>
                 <ul className={`space-y-1.5 text-xs ${isBright ? 'text-[#78716C]' : 'text-zinc-400'}`}>
@@ -273,7 +289,7 @@ export default function AboutPage() {
                     isBright ? 'text-[#EA580C]' : 'text-orange-300'
                   }`}
                 >
-                  <span>✓</span>
+                  <Check className="w-3.5 h-3.5 text-emerald-500" />
                   <span>The Mentora Way</span>
                 </div>
                 <ul

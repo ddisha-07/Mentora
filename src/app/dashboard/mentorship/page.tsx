@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { Calendar, X, MessageSquare, Coins, UserCheck, Bot, FileText, Star, Check } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
@@ -41,36 +42,36 @@ const featuredMentors: Mentor[] = [
     avatar: 'SL',
     rating: 4.95,
     sessionsCount: 62,
-    specialties: ['Concurrency Models', 'Go / Rust', 'Database Scaling', 'Promotion Strategy'],
-    bio: 'Lead engineer on video ingestion pipelines. Specializes in concurrent distributed primitives and technical interview prep.',
+    specialties: ['System Design', 'Microservices', 'Database Sharding', 'Career Strategy'],
+    bio: 'Leading high-concurrency streaming services. Specializes in guiding engineers from Senior to Staff/Principal roles.',
     creditsRequired: 1,
     availableNext: 'Friday, 2:00 PM',
   },
   {
     id: 'm3',
-    name: 'David Chen',
-    role: 'VP of Engineering',
-    company: 'Scale AI',
-    avatar: 'DC',
-    rating: 5.0,
-    sessionsCount: 45,
-    specialties: ['AI Infrastructure', 'Engineering Leadership', 'Org Scaling', 'Executive Presence'],
-    bio: 'Experienced engineering executive building high-scale machine learning infra. Focuses on tech strategy and leadership transition.',
-    creditsRequired: 2,
-    availableNext: 'Saturday, 11:00 AM',
+    name: 'Elena Rostova',
+    role: 'Head of Infrastructure',
+    company: 'Datadog',
+    avatar: 'ER',
+    rating: 4.99,
+    sessionsCount: 110,
+    specialties: ['Kubernetes', 'Cloud Infrastructure', 'Observability', 'Team Leadership'],
+    bio: 'Built and scaled clusters managing millions of nodes. Pragmatic advice on production resilience and operations.',
+    creditsRequired: 1,
+    availableNext: 'Next Monday, 11:00 AM',
   },
   {
     id: 'm4',
-    name: 'Elena Rostova',
-    role: 'Cloud Infra Director',
-    company: 'Cloudflare',
-    avatar: 'ER',
+    name: 'Kenji Sato',
+    role: 'Lead Security Engineer',
+    company: 'Square',
+    avatar: 'KS',
     rating: 4.92,
-    sessionsCount: 58,
-    specialties: ['Kubernetes', 'Edge Computing', 'Zero-Trust IAM', 'Platform Eng'],
-    bio: 'Built multi-region edge platforms handling 40M+ req/sec. Deep expertise in cloud-native operational excellence.',
+    sessionsCount: 45,
+    specialties: ['Zero Trust Security', 'AppSec', 'Auth & Cryptography', 'Compliance'],
+    bio: 'Protecting payments and sensitive telemetry at scale. Helping developers incorporate security by design.',
     creditsRequired: 1,
-    availableNext: 'Monday, 5:00 PM',
+    availableNext: 'Tomorrow, 6:00 PM',
   },
 ];
 
@@ -81,12 +82,14 @@ interface ChatMessage {
   time: string;
 }
 
-export default function MentorshipPage() {
-  const { isBright } = useTheme();
+export default function MentorshipHubPage() {
+  const { theme } = useTheme();
+  const isBright = theme === 'bright';
+
   const [activeTab, setActiveTab] = useState<'mentors' | 'ai' | 'past'>('mentors');
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
-  const [bookingSlot, setBookingSlot] = useState<string>('Tomorrow at 4:30 PM EST');
-  const [bookingTopic, setBookingTopic] = useState<string>('');
+  const [bookingSlot, setBookingSlot] = useState('Tomorrow at 4:30 PM EST');
+  const [bookingTopic, setBookingTopic] = useState('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // AI Chat state
@@ -94,24 +97,22 @@ export default function MentorshipPage() {
     {
       id: 'c1',
       sender: 'ai',
-      text: 'Hello Alex! I am your 24/7 Mentora AI Career Companion. Whether you want to review an architecture diagram, prep for a Staff Engineer mock loop, or unblock a tough technical concept, I am ready. What is on your mind today?',
-      time: '10:00 AM',
+      text: 'Hello Alex! I am your 24/7 autonomous Mentora Career Advisor. I have analyzed your system design labs and current trajectory toward Staff Engineer. How can I assist your engineering growth today?',
+      time: 'Just now',
     },
   ]);
   const [inputQuestion, setInputQuestion] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const bgPage = isBright ? '#FFF8F0' : '#111010';
-  const cardBg = isBright ? '#FFFFFF' : '#1C1916';
-  const cardBorder = isBright ? 'rgba(234,88,12,0.12)' : 'rgba(255,107,53,0.1)';
-  const textPrimary = isBright ? '#1C1917' : '#FFF8F0';
-  const textMuted = isBright ? '#78716C' : 'rgba(255,248,240,0.55)';
+  const cardBg = isBright ? '#FFFFFF' : '#110a05';
+  const cardBorder = isBright ? '#EAE0D5' : '#2A1810';
+  const textPrimary = isBright ? '#1A0F0A' : '#F5EBE6';
+  const textMuted = isBright ? '#7C6F65' : '#8A7A70';
 
   const handleBookSession = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedMentor) return;
-
-    setToastMessage(`1-on-1 session booked with ${selectedMentor.name} for ${bookingSlot}! Calendar invitation sent.`);
+    setToastMessage(`Session booked with ${selectedMentor.name} for ${bookingSlot}! 1 Credit deducted.`);
     setSelectedMentor(null);
     setBookingTopic('');
     setTimeout(() => setToastMessage(null), 5000);
@@ -121,47 +122,42 @@ export default function MentorshipPage() {
     e.preventDefault();
     if (!inputQuestion.trim()) return;
 
-    const userMsg: ChatMessage = {
-      id: `u-${Date.now()}`,
-      sender: 'user',
-      text: inputQuestion.trim(),
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
-
-    setChatMessages((prev) => [...prev, userMsg]);
-    const currentQ = inputQuestion;
+    const userText = inputQuestion.trim();
     setInputQuestion('');
     setIsTyping(true);
 
+    const userMsg: ChatMessage = {
+      id: `u-${Date.now()}`,
+      sender: 'user',
+      text: userText,
+      time: 'Now',
+    };
+
+    setChatMessages((prev) => [...prev, userMsg]);
+
+    // Simulate AI response
     setTimeout(() => {
-      let aiResponseText =
-        'Great question! When designing distributed microservices for this scenario, the critical pattern is decoupling the transactional state using an Outbox Pattern with Change Data Capture (CDC). This eliminates dual-write anomalies while guaranteeing at-least-once delivery to your message brokers.';
-
-      if (currentQ.toLowerCase().includes('saga') || currentQ.toLowerCase().includes('choreography')) {
-        aiResponseText =
-          'Between Saga Orchestration and Choreography: Use Orchestration when business workflows exceed 4 steps or require complex compensating transactions with tight audits. Use Choreography for lightweight event notifications where services can react autonomously without a central point of coordination.';
-      } else if (currentQ.toLowerCase().includes('interview') || currentQ.toLowerCase().includes('mock')) {
-        aiResponseText =
-          'Here is an architecture prompt: "Design a globally distributed rate limiter that enforces a sliding window counter across 5 AWS regions with < 5ms latency overhead." Key topics to address: Redis Cell vs Local Token Buckets, gossip protocols for sync, and degraded mode fallback.';
+      let aiReply = "That's a key milestone. Focus on driving cross-team consensus, writing clear RFCs, and tying architectural improvements to core business metrics like p99 latency and infrastructure cost.";
+      if (userText.toLowerCase().includes('kafka') || userText.toLowerCase().includes('distributed')) {
+        aiReply = "For distributed streaming, prioritize partition key strategy, idempotency guarantees (at-least-once vs exactly-once), and backpressure management before fine-tuning consumer group configurations.";
+      } else if (userText.toLowerCase().includes('salary') || userText.toLowerCase().includes('offer') || userText.toLowerCase().includes('negotiat')) {
+        aiReply = "When negotiating Staff+ bands, highlight measurable blast radius: quantify revenue protected, downtime avoided, and junior engineers mentored into Senior roles.";
       }
-
-      const aiMsg: ChatMessage = {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: aiResponseText,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      };
-
-      setChatMessages((prev) => [...prev, aiMsg]);
+      setChatMessages((prev) => [
+        ...prev,
+        { id: `ai-${Date.now()}`, sender: 'ai', text: aiReply, time: 'Just now' },
+      ]);
       setIsTyping(false);
-    }, 1200);
+    }, 700);
   };
 
   return (
     <div
-      id="mentorship-page"
-      className="min-h-screen flex"
-      style={{ background: bgPage, fontFamily: 'var(--font-geist-sans), sans-serif' }}
+      className="flex min-h-screen font-sans"
+      style={{
+        background: isBright ? '#FDFBF7' : '#0a0603',
+        color: textPrimary,
+      }}
     >
       <DashboardSidebar />
 
@@ -171,12 +167,15 @@ export default function MentorshipPage() {
           {/* Toast Notification */}
           {toastMessage && (
             <div className="p-4 rounded-2xl bg-orange-950/90 border border-orange-500/70 text-orange-200 text-sm font-medium shadow-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-3">
-              <span className="flex items-center gap-2">🗓️ {toastMessage}</span>
+              <span className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-orange-400" />
+                {toastMessage}
+              </span>
               <button
                 onClick={() => setToastMessage(null)}
                 className="text-orange-400 hover:text-white font-bold ml-4"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -185,7 +184,8 @@ export default function MentorshipPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span>💬 INDUSTRY GUIDANCE & COACHING</span>
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>INDUSTRY GUIDANCE & COACHING</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Mentorship Hub
@@ -197,7 +197,7 @@ export default function MentorshipPage() {
 
             <div className="flex items-center gap-3">
               <div className="px-4 py-2 rounded-xl border flex items-center gap-2" style={{ background: cardBg, borderColor: cardBorder }}>
-                <span className="text-sm">🪙</span>
+                <Coins className="w-4 h-4 text-amber-400" />
                 <span className="text-xs font-bold" style={{ color: textPrimary }}>
                   2 Mentorship Credits Available
                 </span>
@@ -259,25 +259,28 @@ export default function MentorshipPage() {
           {/* Navigation Tabs */}
           <div className="flex items-center gap-2 border-b pb-3" style={{ borderColor: cardBorder }}>
             {[
-              { id: 'mentors', label: '1-on-1 Mentors Directory', icon: '🧑‍💻' },
-              { id: 'ai', label: '24/7 AI Career Companion', icon: '🤖' },
-              { id: 'past', label: 'Past Session Notes (3)', icon: '📝' },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 ${
-                  activeTab === tab.id
-                    ? 'bg-[#FF6B35] text-white shadow-md shadow-orange-500/20'
-                    : isBright
-                    ? 'bg-white text-zinc-600 border border-[#EAE0D5] hover:border-orange-300'
-                    : 'bg-[#18130e] text-zinc-400 border border-orange-950/60 hover:border-orange-800'
-                }`}
-              >
-                <span>{tab.icon}</span>
-                <span>{tab.label}</span>
-              </button>
-            ))}
+              { id: 'mentors', label: '1-on-1 Mentors Directory', icon: UserCheck },
+              { id: 'ai', label: '24/7 AI Career Companion', icon: Bot },
+              { id: 'past', label: 'Past Session Notes (3)', icon: FileText },
+            ].map((tab) => {
+              const TabIcon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 ${
+                    activeTab === tab.id
+                      ? 'bg-[#FF6B35] text-white shadow-md shadow-orange-500/20'
+                      : isBright
+                      ? 'bg-white text-zinc-600 border border-[#EAE0D5] hover:border-orange-300'
+                      : 'bg-[#18130e] text-zinc-400 border border-orange-950/60 hover:border-orange-800'
+                  }`}
+                >
+                  <TabIcon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* TAB 1: MENTORS DIRECTORY */}
@@ -308,7 +311,7 @@ export default function MentorshipPage() {
 
                         <div className="text-right">
                           <div className="flex items-center gap-1 text-xs font-bold text-amber-400">
-                            <span>★</span>
+                            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                             <span>{mentor.rating}</span>
                           </div>
                           <span className="text-[10px]" style={{ color: textMuted }}>
@@ -370,8 +373,8 @@ export default function MentorshipPage() {
             >
               <div className="flex items-center justify-between border-b pb-4" style={{ borderColor: cardBorder }}>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-orange-500/15 text-orange-500 flex items-center justify-center text-xl">
-                    🤖
+                  <div className="w-10 h-10 rounded-xl bg-orange-500/15 text-orange-500 flex items-center justify-center">
+                    <Bot className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-bold text-base" style={{ color: textPrimary }}>
@@ -498,7 +501,9 @@ export default function MentorshipPage() {
                       <h4 className="font-bold text-base" style={{ color: textPrimary }}>{sess.title}</h4>
                       <p className="text-xs text-orange-500 font-medium">With {sess.mentor} • {sess.date}</p>
                     </div>
-                    <span className="text-xs text-emerald-500 font-bold">Completed ✓</span>
+                    <span className="text-xs text-emerald-500 font-bold flex items-center gap-1">
+                      Completed <Check className="w-3.5 h-3.5" />
+                    </span>
                   </div>
 
                   <p className="text-xs leading-relaxed" style={{ color: textMuted }}>
@@ -543,7 +548,7 @@ export default function MentorshipPage() {
                 className="w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold"
                 style={{ borderColor: cardBorder, color: textMuted }}
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 

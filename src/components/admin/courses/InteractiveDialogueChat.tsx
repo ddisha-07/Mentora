@@ -326,7 +326,7 @@ ${topicsBullets}
 
 ${first.situation}
 
-❓ **Diagnostic Question:**
+**Diagnostic Question:**
 ${first.question}`,
       },
     ];
@@ -343,7 +343,7 @@ ${first.question}`,
       id: `hint-${Date.now()}`,
       sender: "bot",
       isHint: true,
-      text: `💡 **Helpful Clue:**
+      text: `**Helpful Clue:**
 ${hintText}
 
 *What do you think is the initial prerequisite step? Give it your best shot below!*`,
@@ -365,7 +365,7 @@ ${hintText}
       solvedScenarios: 1,
       attempts: finalAttempts,
       scorePercent: score,
-      tier: score >= 90 ? "🌟 Dialogue Master" : "⚡ Analytical Problem Solver",
+      tier: score >= 90 ? "Dialogue Master" : "Analytical Problem Solver",
       strengths: [
         "Engaged actively with step-by-step logic and sequential decomposition",
         "Examined real-world workflows from a computational perspective",
@@ -386,7 +386,7 @@ ${hintText}
       id: `end-${Date.now()}`,
       sender: "bot",
       isSummary: true,
-      text: `🏁 **Dialogue Concluded!** You've wrapped up this interactive session. Here is your comprehensive learning summary and takeaways below:`,
+      text: `**Dialogue Concluded!** You've wrapped up this interactive session. Here is your comprehensive learning summary and takeaways below:`,
     };
 
     setMessages((prev) => [...prev, endMsg]);
@@ -470,7 +470,7 @@ ${hintText}
         solvedScenarios: scenarios.length,
         attempts: currentAttempts,
         scorePercent: data.summary?.score || 95,
-        tier: "🌟 Dialogue Master",
+        tier: "Dialogue Master",
         strengths: data.summary?.concepts_mastered || [
           "Identified the foundational initialization requirement",
           "Structured instructions with clear prerequisite sequencing",
@@ -488,9 +488,9 @@ ${hintText}
         id: `bot-success-${Date.now()}`,
         sender: "bot",
         isDesiredAnswer: true,
-        text: `${data.bot_response || `🎯 **Spot on! Brilliant explanation.**\n${activeScenario.correctExplanation}`}
+        text: `${data.bot_response || `**Spot on! Brilliant explanation.**\n${activeScenario.correctExplanation}`}
 
-*(+50 XP awarded! 🎉)*`,
+*(+50 XP awarded!)*`,
       };
 
       setMessages([...history, successMsg]);
@@ -545,7 +545,7 @@ ${hintText}
         solvedScenarios: scenarios.length,
         attempts: currentAttempts,
         scorePercent: Math.max(75, 100 - (currentAttempts - 1) * 7),
-        tier: "🌟 Dialogue Master",
+        tier: "Dialogue Master",
         strengths: [
           "Identified the foundational initialization requirement",
           "Understood that environments must be active before instructions execute",
@@ -563,11 +563,11 @@ ${hintText}
         id: `bot-success-${Date.now()}`,
         sender: "bot",
         isDesiredAnswer: true,
-        text: `🎯 **Spot on! Brilliant explanation.**
+        text: `**Spot on! Brilliant explanation.**
 
 ${activeScenario.correctExplanation}
 
-*(+50 XP awarded! 🎉)*`,
+*(+50 XP awarded!)*`,
       };
 
       setMessages([...history, successMsg]);
@@ -739,7 +739,7 @@ ${activeScenario.correctExplanation}
                 </h4>
               </div>
               <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                {(summaryData.tier || "🌟 Dialogue Master").replace(/Socratic/gi, "Dialogue")}
+                {(summaryData.tier || "Dialogue Master").replace(/Socratic/gi, "Dialogue")}
               </span>
             </div>
 
