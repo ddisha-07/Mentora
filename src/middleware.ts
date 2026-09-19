@@ -10,7 +10,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
   
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  return response;
 }
 export const config = {
   matcher: [
