@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
+
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export default function PublicNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -12,10 +15,10 @@ export default function PublicNavbar() {
   const pathname = usePathname();
   const { isBright, toggleTheme } = useTheme();
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     let mounted = true;
 
-    // Only show DASHBOARD button if the user has logged in and visited dashboard in this session
+    // Immediately check if the user has logged in and visited dashboard in this session
     const hasVisitedDashboard =
       typeof window !== 'undefined' &&
       sessionStorage.getItem('mentora_dashboard_active') === 'true';
@@ -25,22 +28,21 @@ export default function PublicNavbar() {
       return;
     }
 
-    // Verify with server to confirm session is still valid
+    // Immediately show DASHBOARD button without waiting for background network check
+    setShowDashboardBtn(true);
+
+    // Silently verify with server in the background to ensure session is still valid
     fetch('/api/auth/session')
       .then((res) => {
-        if (mounted) {
-          if (res.ok) {
-            setShowDashboardBtn(true);
-          } else {
-            setShowDashboardBtn(false);
-            if (typeof window !== 'undefined') {
-              sessionStorage.removeItem('mentora_dashboard_active');
-            }
+        if (mounted && !res.ok) {
+          setShowDashboardBtn(false);
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('mentora_dashboard_active');
           }
         }
       })
       .catch(() => {
-        if (mounted) setShowDashboardBtn(false);
+        // Keep current state on transient network failure
       });
 
     return () => {
