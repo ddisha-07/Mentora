@@ -13,7 +13,8 @@ export function formatAuthError(err: any): string {
   }
 
   if (code === 'auth/unauthorized-domain' || msg.includes('auth/unauthorized-domain')) {
-    return "This domain (localhost) is not authorized for OAuth. Add 'localhost' in Firebase Console > Authentication > Settings > Authorized domains.";
+    const domain = typeof window !== 'undefined' ? window.location.hostname : 'this domain';
+    return `This domain (${domain}) is not authorized for OAuth. Add '${domain}' in Firebase Console > Authentication > Settings > Authorized domains.`;
   }
 
   if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found' || msg.includes('invalid-credential')) {
