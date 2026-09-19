@@ -42,3 +42,15 @@ next-env.d.ts
 
 # local admin source
 mentora-admin/
+
+# Firebase & Credentials (Never expose service accounts, private keys, or debug logs)
+.firebase/
+*-adminsdk-*.json
+serviceAccountKey.json
+firebase-service-account*.json
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+*.key
+*.pem
+

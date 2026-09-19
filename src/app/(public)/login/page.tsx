@@ -18,7 +18,7 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check hash fragment first (OAuth errors from Supabase redirect with #error=...&error_description=...)
+    // Check hash fragment first (OAuth errors redirect with #error=...&error_description=...)
     if (typeof window !== 'undefined' && window.location.hash) {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const hashErrorDesc = hashParams.get('error_description');

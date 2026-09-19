@@ -12,7 +12,7 @@ A phase-by-phase build plan derived from `01-REQUIREMENTS.md`, `02-ARCHITECTURE.
 
 - Initialize Next.js (App Router, TS, Tailwind, ESLint/Prettier).
 - Set up the target directory structure from `02-ARCHITECTURE.md §9` (`(public)/`, `onboarding/`, `dashboard/`, `api/`, `db/`, `lib/`, `components/`).
-- Provision PostgreSQL (local + hosted, e.g. Neon/Supabase/RDS).
+- Provision database & auth (Firebase / Firestore).
 - Install & configure Drizzle ORM; `src/db/index.ts` client, `src/db/schema.ts` stub.
 - `.env` conventions: server-only secrets via `process.env`, `NEXT_PUBLIC_*` only for client-safe values.
 - `GET /api/health` route handler — first working endpoint, used for CI/deploy checks.

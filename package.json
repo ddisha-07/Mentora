@@ -6,7 +6,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "server": "node server.js",
     "lint": "eslint",
     "test:personalization": "tsx src/lib/personalization/pipeline.test.ts",
     "firebase:use": "firebase use mentora-932c5",
