@@ -7,9 +7,34 @@ import type { Firestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import type { Storage } from 'firebase-admin/storage';
 
+function cleanPrivateKey(key: string | undefined): string | undefined {
+  if (!key) return undefined;
+  let cleaned = key.trim();
+  // Strip surrounding quotes if present (e.g. from copy-pasting from .env file into Vercel)
+  if (
+    (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+    (cleaned.startsWith("'") && cleaned.endsWith("'"))
+  ) {
+    cleaned = cleaned.slice(1, -1).trim();
+  }
+  return cleaned.replace(/\\n/g, '\n');
+}
+
+function cleanEnvString(val: string | undefined): string | undefined {
+  if (!val) return undefined;
+  let cleaned = val.trim();
+  if (
+    (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+    (cleaned.startsWith("'") && cleaned.endsWith("'"))
+  ) {
+    cleaned = cleaned.slice(1, -1).trim();
+  }
+  return cleaned;
+}
+
 function getServiceAccount(): ServiceAccount | null {
   // Safely check if the FIREBASE_SERVICE_ACCOUNT_KEY environment variable exists before parsing
-  const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  const serviceAccountKey = cleanEnvString(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
   if (serviceAccountKey) {
     try {
       const trimmed = serviceAccountKey.trim();
@@ -24,7 +49,7 @@ function getServiceAccount(): ServiceAccount | null {
 
       if (parsed && typeof parsed === 'object') {
         if (typeof parsed.private_key === 'string') {
-          parsed.private_key = parsed.private_key.replace(/\\n/g, '\n');
+          parsed.private_key = cleanPrivateKey(parsed.private_key);
         }
         return parsed as ServiceAccount;
       }
@@ -35,9 +60,11 @@ function getServiceAccount(): ServiceAccount | null {
   }
 
   // Fallback to individual environment variables
-  const projectId = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const projectId =
+    cleanEnvString(process.env.FIREBASE_PROJECT_ID) ||
+    cleanEnvString(process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+  const clientEmail = cleanEnvString(process.env.FIREBASE_CLIENT_EMAIL);
+  const privateKey = cleanPrivateKey(process.env.FIREBASE_PRIVATE_KEY);
 
   if (projectId && clientEmail && privateKey) {
     return {

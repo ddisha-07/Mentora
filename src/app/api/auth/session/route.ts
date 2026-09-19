@@ -21,9 +21,12 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Session creation error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({
+      error: error?.message || 'Failed to create session',
+      code: error?.code,
+    }, { status: 500 });
   }
 }
 

@@ -58,7 +58,10 @@ function LoginForm() {
         body: JSON.stringify({ idToken }),
       });
 
-      if (!res.ok) throw new Error('Failed to create session');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to create session');
+      }
       
       router.push('/dashboard');
     } catch (err: any) {
@@ -87,7 +90,10 @@ function LoginForm() {
         body: JSON.stringify({ idToken }),
       });
 
-      if (!res.ok) throw new Error('Failed to create session');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to create session');
+      }
       
       router.push('/dashboard');
     } catch (err: any) {
