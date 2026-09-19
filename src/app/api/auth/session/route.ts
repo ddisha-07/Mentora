@@ -15,7 +15,14 @@ export async function POST(request: NextRequest) {
       decodedIdToken = await adminAuth.verifyIdToken(idToken);
     } catch (verifyError: any) {
       console.error('ID token verification failed:', verifyError);
-      return NextResponse.json({ error: 'Invalid or expired ID token' }, { status: 401 });
+      const isConfigError = verifyError?.message?.includes('not initialized');
+      return NextResponse.json(
+        { 
+          error: isConfigError ? verifyError.message : 'Invalid or expired ID token',
+          code: verifyError?.code,
+        }, 
+        { status: isConfigError ? 500 : 401 }
+      );
     }
 
     const uid = decodedIdToken.uid;
