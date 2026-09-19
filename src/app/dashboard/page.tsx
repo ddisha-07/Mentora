@@ -3,8 +3,9 @@
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import DashboardRightPanel from '@/components/dashboard/DashboardRightPanel';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import type { CareerAnalysisResult, CourseRecommendation } from '@/app/api/analyze-profile/route';
 
 // ─── Mock Data ─────────────────────────────────────────────────────────────────
 const statsCards = [
@@ -455,6 +456,27 @@ export default function DashboardPage() {
     Object.fromEntries(tasks.map((t) => [t.id, t.done]))
   );
   const [journeysExpanded, setJourneysExpanded] = useState(true);
+  const [careerAnalysis, setCareerAnalysis] = useState<CareerAnalysisResult | null>(null);
+  const [enrolledCourseIds, setEnrolledCourseIds] = useState<Record<string, boolean>>({});
+  const [activeGapTab, setActiveGapTab] = useState<'missing' | 'possessed'>('missing');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('mentora_career_analysis');
+      if (saved) {
+        setCareerAnalysis(JSON.parse(saved));
+      }
+    } catch (err) {
+      console.error('Failed to load career analysis from localStorage:', err);
+    }
+  }, []);
+
+  const toggleEnrollCourse = (id: string) => {
+    setEnrolledCourseIds((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   const bgPage = isBright ? '#FFF8F0' : '#111010';
   const cardBg = isBright ? '#FFFFFF' : '#1C1916';
@@ -554,6 +576,244 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+
+          {/* ── AI Career Assessment & Roadmap Blueprint ──────────────────────── */}
+          {careerAnalysis ? (
+            <section
+              id="ai-career-blueprint"
+              className="relative rounded-3xl p-6 overflow-hidden transition-all duration-300 shadow-xl border"
+              style={{
+                background: isBright
+                  ? 'linear-gradient(135deg, #FFFFFF 0%, #FFF8F2 60%, #FFF0E6 100%)'
+                  : 'linear-gradient(135deg, #18110B 0%, #130E09 60%, #201309 100%)',
+                borderColor: isBright ? 'rgba(234, 88, 12, 0.25)' : 'rgba(255, 107, 53, 0.25)',
+                boxShadow: cardShadow,
+              }}
+            >
+              {/* Background ambient decorative glow */}
+              <div
+                className="absolute top-0 right-0 w-80 h-80 pointer-events-none rounded-full blur-3xl opacity-20 -z-0"
+                style={{ background: 'radial-gradient(circle, #EA580C 0%, transparent 70%)' }}
+              />
+
+              <div className="relative z-10 space-y-5">
+                {/* Header Row: Level Badge & Future Goal */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4" style={{ borderColor: isBright ? 'rgba(234,88,12,0.15)' : 'rgba(255,107,53,0.15)' }}>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-[#EA580C]/15 text-[#EA580C] border border-[#EA580C]/30">
+                        ✦ GEMINI AI CAREER BLUEPRINT
+                      </span>
+                      <span className="text-xs font-mono font-bold" style={{ color: textMuted }}>
+                        Target Goal: <span style={{ color: textPrimary }} className="underline decoration-orange-500 font-extrabold">{careerAnalysis.futureGoal}</span>
+                      </span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-black tracking-tight" style={{ color: textPrimary }}>
+                      Skill Gap & Readiness Analysis
+                    </h2>
+                  </div>
+
+                  {/* Level Pill Badge */}
+                  <div className="flex items-center gap-2 self-start sm:self-center">
+                    <div
+                      className="px-4 py-2 rounded-2xl border shadow-sm flex items-center gap-2"
+                      style={{
+                        background:
+                          careerAnalysis.currentLevel === 'Advanced'
+                            ? isBright ? '#FEF3C7' : '#2C1D06'
+                            : careerAnalysis.currentLevel === 'Intermediate'
+                            ? isBright ? '#FFEDD5' : '#291406'
+                            : isBright ? '#ECFDF5' : '#062817',
+                        borderColor:
+                          careerAnalysis.currentLevel === 'Advanced'
+                            ? '#F59E0B'
+                            : careerAnalysis.currentLevel === 'Intermediate'
+                            ? '#EA580C'
+                            : '#10B981',
+                      }}
+                    >
+                      <span className="text-lg">
+                        {careerAnalysis.currentLevel === 'Advanced' ? '🏆' : careerAnalysis.currentLevel === 'Intermediate' ? '⚡' : '🌱'}
+                      </span>
+                      <div>
+                        <div className="text-[10px] font-mono uppercase font-bold tracking-wider" style={{ color: textMuted }}>
+                          Current Level
+                        </div>
+                        <div
+                          className="text-sm font-black font-mono"
+                          style={{
+                            color:
+                              careerAnalysis.currentLevel === 'Advanced'
+                                ? '#D97706'
+                                : careerAnalysis.currentLevel === 'Intermediate'
+                                ? '#EA580C'
+                                : '#059669',
+                          }}
+                        >
+                          {careerAnalysis.currentLevel} Tier
+                        </div>
+                      </div>
+                    </div>
+
+                    <Link
+                      href="/onboarding"
+                      className="px-3 py-2 rounded-xl text-xs font-mono font-semibold border transition-all hover:scale-105"
+                      style={{
+                        borderColor: isBright ? 'rgba(234,88,12,0.3)' : 'rgba(255,107,53,0.3)',
+                        color: '#EA580C',
+                        background: isBright ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.3)',
+                      }}
+                      title="Update your profile or upload a new resume"
+                    >
+                      Update Profile ↺
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Level Justification & Evaluation Summary */}
+                <div
+                  className="p-4 rounded-2xl border text-xs leading-relaxed"
+                  style={{
+                    background: isBright ? 'rgba(255, 237, 213, 0.4)' : 'rgba(234, 88, 12, 0.06)',
+                    borderColor: isBright ? 'rgba(234, 88, 12, 0.2)' : 'rgba(255, 107, 53, 0.15)',
+                    color: textPrimary,
+                  }}
+                >
+                  <p className="font-semibold">
+                    <span className="text-orange-500 font-bold">Evaluation Summary: </span>
+                    {careerAnalysis.levelExplanation || careerAnalysis.currentProfileEvaluation?.summary}
+                  </p>
+                </div>
+
+                {/* Interactive Tabs for Missing Skills (Prerequisite Gaps) vs Possessed Skills */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveGapTab('missing')}
+                      className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                        activeGapTab === 'missing'
+                          ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-sm'
+                          : isBright
+                          ? 'bg-white border-stone-200 text-stone-600 hover:border-orange-300'
+                          : 'bg-[#120b06] border-orange-950/60 text-zinc-400 hover:border-orange-800'
+                      }`}
+                    >
+                      ⚠️ Prerequisite Gaps ({careerAnalysis.prerequisiteGaps?.length || careerAnalysis.missingSkills?.length || 0})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveGapTab('possessed')}
+                      className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                        activeGapTab === 'possessed'
+                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                          : isBright
+                          ? 'bg-white border-stone-200 text-stone-600 hover:border-emerald-300'
+                          : 'bg-[#120b06] border-emerald-950/60 text-zinc-400 hover:border-emerald-800'
+                      }`}
+                    >
+                      ✓ Possessed Skills ({careerAnalysis.possessedSkills?.length || 0})
+                    </button>
+                  </div>
+
+                  {activeGapTab === 'missing' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-in fade-in duration-200">
+                      {(careerAnalysis.prerequisiteGaps && careerAnalysis.prerequisiteGaps.length > 0
+                        ? careerAnalysis.prerequisiteGaps
+                        : (careerAnalysis.missingSkills || []).map((s) => ({
+                            skill: s,
+                            impact: 'Required prerequisite to achieve target career role.',
+                            urgency: 'High' as const,
+                          }))
+                      ).map((gap, idx) => (
+                        <div
+                          key={idx}
+                          className="p-3.5 rounded-2xl border transition-all hover:scale-[1.01]"
+                          style={{
+                            background: cardBg,
+                            borderColor:
+                              gap.urgency === 'High'
+                                ? 'rgba(239, 68, 68, 0.35)'
+                                : gap.urgency === 'Medium'
+                                ? 'rgba(245, 158, 11, 0.35)'
+                                : 'rgba(59, 130, 246, 0.35)',
+                          }}
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-xs font-bold font-mono" style={{ color: textPrimary }}>
+                              {gap.skill}
+                            </span>
+                            <span
+                              className={`text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded-full border ${
+                                gap.urgency === 'High'
+                                  ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                                  : gap.urgency === 'Medium'
+                                  ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                                  : 'bg-blue-500/15 text-blue-400 border-blue-500/30'
+                              }`}
+                            >
+                              {gap.urgency} Gap
+                            </span>
+                          </div>
+                          <p className="text-[11px] leading-relaxed" style={{ color: textMuted }}>
+                            {gap.impact}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-2 p-3 rounded-2xl border animate-in fade-in duration-200" style={{ background: cardBg, borderColor: cardBorder }}>
+                      {careerAnalysis.possessedSkills?.map((skill, idx) => (
+                        <span
+                          key={idx}
+                          className="text-xs font-mono font-semibold px-3 py-1 rounded-xl border flex items-center gap-1.5"
+                          style={{
+                            background: isBright ? '#ECFDF5' : 'rgba(16, 185, 129, 0.1)',
+                            color: isBright ? '#065F46' : '#34D399',
+                            borderColor: isBright ? '#A7F3D0' : 'rgba(16, 185, 129, 0.3)',
+                          }}
+                        >
+                          <span className="text-emerald-500 font-bold">✓</span>
+                          <span>{skill}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          ) : (
+            <div
+              className="p-5 rounded-3xl border flex flex-col sm:flex-row items-center justify-between gap-4 transition-all"
+              style={{
+                background: isBright
+                  ? 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)'
+                  : 'linear-gradient(135deg, #1C130D 0%, #140E0A 100%)',
+                borderColor: isBright ? '#FDBA74' : 'rgba(234, 88, 12, 0.3)',
+                boxShadow: cardShadow,
+              }}
+            >
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-2xl shrink-0">
+                  🎯
+                </div>
+                <div>
+                  <h3 className="text-sm font-black" style={{ color: textPrimary }}>
+                    Unlock Your AI Career Blueprint & Course Recommendations
+                  </h3>
+                  <p className="text-xs" style={{ color: textMuted }}>
+                    Paste your LinkedIn profile and CV to get Gemini-powered gap analysis and 3-4 targeted courses.
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/onboarding"
+                className="px-5 py-2.5 rounded-xl font-bold font-mono text-xs text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-md shadow-orange-500/20 whitespace-nowrap transition-all active:scale-95"
+              >
+                Complete Onboarding →
+              </Link>
+            </div>
+          )}
 
           {/* ── 2. Bento Stats Grid (Layout matching User Reference Image 1) ────────────── */}
           <section id="quick-stats">
@@ -947,10 +1207,10 @@ export default function DashboardPage() {
             <div className="relative z-10 flex items-center justify-between mb-4">
               <div>
                 <span className="text-[10px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/25 uppercase">
-                  ✦ FEATURED FOR YOU
+                  {careerAnalysis ? '✦ TAILORED FOR YOUR GAPS' : '✦ FEATURED FOR YOU'}
                 </span>
                 <h2 className="text-xl font-black tracking-tight mt-1 mb-0" style={{ color: textPrimary }}>
-                  Recommended For You
+                  {careerAnalysis ? 'AI Targeted Course Recommendations' : 'Recommended For You'}
                 </h2>
               </div>
               <a
@@ -963,86 +1223,155 @@ export default function DashboardPage() {
 
             {/* Nested Cards Grid / Scroll */}
             <div className="relative z-10 flex gap-4 overflow-x-auto pb-2 pt-1" style={{ scrollbarWidth: 'none' }}>
-              {recommendedCourses.map((course) => (
-                <div
-                  key={course.id}
-                  id={`course-${course.id}`}
-                  className="flex-shrink-0 w-[240px] rounded-2xl flex flex-col transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 cursor-pointer overflow-hidden group"
-                  style={{
-                    background: cardBg,
-                    border: `1px solid ${cardBorder}`,
-                    boxShadow: cardShadow,
-                  }}
-                >
-                  {/* Top Visual Banner (Thumbnail matching image 2 style) */}
-                  <div style={{ background: course.bannerBg }}>
-                    <CourseBannerGraphic
-                      type={course.illustrationType}
-                      bannerText={course.bannerText}
-                      techLogo={course.techLogo}
-                      tag={course.tag}
-                    />
-                  </div>
+              {(careerAnalysis?.targetedCourseRecommendations && careerAnalysis.targetedCourseRecommendations.length > 0
+                ? careerAnalysis.targetedCourseRecommendations
+                : recommendedCourses
+              ).map((course: any) => {
+                const isGemini = !!careerAnalysis?.targetedCourseRecommendations?.some((c) => c.id === course.id);
+                const isEnrolled = !!enrolledCourseIds[course.id];
 
-                  {/* Bottom Card Body */}
-                  <div className="p-3.5 flex flex-col justify-between flex-1">
-                    <div>
-                      {/* Course Title */}
-                      <h4
-                        className="text-xs font-bold leading-snug line-clamp-2 min-h-[34px] transition-colors group-hover:text-[#FF6B35]"
-                        style={{ color: textPrimary }}
-                      >
-                        {course.title}
-                      </h4>
-
-                      {/* Author & Category metadata line */}
-                      <p className="text-[11px] mt-2 font-medium" style={{ color: textMuted }}>
-                        By <span className="font-semibold" style={{ color: textPrimary }}>{course.author}</span> in{' '}
-                        <span style={{ color: textMuted }}>{course.category}</span>
-                      </p>
-
-                      {/* Star Rating line */}
-                      <div className="flex items-center gap-1 mt-2.5">
-                        <div className="flex text-[#F59E0B] text-[11px] gap-[1px]">
-                          <span>★</span>
-                          <span>★</span>
-                          <span>★</span>
-                          <span>★</span>
-                          <span>★</span>
-                        </div>
-                        <span className="text-xs font-bold ml-1" style={{ color: textPrimary }}>
-                          {course.rating.toFixed(1).replace('.', ',')}
-                        </span>
-                        <span className="text-[10px]" style={{ color: textMuted }}>
-                          ({course.students})
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Action Button */}
-                    <button
-                      className="mt-3.5 w-full py-2 rounded-full text-xs font-bold transition-all duration-200 border flex items-center justify-center gap-1.5 shadow-sm group-hover:shadow-md"
+                return (
+                  <div
+                    key={course.id}
+                    id={`course-${course.id}`}
+                    className="flex-shrink-0 w-[270px] rounded-2xl flex flex-col transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 cursor-pointer overflow-hidden group"
+                    style={{
+                      background: cardBg,
+                      border: `1px solid ${cardBorder}`,
+                      boxShadow: cardShadow,
+                    }}
+                  >
+                    {/* Top Visual Banner */}
+                    <div
                       style={{
-                        borderColor: isBright ? 'rgba(234,88,12,0.35)' : 'rgba(255,107,53,0.35)',
-                        color: '#FF6B35',
-                        background: isBright ? 'rgba(255,107,53,0.04)' : 'rgba(255,107,53,0.08)',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#FF6B35';
-                        e.currentTarget.style.color = '#FFFFFF';
-                        e.currentTarget.style.borderColor = '#FF6B35';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = isBright ? 'rgba(255,107,53,0.04)' : 'rgba(255,107,53,0.08)';
-                        e.currentTarget.style.color = '#FF6B35';
-                        e.currentTarget.style.borderColor = isBright ? 'rgba(234,88,12,0.35)' : 'rgba(255,107,53,0.35)';
+                        background:
+                          course.bannerBg ||
+                          (isGemini
+                            ? 'linear-gradient(135deg, #c2410c 0%, #ea580c 45%, #fb923c 100%)'
+                            : course.bannerBg),
                       }}
                     >
-                      Start Learning
-                    </button>
+                      {isGemini ? (
+                        <div className="relative w-full h-32 rounded-t-2xl overflow-hidden flex flex-col justify-between p-3 select-none">
+                          <div
+                            className="absolute inset-0 opacity-20 pointer-events-none"
+                            style={{
+                              backgroundImage: `
+                                linear-gradient(to right, rgba(255,255,255,0.25) 1px, transparent 1px),
+                                linear-gradient(to bottom, rgba(255,255,255,0.25) 1px, transparent 1px)
+                              `,
+                              backgroundSize: '16px 16px',
+                            }}
+                          />
+                          <div className="relative z-10 flex items-center justify-between w-full">
+                            <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-black/40 text-white backdrop-blur-sm border border-white/20 uppercase tracking-wider">
+                              {course.level || 'Intermediate'}
+                            </span>
+                            <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-white text-orange-600 shadow-md">
+                              {course.matchScore ? `${course.matchScore}% MATCH` : 'TOP PICK'}
+                            </span>
+                          </div>
+                          <div className="relative z-10 mt-auto">
+                            <span className="text-[10px] font-bold text-white/80 uppercase font-mono block truncate">
+                              {course.category}
+                            </span>
+                            <p className="text-[11px] font-black leading-tight tracking-wider text-white uppercase drop-shadow-md line-clamp-2">
+                              {course.title}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <CourseBannerGraphic
+                          type={course.illustrationType}
+                          bannerText={course.bannerText}
+                          techLogo={course.techLogo}
+                          tag={course.tag}
+                        />
+                      )}
+                    </div>
+
+                    {/* Bottom Card Body */}
+                    <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2.5">
+                      <div>
+                        {/* Course Title */}
+                        <h4
+                          className="text-xs font-bold leading-snug line-clamp-2 min-h-[34px] transition-colors group-hover:text-[#FF6B35]"
+                          style={{ color: textPrimary }}
+                        >
+                          {course.title}
+                        </h4>
+
+                        {/* Reason / Gap Bridged */}
+                        {course.reason && (
+                          <p className="text-[10px] mt-1.5 leading-relaxed font-mono line-clamp-2" style={{ color: textMuted }}>
+                            <span className="text-orange-500 font-bold">Why: </span>
+                            {course.reason}
+                          </p>
+                        )}
+
+                        {/* Key Topics */}
+                        {course.keyTopics && course.keyTopics.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {course.keyTopics.slice(0, 3).map((topic: string, tidx: number) => (
+                              <span
+                                key={tidx}
+                                className="text-[9px] font-mono px-1.5 py-0.5 rounded-md border"
+                                style={{
+                                  background: isBright ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.05)',
+                                  borderColor: isBright ? '#E5D7C8' : 'rgba(255,255,255,0.1)',
+                                  color: textMuted,
+                                }}
+                              >
+                                {topic}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Duration & Level metadata */}
+                        <div className="flex items-center justify-between mt-2.5 text-[10px] font-mono" style={{ color: textSub }}>
+                          <span>⏱ {course.duration || '6h 30m'}</span>
+                          <span>Level: {course.level || 'Intermediate'}</span>
+                        </div>
+                      </div>
+
+                      {/* Action Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleEnrollCourse(course.id);
+                        }}
+                        className={`w-full py-2 rounded-full text-xs font-bold transition-all duration-200 border flex items-center justify-center gap-1.5 shadow-sm cursor-pointer ${
+                          isEnrolled
+                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
+                            : 'hover:bg-[#FF6B35] hover:text-white hover:border-[#FF6B35]'
+                        }`}
+                        style={
+                          !isEnrolled
+                            ? {
+                                borderColor: isBright ? 'rgba(234,88,12,0.35)' : 'rgba(255,107,53,0.35)',
+                                color: '#FF6B35',
+                                background: isBright ? 'rgba(255,107,53,0.04)' : 'rgba(255,107,53,0.08)',
+                              }
+                            : undefined
+                        }
+                      >
+                        {isEnrolled ? (
+                          <>
+                            <span>✓</span>
+                            <span>Enrolled in Pathway</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Start Learning</span>
+                            <span>→</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
