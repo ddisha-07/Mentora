@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
+import { Mail, Building2, Zap, Rocket } from 'lucide-react';
 
 export default function ContactPage() {
   const { isBright } = useTheme();
@@ -80,7 +81,7 @@ export default function ContactPage() {
                       : 'bg-orange-950/80 border-orange-700/60'
                   }`}
                 >
-                  ✉️
+                  <Mail className="w-5 h-5 text-orange-500" />
                 </div>
                 <div>
                   <span className="text-[10px] font-mono uppercase text-[#EA580C] font-bold tracking-widest block">
@@ -119,7 +120,7 @@ export default function ContactPage() {
                       : 'bg-[#1f1309] border-amber-700/60'
                   }`}
                 >
-                  🏢
+                  <Building2 className="w-5 h-5 text-amber-500" />
                 </div>
                 <div>
                   <span
@@ -162,7 +163,7 @@ export default function ContactPage() {
                       : 'bg-[#241207] border-orange-600/60'
                   }`}
                 >
-                  ⚡
+                  <Zap className="w-5 h-5 text-orange-500" />
                 </div>
                 <div>
                   <span className="text-[10px] font-mono uppercase text-[#EA580C] font-bold tracking-widest block">
@@ -237,7 +238,9 @@ export default function ContactPage() {
                         : 'bg-orange-950/40 border-orange-600/60'
                     }`}
                   >
-                    <div className="text-3xl">🚀</div>
+                    <div className="w-12 h-12 mx-auto rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+                      <Rocket className="w-6 h-6" />
+                    </div>
                     <h4
                       className={`text-lg font-bold ${
                         isBright ? 'text-emerald-900' : 'text-white'

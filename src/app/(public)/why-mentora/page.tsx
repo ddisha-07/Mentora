@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Check, X } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 
 export default function WhyMentoraPage() {
@@ -74,7 +75,7 @@ export default function WhyMentoraPage() {
             }`}
           >
             <div className="flex items-center gap-2 text-rose-500 font-bold text-lg font-mono">
-              <span>✕</span>
+              <X className="w-5 h-5 shrink-0" />
               <span>Traditional Learning</span>
             </div>
             <ul
@@ -114,7 +115,7 @@ export default function WhyMentoraPage() {
                 isBright ? 'text-[#EA580C]' : 'text-amber-400'
               }`}
             >
-              <span>✓</span>
+              <Check className="w-5 h-5 shrink-0 text-emerald-500" />
               <span>With Mentora</span>
             </div>
             <ul
@@ -123,19 +124,19 @@ export default function WhyMentoraPage() {
               }`}
             >
               <li className="flex items-start gap-2">
-                <span className="text-emerald-500 font-bold shrink-0">✓</span>
+                <Check className="w-4 h-4 text-emerald-500 font-bold shrink-0 mt-0.5" />
                 <span>Role & level-tailored learning journeys generated algorithmically</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-500 font-bold shrink-0">✓</span>
+                <Check className="w-4 h-4 text-emerald-500 font-bold shrink-0 mt-0.5" />
                 <span>Predictive skill-gap diagnostics eliminate redundant lessons</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-500 font-bold shrink-0">✓</span>
+                <Check className="w-4 h-4 text-emerald-500 font-bold shrink-0 mt-0.5" />
                 <span>Multi-modal learning (spaced flashcards, video breakdowns, drills)</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-500 font-bold shrink-0">✓</span>
+                <Check className="w-4 h-4 text-emerald-500 font-bold shrink-0 mt-0.5" />
                 <span>Tamper-proof Skill Passport artifact earned through 70%+ evaluations</span>
               </li>
             </ul>

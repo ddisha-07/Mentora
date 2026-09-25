@@ -32,7 +32,7 @@ export default function GoPremiumCard({ className = '', onAccessGranted }: GoPre
     setIsActivated(true);
     localStorage.setItem('mentora_premium_status', 'true');
     setIsModalOpen(false);
-    setToastMessage('🎉 Mentora Premium Activated! Enjoy 25k+ courses.');
+    setToastMessage('Mentora Premium Activated! Enjoy 25k+ courses.');
     if (onAccessGranted) onAccessGranted();
 
     setTimeout(() => {
@@ -52,8 +52,8 @@ export default function GoPremiumCard({ className = '', onAccessGranted }: GoPre
             style={{ position: 'fixed', bottom: '80px', left: '16px', zIndex: 99999 }}
             className="px-4 py-2.5 rounded-xl bg-[#1C1613] border border-[#FF6B35]/50 text-white shadow-2xl flex items-center gap-2.5 backdrop-blur-md"
           >
-            <div className="w-6 h-6 rounded-full bg-[#FF6B35] text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-md">
-              ✓
+            <div className="w-6 h-6 rounded-full bg-[#FF6B35] text-white flex items-center justify-center shrink-0 shadow-md">
+              <Check className="w-3.5 h-3.5" />
             </div>
             <p className="text-[11px] font-semibold text-stone-100">{toastMessage}</p>
           </motion.div>
@@ -69,8 +69,8 @@ export default function GoPremiumCard({ className = '', onAccessGranted }: GoPre
           style={{ position: 'fixed', bottom: '16px', left: '16px', top: 'auto', right: 'auto', zIndex: 9999 }}
           className={`px-3.5 py-2 rounded-full bg-gradient-to-r from-[#241C16] to-[#1C1612] border border-[#FF6B35]/40 text-white shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all group ${className}`}
         >
-          <div className="w-4 h-4 rounded-full bg-[#FF6B35] text-white flex items-center justify-center text-[9px] font-extrabold shadow-sm">
-            ✦
+          <div className="w-4 h-4 rounded-full bg-[#FF6B35] text-white flex items-center justify-center shadow-sm">
+            <Sparkles className="w-2.5 h-2.5 text-white" />
           </div>
           <span className="text-[11px] font-bold text-white group-hover:text-[#FF6B35] transition-colors">
             {isActivated ? 'PRO Active' : 'Go Premium'}

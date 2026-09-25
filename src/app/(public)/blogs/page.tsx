@@ -15,7 +15,9 @@ import {
   CheckCircle2,
   Lock,
   Flame,
-  ArrowUpRight
+  ArrowUpRight,
+  Check,
+  Lightbulb,
 } from 'lucide-react';
 
 export default function BlogsPage() {
@@ -471,9 +473,10 @@ export default function BlogsPage() {
                                       3 drills remaining before Level 4 unlock
                                     </div>
                                   </div>
-                                  <div className="flex items-center gap-2 pt-1 text-[9px] font-mono text-orange-300">
-                                    <span>🔒 Level 04: Raft Consensus</span>
-                                  </div>
+                                   <div className="flex items-center gap-1.5 pt-1 text-[9px] font-mono text-orange-300">
+                                     <Lock className="w-3 h-3" />
+                                     <span>Level 04: Raft Consensus</span>
+                                   </div>
                                 </div>
 
                                 {/* Right Phone View */}
@@ -573,13 +576,13 @@ export default function BlogsPage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-2 text-[9px] font-mono text-zinc-300 pt-1 border-t border-white/10">
-                                  <div>• Split-Brain Resolution: ✓</div>
-                                  <div>• Multi-Raft Replication: ✓</div>
-                                  <div>• Jitter Backoff Drift: ✓</div>
-                                  <div>• Write-Ahead WAL Tuning: ✓</div>
-                                </div>
-                              </div>
-                            </div>
+                                   <div className="flex items-center gap-1.5"><Check className="w-3 h-3 text-emerald-400" /> Split-Brain Resolution</div>
+                                   <div className="flex items-center gap-1.5"><Check className="w-3 h-3 text-emerald-400" /> Multi-Raft Replication</div>
+                                   <div className="flex items-center gap-1.5"><Check className="w-3 h-3 text-emerald-400" /> Jitter Backoff Drift</div>
+                                   <div className="flex items-center gap-1.5"><Check className="w-3 h-3 text-emerald-400" /> Write-Ahead WAL Tuning</div>
+                                 </div>
+                               </div>
+                             </div>
                           )}
 
                           {numInt === 4 && (
@@ -595,10 +598,10 @@ export default function BlogsPage() {
                                 <div className="text-rose-400 line-through">
                                   users.map(async u =&gt; await db.fetchProfile(u.id))
                                 </div>
-                                <div className="p-2 rounded bg-amber-500/10 border border-amber-500/30 text-amber-200">
-                                  <span className="font-bold text-amber-400">💡 Socratic Prompt:</span>{' '}
-                                  "Notice the N+1 database roundtrips. How would a single batch vector query change the latency curve?"
-                                </div>
+                                 <div className="p-2 rounded bg-amber-500/10 border border-amber-500/30 text-amber-200">
+                                   <span className="font-bold text-amber-400 inline-flex items-center gap-1"><Lightbulb className="w-3.5 h-3.5" /> Socratic Prompt:</span>{' '}
+                                   "Notice the N+1 database roundtrips. How would a single batch vector query change the latency curve?"
+                                 </div>
                               </div>
                             </div>
                           )}
@@ -739,7 +742,7 @@ export default function BlogsPage() {
               }`}
             >
               <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase text-orange-500">
-                <span>✦</span>
+                <Sparkles className="w-3.5 h-3.5 text-orange-500" />
                 <span>
                   {activeArticle.tabLabel || `ARTICLE ${activeArticle.num}`} //{' '}
                   {activeArticle.category}

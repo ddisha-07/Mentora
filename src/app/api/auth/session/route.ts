@@ -29,26 +29,23 @@ export async function POST(request: NextRequest) {
 
     const { uid, email, name, picture } = decodedUser;
 
-    // 2. Best-effort Firestore user synchronization (won't block login if Firestore is unavailable)
+    // 2. Verify user account exists in Firestore before allowing login
     try {
       const { adminDb } = await import('@/utils/firebase/admin');
       const userRef = adminDb.collection('users').doc(uid);
       const userDoc = await userRef.get();
       if (!userDoc.exists) {
-        await userRef.set({
-          userId: uid,
-          email,
-          name,
-          role: 'learner',
-          status: 'active',
-          picture: picture || null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          onboardingComplete: false,
-        });
+        return NextResponse.json(
+          {
+            error: 'No account found for this user. Please create an account first.',
+            notRegistered: true,
+          },
+          { status: 404 }
+        );
       }
-    } catch (dbError) {
-      console.warn('Could not sync user to Firestore:', dbError);
+    } catch (dbError: any) {
+      if (dbError?.notRegistered) throw dbError;
+      console.warn('Firestore user existence check warning:', dbError);
     }
 
     // 3. Create session cookie (fallback to idToken if createSessionCookie is unavailable)

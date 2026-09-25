@@ -144,8 +144,8 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
                 )}
                 <span>{isBright ? "Light Mode" : "Dark Mode"}</span>
               </div>
-              <span className="text-[11px] px-1.5 py-0.5 rounded bg-white/[0.06] text-ink-300">
-                {isBright ? "☀️" : "🌙"}
+              <span className="p-1 rounded bg-white/[0.06] text-ink-300 flex items-center justify-center">
+                {isBright ? <Sun size={12} className="text-amber-500" /> : <Moon size={12} className="text-ember-400" />}
               </span>
             </button>
 
