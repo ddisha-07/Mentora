@@ -209,9 +209,6 @@ export default function CommunityPage() {
           {/* Header Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span>👥 PEER COHORTS & NETWORK</span>
-              </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Community & Squads
               </h1>
@@ -226,7 +223,7 @@ export default function CommunityPage() {
                 onClick={() => setComposerExpanded(!composerExpanded)}
                 className="px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all active:scale-95 flex items-center gap-2 bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] text-white hover:brightness-110 shadow-orange-500/20"
               >
-                <span>✏️ Share with Community</span>
+                <span>Share with Community</span>
               </button>
             </div>
           </div>
@@ -393,7 +390,7 @@ export default function CommunityPage() {
                                 YOU
                               </span>
                             )}
-                            <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-orange-500/10 text-orange-500 font-semibold border border-orange-500/20">
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold bg-[#FFF0E5] text-[#C2410C] border border-[#FDBA74] dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20">
                               {post.author.level}
                             </span>
                           </div>
@@ -403,7 +400,7 @@ export default function CommunityPage() {
                         </div>
                       </div>
 
-                      <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full border bg-zinc-500/10 text-zinc-400 border-zinc-500/20">
+                      <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full border bg-stone-100 text-stone-700 border-stone-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700">
                         {post.category}
                       </span>
                     </div>
@@ -423,11 +420,11 @@ export default function CommunityPage() {
                       {post.tags.map((tag, i) => (
                         <span
                           key={i}
-                          className="text-[11px] font-mono px-2 py-0.5 rounded border"
+                          className="text-[11px] font-mono px-2.5 py-0.5 rounded-md border font-medium"
                           style={{
-                            background: isBright ? '#FAF4EE' : '#140c07',
-                            borderColor: cardBorder,
-                            color: textMuted,
+                            background: isBright ? '#F5EBE1' : '#140c07',
+                            borderColor: isBright ? '#E2D4C5' : cardBorder,
+                            color: isBright ? '#44403C' : textMuted,
                           }}
                         >
                           {tag}
@@ -440,25 +437,26 @@ export default function CommunityPage() {
                       <button
                         type="button"
                         onClick={() => handleUpvote(post.id)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold border transition-all active:scale-95 ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold border transition-all active:scale-95 shadow-xs ${
                           post.hasUpvoted
-                            ? 'bg-orange-500 text-white border-orange-500'
-                            : 'hover:bg-orange-500/10'
+                            ? 'bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] text-white border-transparent shadow-orange-500/25'
+                            : isBright
+                            ? 'bg-white border-[#FDBA74] text-[#1C1917] hover:bg-[#FFF0E5] hover:text-[#C2410C]'
+                            : 'bg-[#1C1916] border-white/10 text-stone-200 hover:bg-orange-500/10 hover:text-white'
                         }`}
-                        style={{
-                          borderColor: post.hasUpvoted ? '#FF6B35' : cardBorder,
-                          color: post.hasUpvoted ? '#FFFFFF' : textPrimary,
-                        }}
                       >
-                        <span>▲</span>
+                        <span className={post.hasUpvoted ? 'text-white' : 'text-orange-500'}>▲</span>
                         <span>{post.upvotes} Upvotes</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => alert(`Opening comment drawer for: ${post.title}`)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold border transition-all hover:bg-orange-500/10"
-                        style={{ borderColor: cardBorder, color: textMuted }}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold border transition-all shadow-xs ${
+                          isBright
+                            ? 'bg-white border-[#E5D6C8] text-[#44403C] hover:bg-[#FFF0E5] hover:text-[#C2410C] hover:border-[#FDBA74]'
+                            : 'bg-[#1C1916] border-white/10 text-stone-300 hover:bg-orange-500/10 hover:text-white'
+                        }`}
                       >
                         <span>💬</span>
                         <span>{post.commentsCount} Comments</span>
@@ -467,8 +465,10 @@ export default function CommunityPage() {
                       <button
                         type="button"
                         onClick={() => alert('Post link copied to clipboard!')}
-                        className="ml-auto text-xs font-semibold hover:text-[#FF6B35] transition-colors"
-                        style={{ color: textMuted }}
+                        className="ml-auto text-xs font-bold transition-colors"
+                        style={{ color: isBright ? '#57534E' : textMuted }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = '#EA580C'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = isBright ? '#57534E' : textMuted; }}
                       >
                         Share
                       </button>
@@ -508,7 +508,7 @@ export default function CommunityPage() {
                         <h4 className="text-xs font-bold" style={{ color: textPrimary }}>{cohort.name}</h4>
                         <p className="text-[11px]" style={{ color: textMuted }}>{cohort.members}</p>
                       </div>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold bg-orange-500/10 text-orange-500">
+                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold bg-[#FFF0E5] text-[#C2410C] border border-[#FDBA74] dark:bg-orange-500/10 dark:text-orange-400">
                         {cohort.tag}
                       </span>
                     </div>
@@ -518,8 +518,22 @@ export default function CommunityPage() {
                 <button
                   type="button"
                   onClick={() => alert('Joined System Design study cohort!')}
-                  className="w-full py-2.5 rounded-xl text-xs font-bold border text-center transition-all hover:bg-orange-500 hover:text-white hover:border-orange-500 active:scale-95"
-                  style={{ borderColor: cardBorder, color: textPrimary }}
+                  className="w-full py-2.5 rounded-xl text-xs font-bold border text-center transition-all active:scale-95 shadow-sm"
+                  style={{
+                    background: isBright ? '#FFFFFF' : 'transparent',
+                    borderColor: isBright ? '#FDBA74' : cardBorder,
+                    color: isBright ? '#1C1917' : textPrimary,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#EA580C';
+                    e.currentTarget.style.color = '#FFFFFF';
+                    e.currentTarget.style.borderColor = '#EA580C';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = isBright ? '#FFFFFF' : 'transparent';
+                    e.currentTarget.style.borderColor = isBright ? '#FDBA74' : cardBorder;
+                    e.currentTarget.style.color = isBright ? '#1C1917' : textPrimary;
+                  }}
                 >
                   Join Cohort Session →
                 </button>

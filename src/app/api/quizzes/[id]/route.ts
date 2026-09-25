@@ -14,14 +14,18 @@ export async function GET(
     // await ensureQuizAndLeaderboardSeed(); // Seeding would need to be rewritten for Firestore
 
     let targetQuizId = id;
-    let quizDoc = await adminDb.collection('quizzes').doc(targetQuizId).get();
-
-    if (!quizDoc.exists) {
-      targetQuizId = DEMO_QUIZ_ID;
+    let quizDoc: any = null;
+    try {
       quizDoc = await adminDb.collection('quizzes').doc(targetQuizId).get();
+      if (!quizDoc.exists) {
+        targetQuizId = DEMO_QUIZ_ID;
+        quizDoc = await adminDb.collection('quizzes').doc(targetQuizId).get();
+      }
+    } catch (e) {
+      console.warn('Firestore quiz fetch unavailable, using mock quiz:', e);
     }
 
-    if (!quizDoc.exists) {
+    if (!quizDoc || !quizDoc.exists) {
       // Return a mock demo quiz if it doesn't exist to prevent app from breaking during migration
       return NextResponse.json({
         id: DEMO_QUIZ_ID,

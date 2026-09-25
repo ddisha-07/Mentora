@@ -14,7 +14,16 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('dark');
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('mentora_theme') as Theme | null;
+        if (saved === 'bright' || saved === 'dark') return saved;
+        if (document.documentElement.classList.contains('bright')) return 'bright';
+      } catch {}
+    }
+    return 'dark';
+  });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -25,7 +34,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         setThemeState(savedTheme);
         applyTheme(savedTheme);
       } else {
-        applyTheme('dark');
+        const isAlreadyBright = document.documentElement.classList.contains('bright');
+        if (isAlreadyBright) {
+          setThemeState('bright');
+          applyTheme('bright');
+        } else {
+          applyTheme('dark');
+        }
       }
     } catch {
       applyTheme('dark');
@@ -65,7 +80,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     <ThemeContext.Provider
       value={{
         theme,
-        isBright: mounted && theme === 'bright',
+        isBright: theme === 'bright',
         toggleTheme,
         setTheme,
       }}

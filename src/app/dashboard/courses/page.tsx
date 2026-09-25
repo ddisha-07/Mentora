@@ -1,10 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import * as courseService from '@/lib/admin/services/courseService';
+import { mockCourses } from '@/lib/admin/data/mockCourses';
+import {
+  calculateCourseDuration,
+  calculateCourseLiteralProgress,
+  estimateModuleMinutes,
+  formatMinutesToDuration,
+} from '@/lib/courses/progressEngine';
 
 interface FannedCourse {
   id: string;
@@ -29,184 +36,6 @@ interface FannedCourse {
   description: string;
   modules: { id: string; title: string; duration: string; isQuiz: boolean; completed: boolean }[];
 }
-
-const fannedCourses: FannedCourse[] = [
-  {
-    id: 'cloud-architect',
-    title: 'Full-Stack Cloud Architect',
-    subtitle: 'Level 4 Milestone Gate',
-    instructor: {
-      name: 'Lynn Chang',
-      handle: '@lynnchang_eng',
-      avatar: 'LC',
-      verified: true,
-    },
-    level: 4,
-    progressPercent: 72,
-    quizzesCount: 8,
-    totalModules: 14,
-    duration: '8.5 hrs',
-    xpPoints: 2450,
-    cardColor: 'from-[#321c10] via-[#22140b] to-[#140c06]',
-    accentGradient: 'from-orange-500 via-amber-500 to-yellow-500',
-    tag: 'Active Track',
-    artworkIcon: '🤖',
-    description: 'Master high-availability distributed systems, multi-region cloud resilience, and level-gated enterprise microservices.',
-    modules: [
-      { id: 'm1', title: 'Core Cloud Resilience & Multi-Region VPCs', duration: '45m', isQuiz: false, completed: true },
-      { id: 'm2', title: 'Scalable API Gateways & Edge Routing', duration: '55m', isQuiz: false, completed: true },
-      { id: 'm3', title: 'Check: Cloud Architecture Diagnostic', duration: '20m', isQuiz: true, completed: true },
-      { id: 'm4', title: 'Distributed Event-Driven Queues with Kafka', duration: '1h 10m', isQuiz: false, completed: false },
-      { id: 'm5', title: 'Final Gate: Byzantine Fault Recovery Audit', duration: '35m', isQuiz: true, completed: false },
-    ],
-  },
-  {
-    id: 'ts-patterns',
-    title: 'Advanced TypeScript Patterns',
-    subtitle: 'Type-Level Metaprogramming',
-    instructor: {
-      name: 'Andrew Paul',
-      handle: '@andrew_type',
-      avatar: 'AP',
-      verified: true,
-    },
-    level: 7,
-    progressPercent: 58,
-    quizzesCount: 6,
-    totalModules: 12,
-    duration: '6.0 hrs',
-    xpPoints: 1850,
-    cardColor: 'from-[#1a2336] via-[#121927] to-[#0c101a]',
-    accentGradient: 'from-blue-500 via-indigo-500 to-cyan-400',
-    tag: 'Trending',
-    artworkIcon: '👾',
-    description: 'Master template literal combinators, recursive type gymnastics, and compiler-level invariant typing.',
-    modules: [
-      { id: 't1', title: 'Generics, Constraints & Invariant Typing', duration: '40m', isQuiz: false, completed: true },
-      { id: 't2', title: 'Conditional Types & Infer Keyword', duration: '50m', isQuiz: false, completed: true },
-      { id: 't3', title: 'Template Literal Type Systems', duration: '1h 05m', isQuiz: false, completed: false },
-      { id: 't4', title: 'Compiler-Level Validation Benchmark', duration: '30m', isQuiz: true, completed: false },
-    ],
-  },
-  {
-    id: 'postgres-opt',
-    title: 'High-Throughput PostgreSQL',
-    subtitle: 'Distributed Sharding & Indexing',
-    instructor: {
-      name: 'Sarah Lin',
-      handle: '@sarah_db',
-      avatar: 'SL',
-      verified: true,
-    },
-    level: 5,
-    progressPercent: 45,
-    quizzesCount: 5,
-    totalModules: 10,
-    duration: '5.5 hrs',
-    xpPoints: 1620,
-    cardColor: 'from-[#102b20] via-[#0c1e16] to-[#07130e]',
-    accentGradient: 'from-emerald-500 via-teal-500 to-green-400',
-    tag: 'Staff Pick',
-    artworkIcon: '💾',
-    description: 'Deep dive on EXPLAIN ANALYZE, composite B-tree indexing, connection pooling, and MVCC bloat prevention.',
-    modules: [
-      { id: 'p1', title: 'Execution Plans & Index Selection Internals', duration: '50m', isQuiz: false, completed: true },
-      { id: 'p2', title: 'Partitioning & PgBouncer Pool Setup', duration: '1h 15m', isQuiz: false, completed: false },
-      { id: 'p3', title: 'Benchmark: High-Volume Query Optimization', duration: '35m', isQuiz: true, completed: false },
-    ],
-  },
-  {
-    id: 'k8s-prod',
-    title: 'Kubernetes in Production',
-    subtitle: 'Zero-Downtime Microservices',
-    instructor: {
-      name: 'Marcus Vance',
-      handle: '@marcus_ops',
-      avatar: 'MV',
-      verified: true,
-    },
-    level: 6,
-    progressPercent: 30,
-    quizzesCount: 4,
-    totalModules: 8,
-    duration: '4.0 hrs',
-    xpPoints: 1400,
-    cardColor: 'from-[#302416] via-[#21180e] to-[#140e08]',
-    accentGradient: 'from-amber-600 via-orange-600 to-yellow-500',
-    tag: 'Essential',
-    artworkIcon: '☸️',
-    description: 'Container lifecycle, rolling updates, pod autoscaling, ingress controllers, and secrets rotation.',
-    modules: [
-      { id: 'k1', title: 'Multi-stage Docker Builds & Minimal Images', duration: '40m', isQuiz: false, completed: true },
-      { id: 'k2', title: 'Pods, ReplicaSets & Deployments', duration: '1h 00m', isQuiz: false, completed: false },
-      { id: 'k3', title: 'Production Cluster Resilience Quiz', duration: '30m', isQuiz: true, completed: false },
-    ],
-  },
-];
-
-interface HistoryItem {
-  id: string;
-  eventType: 'evaluation' | 'module' | 'milestone' | 'quiz' | 'enroll';
-  eventLabel: string;
-  courseTitle: string;
-  instructorAvatar: string;
-  instructorName: string;
-  lessonsOrCount: string;
-  scoreOrXp: string;
-  date: string;
-  badgeColor: string;
-}
-
-const historyItems: HistoryItem[] = [
-  {
-    id: 'h1',
-    eventType: 'evaluation',
-    eventLabel: 'Evaluation Passed',
-    courseTitle: 'Cloud Systems Architecture',
-    instructorAvatar: 'LC',
-    instructorName: 'Lynn Chang',
-    lessonsOrCount: 'Gate 4',
-    scoreOrXp: '94% • +150 XP',
-    date: '21/08',
-    badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
-  },
-  {
-    id: 'h2',
-    eventType: 'module',
-    eventLabel: 'Module Completed',
-    courseTitle: 'Template Literal Type Systems',
-    instructorAvatar: 'AP',
-    instructorName: 'Andrew Paul',
-    lessonsOrCount: '7 lessons',
-    scoreOrXp: '11,3 XP',
-    date: '12/07',
-    badgeColor: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
-  },
-  {
-    id: 'h3',
-    eventType: 'milestone',
-    eventLabel: 'Skill Passport Gate',
-    instructorAvatar: 'SL',
-    instructorName: 'Sarah Lin',
-    courseTitle: 'PostgreSQL Distributed Shards',
-    lessonsOrCount: '1 cert',
-    scoreOrXp: '2,56 ETH (XP)',
-    date: '04/01',
-    badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-  },
-  {
-    id: 'h4',
-    eventType: 'quiz',
-    eventLabel: 'Diagnostic Quiz',
-    instructorAvatar: 'MV',
-    instructorName: 'Marcus Vance',
-    courseTitle: 'Kubernetes Pod Topology',
-    lessonsOrCount: '3 quizzes',
-    scoreOrXp: '6,51 XP',
-    date: '24/02',
-    badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
-  },
-];
 
 const CARD_PALETTES = [
   {
@@ -239,7 +68,7 @@ function getCourseArtworkIcon(category = '', title = ''): string {
   const text = `${category} ${title}`.toLowerCase();
   if (text.includes('ai') || text.includes('machine learning') || text.includes('neural') || text.includes('deep learning')) return '🧠';
   if (text.includes('type') || text.includes('react') || text.includes('frontend') || text.includes('web')) return '👾';
-  if (text.includes('postgres') || text.includes('sql') || text.includes('database') || text.includes('data')) return '💾';
+  if (text.includes('postgres') || text.includes('sql') || text.includes('database') || text.includes('data') || text.includes('algorithm')) return '💾';
   if (text.includes('k8s') || text.includes('kubernetes') || text.includes('cloud') || text.includes('docker') || text.includes('devops')) return '☸️';
   if (text.includes('security') || text.includes('cyber') || text.includes('auth')) return '🛡️';
   if (text.includes('python')) return '🐍';
@@ -271,29 +100,49 @@ function parseLevelNumber(lvl: any): number {
   return 4;
 }
 
-function mapAdminCourseToFanned(adminCourse: any, index: number): FannedCourse {
+function mapAdminCourseToFanned(
+  adminCourse: any,
+  index: number,
+  isEnrolled: boolean = false,
+  completedModuleIds: string[] = []
+): FannedCourse {
   const palette = CARD_PALETTES[index % CARD_PALETTES.length];
-  const totalMods = Array.isArray(adminCourse.modules) && adminCourse.modules.length > 0
-    ? adminCourse.modules.length
-    : 6;
-
   const rawModules = Array.isArray(adminCourse.modules) && adminCourse.modules.length > 0
     ? adminCourse.modules
     : [
-        { id: `${adminCourse.id}-m1`, title: 'Core Foundations & Setup', duration: '45m', isQuiz: false, completed: true },
-        { id: `${adminCourse.id}-m2`, title: 'Architecture & Implementation', duration: '1h 00m', isQuiz: false, completed: false },
-        { id: `${adminCourse.id}-m3`, title: 'Diagnostic Milestone Check', duration: '25m', isQuiz: true, completed: false },
-        { id: `${adminCourse.id}-m4`, title: 'Production Best Practices', duration: '50m', isQuiz: false, completed: false },
-        { id: `${adminCourse.id}-m5`, title: 'Mastery Certification Audit', duration: '35m', isQuiz: true, completed: false },
+        { id: `${adminCourse.id}-m1`, title: 'Core Foundations & Architecture', duration: '45m', isQuiz: false, completed: false },
+        { id: `${adminCourse.id}-m2`, title: 'Hands-on Implementation & Patterns', duration: '50m', isQuiz: false, completed: false },
+        { id: `${adminCourse.id}-m3`, title: 'Diagnostic Milestone Evaluation', duration: '25m', isQuiz: true, completed: false },
+        { id: `${adminCourse.id}-m4`, title: 'Production Hardening & Scale', duration: '45m', isQuiz: false, completed: false },
+        { id: `${adminCourse.id}-m5`, title: 'Mastery Gate & Certification', duration: '35m', isQuiz: true, completed: false },
       ];
 
-  const modules = rawModules.map((m: any, mIdx: number) => ({
-    id: m.id || `${adminCourse.id}-m${mIdx + 1}`,
-    title: m.title || `Module ${mIdx + 1}: Key Principles`,
-    duration: m.duration || m.readTime || (m.video?.duration) || `${35 + (mIdx * 10) % 35}m`,
-    isQuiz: Boolean(m.isQuiz || (Array.isArray(m.flashcards) && m.flashcards.length > 0) || mIdx % 3 === 2),
-    completed: Boolean(m.completed || mIdx === 0),
-  }));
+  const totalMods = rawModules.length;
+  const completedSet = new Set(completedModuleIds);
+
+  const modules = rawModules.map((m: any, mIdx: number) => {
+    const modMinutes = estimateModuleMinutes(m);
+    const modId = m.id || `${adminCourse.id}-m${mIdx + 1}`;
+    const isCompleted = isEnrolled && (completedSet.has(modId) || Boolean(m.completed && completedModuleIds.length === 0));
+
+    return {
+      id: modId,
+      title: m.title || `Module ${mIdx + 1}: Key Principles`,
+      duration: formatMinutesToDuration(modMinutes),
+      isQuiz: Boolean(m.isQuiz || (Array.isArray(m.flashcards) && m.flashcards.length > 0) || mIdx % 3 === 2),
+      completed: isCompleted,
+    };
+  });
+
+  const durationData = calculateCourseDuration({ modules, duration: adminCourse.duration });
+  const progressData = calculateCourseLiteralProgress({
+    courseId: adminCourse.id,
+    modules,
+    totalModules: totalMods,
+    isEnrolled,
+    completedModuleIds,
+    storedProgress: adminCourse.progressPercent,
+  });
 
   const instructorName = typeof adminCourse.instructor === 'object' && adminCourse.instructor?.name
     ? adminCourse.instructor.name
@@ -311,14 +160,8 @@ function mapAdminCourseToFanned(adminCourse: any, index: number): FannedCourse {
     ? adminCourse.instructor.avatar
     : getInstructorInitials(instructorName);
 
-  const quizzesCount = modules.filter((m: any) => m.isQuiz).length || Math.max(2, Math.floor(totalMods * 0.4));
+  const quizzesCount = modules.filter((m: any) => m.isQuiz).length || Math.max(1, Math.floor(totalMods * 0.4));
   const xpPoints = adminCourse.xp || (totalMods * 175 + 400);
-
-  let durationStr = adminCourse.duration || `${(totalMods * 1.1).toFixed(1)} hrs`;
-  if (typeof durationStr === 'string' && durationStr.toLowerCase().includes('week')) {
-    const weeks = parseInt(durationStr, 10) || 4;
-    durationStr = `${(weeks * 2.5).toFixed(1)} hrs`;
-  }
 
   return {
     id: String(adminCourse.id),
@@ -331,12 +174,10 @@ function mapAdminCourseToFanned(adminCourse: any, index: number): FannedCourse {
       verified: true,
     },
     level: parseLevelNumber(adminCourse.level),
-    progressPercent: adminCourse.progressPercent !== undefined
-      ? Number(adminCourse.progressPercent)
-      : (adminCourse.enrolled ? Math.min(80, (adminCourse.enrolled % 50) + 25) : 35),
+    progressPercent: progressData.progressPercent,
     quizzesCount,
     totalModules: totalMods,
-    duration: durationStr,
+    duration: durationData.formatted,
     xpPoints,
     cardColor: palette.cardColor,
     accentGradient: palette.accentGradient,
@@ -347,18 +188,129 @@ function mapAdminCourseToFanned(adminCourse: any, index: number): FannedCourse {
   };
 }
 
+export const initialAdminCourses: FannedCourse[] = mockCourses
+  .filter((c: any) => c.status !== 'Archived')
+  .map((c: any, idx: number) => mapAdminCourseToFanned(c, idx));
+
+const fannedCourses: FannedCourse[] = initialAdminCourses;
+
+interface HistoryItem {
+  id: string;
+  eventType: 'evaluation' | 'module' | 'milestone' | 'quiz' | 'enroll';
+  eventLabel: string;
+  courseTitle: string;
+  instructorAvatar: string;
+  instructorName: string;
+  lessonsOrCount: string;
+  scoreOrXp: string;
+  date: string;
+  badgeColor: string;
+}
+
+const historyItems: HistoryItem[] = [
+  {
+    id: 'h1',
+    eventType: 'evaluation',
+    eventLabel: 'Evaluation Passed',
+    courseTitle: 'Machine Learning Fundamentals',
+    instructorAvatar: 'MF',
+    instructorName: 'Mentora Faculty',
+    lessonsOrCount: 'Gate 1',
+    scoreOrXp: '94% • +150 XP',
+    date: '21/08',
+    badgeColor: 'text-emerald-700 bg-emerald-50 border-emerald-300 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20',
+  },
+  {
+    id: 'h2',
+    eventType: 'module',
+    eventLabel: 'Module Completed',
+    courseTitle: 'Full-Stack Web Development with React',
+    instructorAvatar: 'PG',
+    instructorName: 'Pixel Guru',
+    lessonsOrCount: '3 modules',
+    scoreOrXp: '1,200 XP',
+    date: '12/07',
+    badgeColor: 'text-blue-700 bg-blue-50 border-blue-300 dark:text-blue-400 dark:bg-blue-500/10 dark:border-blue-500/20',
+  },
+  {
+    id: 'h3',
+    eventType: 'milestone',
+    eventLabel: 'Skill Passport Gate',
+    instructorAvatar: 'AP',
+    instructorName: 'Algo Master',
+    courseTitle: 'Data Structures & Algorithms',
+    lessonsOrCount: '1 cert',
+    scoreOrXp: '1,500 XP',
+    date: '04/01',
+    badgeColor: 'text-amber-800 bg-amber-50 border-amber-300 dark:text-amber-400 dark:bg-amber-500/10 dark:border-amber-500/20',
+  },
+];
+
 export default function CoursesPage() {
   const { isBright } = useTheme();
   const [allCourses, setAllCourses] = useState<FannedCourse[]>(fannedCourses);
   const [selectedCourseIndex, setSelectedCourseIndex] = useState<number>(0);
   const [hoveredCourseIndex, setHoveredCourseIndex] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'recommended' | 'saved'>('recommended');
-  const [savedCourseIds, setSavedCourseIds] = useState<string[]>(['postgres-opt', 'cloud-architect']);
+  const [savedCourseIds, setSavedCourseIds] = useState<string[]>(['crs_1']);
   const [historyFilter, setHistoryFilter] = useState<'all' | 'eval' | 'milestone'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [syllabusModalOpen, setSyllabusModalOpen] = useState(false);
   const [enrollModalOpen, setEnrollModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const [enrolledCourseIds, setEnrolledCourseIds] = useState<Record<string, boolean>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('mentora_enrolled_courses');
+        if (raw) return JSON.parse(raw);
+      } catch {}
+    }
+    return { 'crs_1': true };
+  });
+
+  const [completedModulesMap, setCompletedModulesMap] = useState<Record<string, string[]>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('mentora_completed_modules');
+        if (raw) return JSON.parse(raw);
+      } catch {}
+    }
+    return {
+      'crs_1': ['mod_1'],
+    };
+  });
+
+  // Sync enrolled courses & progress from database
+  useEffect(() => {
+    async function loadDatabaseProgress() {
+      try {
+        const res = await fetch('/api/courses/progress');
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.progressMap && Object.keys(data.progressMap).length > 0) {
+            const newEnrolled: Record<string, boolean> = {};
+            const newCompleted: Record<string, string[]> = {};
+            for (const [cId, pData] of Object.entries<any>(data.progressMap)) {
+              if (pData.enrolled) newEnrolled[cId] = true;
+              if (Array.isArray(pData.completedModules) && pData.completedModules.length > 0) {
+                newCompleted[cId] = pData.completedModules;
+              }
+            }
+            if (Object.keys(newEnrolled).length > 0) {
+              setEnrolledCourseIds((prev) => ({ ...prev, ...newEnrolled }));
+            }
+            if (Object.keys(newCompleted).length > 0) {
+              setCompletedModulesMap((prev) => ({ ...prev, ...newCompleted }));
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to load courses progress from database:', err);
+      }
+    }
+    loadDatabaseProgress();
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -368,22 +320,13 @@ export default function CoursesPage() {
         const stored = await courseService.getCourses();
         if (!isMounted) return;
 
-        const published = (stored || []).filter((c: any) => c.status === 'Published');
-        if (published.length === 0) return;
-
-        const mapped = published.map((c: any, idx: number) =>
-          mapAdminCourseToFanned(c, idx)
-        );
-
-        // Deduplicate against static demo courses by id or normalized title
-        const publishedIds = new Set(mapped.map((c) => c.id.toLowerCase()));
-        const publishedTitles = new Set(mapped.map((c) => c.title.toLowerCase().trim()));
-
-        const remainingDemo = fannedCourses.filter(
-          (c) => !publishedIds.has(c.id.toLowerCase()) && !publishedTitles.has(c.title.toLowerCase().trim())
-        );
-
-        setAllCourses([...mapped, ...remainingDemo]);
+        const adminCreated = (stored || []).filter((c: any) => c.status !== 'Archived');
+        if (adminCreated.length > 0) {
+          const mapped = adminCreated.map((c: any, idx: number) =>
+            mapAdminCourseToFanned(c, idx)
+          );
+          setAllCourses(mapped);
+        }
       } catch (err) {
         console.error('Failed to load published courses:', err);
       }
@@ -395,25 +338,150 @@ export default function CoursesPage() {
       if (e.key === 'mentora_admin_courses_v2') {
         loadPublishedCourses();
       }
+      if (e.key === 'mentora_enrolled_courses') {
+        try {
+          const raw = localStorage.getItem('mentora_enrolled_courses');
+          if (raw) setEnrolledCourseIds(JSON.parse(raw));
+        } catch {}
+      }
+      if (e.key === 'mentora_completed_modules') {
+        try {
+          const raw = localStorage.getItem('mentora_completed_modules');
+          if (raw) setCompletedModulesMap(JSON.parse(raw));
+        } catch {}
+      }
     };
 
     const handleCustomUpdate = () => {
       loadPublishedCourses();
     };
 
+    const handleEnrolledUpdate = (e: any) => {
+      if (e?.detail) setEnrolledCourseIds(e.detail);
+    };
+
     window.addEventListener('storage', handleStorage);
     window.addEventListener('mentora_courses_updated', handleCustomUpdate);
+    window.addEventListener('mentora_enrolled_updated', handleEnrolledUpdate);
 
     return () => {
       isMounted = false;
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener('mentora_courses_updated', handleCustomUpdate);
+      window.removeEventListener('mentora_enrolled_updated', handleEnrolledUpdate);
     };
   }, []);
 
+  const toggleModuleCompletion = async (courseId: string, moduleId: string) => {
+    const currentCompleted = completedModulesMap[courseId] || [];
+    const isCompleted = currentCompleted.includes(moduleId);
+    const nextCompleted = isCompleted
+      ? currentCompleted.filter((id) => id !== moduleId)
+      : [...currentCompleted, moduleId];
+
+    const nextMap = { ...completedModulesMap, [courseId]: nextCompleted };
+    setCompletedModulesMap(nextMap);
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('mentora_completed_modules', JSON.stringify(nextMap));
+      } catch {}
+    }
+
+    // Ensure marked enrolled when completing modules
+    if (!enrolledCourseIds[courseId]) {
+      const nextEnrolled = { ...enrolledCourseIds, [courseId]: true };
+      setEnrolledCourseIds(nextEnrolled);
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('mentora_enrolled_courses', JSON.stringify(nextEnrolled));
+          window.dispatchEvent(new CustomEvent('mentora_enrolled_updated', { detail: nextEnrolled }));
+        } catch {}
+      }
+    }
+
+    // Sync to database
+    try {
+      const target = allCourses.find((c) => c.id === courseId);
+      const total = target?.modules?.length || 4;
+      await fetch('/api/courses/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId,
+          moduleId,
+          completed: !isCompleted,
+          totalModules: total,
+        }),
+      });
+    } catch (err) {
+      console.warn('Failed to sync module progress to database:', err);
+    }
+
+    setToastMessage(
+      !isCompleted
+        ? '✓ Module marked as completed! Progress bar updated.'
+        : 'Module marked as incomplete.'
+    );
+  };
+
+  const enrollInCourse = async (courseId: string, courseTitle: string) => {
+    const nextEnrolled = { ...enrolledCourseIds, [courseId]: true };
+    setEnrolledCourseIds(nextEnrolled);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('mentora_enrolled_courses', JSON.stringify(nextEnrolled));
+        window.dispatchEvent(new CustomEvent('mentora_enrolled_updated', { detail: nextEnrolled }));
+      } catch {}
+    }
+
+    try {
+      await fetch('/api/courses/enroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId, action: 'enroll' }),
+      });
+    } catch (err) {
+      console.warn('Failed to persist enrollment to database:', err);
+    }
+
+    setToastMessage(`Enrolled in "${courseTitle}"! Starting at 0% progress.`);
+  };
+
+  // Derive literal progress and accurate duration for every course
+  const processedCourses = useMemo(() => {
+    return allCourses.map((c) => {
+      const isEnrolled = !!enrolledCourseIds[c.id];
+      const completedIds = completedModulesMap[c.id] || (isEnrolled ? c.modules.filter((m) => m.completed).map((m) => m.id) : []);
+
+      const progressData = calculateCourseLiteralProgress({
+        courseId: c.id,
+        modules: c.modules,
+        totalModules: c.modules.length,
+        isEnrolled,
+        completedModuleIds: completedIds,
+      });
+
+      const durationData = calculateCourseDuration({ modules: c.modules, duration: c.duration });
+
+      const updatedModules = c.modules.map((m) => ({
+        ...m,
+        completed: isEnrolled && completedIds.includes(m.id),
+      }));
+
+      return {
+        ...c,
+        totalModules: c.modules.length,
+        duration: durationData.formatted,
+        progressPercent: progressData.progressPercent,
+        modules: updatedModules,
+      };
+    });
+  }, [allCourses, enrolledCourseIds, completedModulesMap]);
+
   const baseCourses = viewMode === 'saved'
-    ? allCourses.filter((c) => savedCourseIds.includes(c.id))
-    : allCourses;
+    ? processedCourses.filter((c) => savedCourseIds.includes(c.id))
+    : processedCourses;
 
   const displayedCourses = searchQuery.trim()
     ? baseCourses.filter((c) =>
@@ -497,13 +565,11 @@ export default function CoursesPage() {
                   }}
                   className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
                     viewMode === 'recommended'
-                      ? 'bg-white text-zinc-900 shadow-sm'
-                      : 'text-zinc-400 hover:text-zinc-200'
+                      ? 'bg-[#FF6B35] text-white shadow-md shadow-orange-500/25'
+                      : isBright
+                      ? 'text-stone-700 hover:text-[#C2410C]'
+                      : 'text-zinc-400 hover:text-white'
                   }`}
-                  style={{
-                    background: viewMode === 'recommended' ? (isBright ? '#1C1917' : '#FFFFFF') : 'transparent',
-                    color: viewMode === 'recommended' ? (isBright ? '#FFFFFF' : '#1C1917') : undefined,
-                  }}
                 >
                   Recommended Courses
                 </button>
@@ -515,13 +581,11 @@ export default function CoursesPage() {
                   }}
                   className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
                     viewMode === 'saved'
-                      ? 'bg-white text-zinc-900 shadow-sm'
-                      : 'text-zinc-400 hover:text-zinc-200'
+                      ? 'bg-[#FF6B35] text-white shadow-md shadow-orange-500/25'
+                      : isBright
+                      ? 'text-stone-700 hover:text-[#C2410C]'
+                      : 'text-zinc-400 hover:text-white'
                   }`}
-                  style={{
-                    background: viewMode === 'saved' ? (isBright ? '#1C1917' : '#FFFFFF') : 'transparent',
-                    color: viewMode === 'saved' ? (isBright ? '#FFFFFF' : '#1C1917') : undefined,
-                  }}
                 >
                   Saved Courses
                 </button>
@@ -540,7 +604,7 @@ export default function CoursesPage() {
                   className="w-full pl-9 pr-4 py-2 rounded-full text-xs outline-none border transition-all focus:ring-2 focus:ring-orange-500/40"
                   style={{
                     background: isBright ? '#FFFFFF' : '#1F1711',
-                    borderColor: cardBorder,
+                    borderColor: isBright ? '#FDBA74' : cardBorder,
                     color: textPrimary,
                   }}
                 />
@@ -553,11 +617,7 @@ export default function CoursesPage() {
               <button
                 type="button"
                 onClick={() => setEnrollModalOpen(true)}
-                className="px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 shadow-md flex items-center gap-1.5 shrink-0"
-                style={{
-                  background: isBright ? '#1C1917' : '#FFFFFF',
-                  color: isBright ? '#FFFFFF' : '#1C1917',
-                }}
+                className="px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 shadow-md flex items-center gap-1.5 shrink-0 bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] text-white hover:brightness-110 shadow-orange-500/25"
               >
                 <span>+</span>
                 <span>Enroll Course</span>
@@ -642,6 +702,7 @@ export default function CoursesPage() {
                                 : 'translateY(0px) scale(1)',
                               transition: 'all 450ms cubic-bezier(0.22, 1, 0.36, 1)',
                             }}
+                            data-dark-card="true"
                             className={`absolute w-[220px] sm:w-[235px] h-[310px] sm:h-[325px] rounded-[28px] p-4 flex flex-col justify-between border cursor-pointer select-none shadow-2xl backdrop-blur-md transition-all duration-300 ${
                               isSelected
                                 ? 'ring-2 ring-orange-500/70 shadow-2xl shadow-orange-500/25 border-orange-400/50'
@@ -670,32 +731,32 @@ export default function CoursesPage() {
                             <div className="flex items-center justify-between gap-1.5 p-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
                               <div className="flex items-center gap-1.5 min-w-0">
                                 <span className="text-base shrink-0">{course.artworkIcon}</span>
-                                <span className="text-[11px] font-bold text-white truncate">
+                                <span className="text-[11px] font-bold truncate text-white" style={{ color: '#FFFFFF' }}>
                                   {course.instructor.name}
                                 </span>
                                 {course.instructor.verified && (
                                   <span className="text-[10px] text-sky-400 shrink-0">✓</span>
                                 )}
                               </div>
-                              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-white/10 text-orange-400 border border-orange-500/20 shrink-0">
+                              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-white/10 text-amber-300 border border-amber-400/30 shrink-0" style={{ color: '#FDE047' }}>
                                 LVL {course.level}
                               </span>
                             </div>
 
                             {/* Course Name Title Section */}
                             <div className="space-y-1 my-1">
-                              <span className="text-[10px] font-mono font-bold text-orange-400 uppercase tracking-wider block">
+                              <span className="text-[10px] font-mono font-bold uppercase tracking-wider block" style={{ color: '#FB923C' }}>
                                 {course.tag}
                               </span>
-                              <h3 className="text-sm sm:text-base font-black text-white leading-tight line-clamp-2 tracking-tight">
+                              <h3 className="text-sm sm:text-base font-black leading-tight line-clamp-2 tracking-tight text-white" style={{ color: '#FFFFFF' }}>
                                 {course.title}
                               </h3>
 
                               {/* Progress bar */}
                               <div className="pt-1.5 space-y-1">
                                 <div className="flex justify-between text-[10px] font-mono">
-                                  <span className="text-zinc-400">Progress</span>
-                                  <span className="text-white font-bold">{course.progressPercent}%</span>
+                                  <span style={{ color: '#A1A1AA' }}>Progress</span>
+                                  <span className="font-bold text-white" style={{ color: '#FFFFFF' }}>{course.progressPercent}%</span>
                                 </div>
                                 <div className="w-full h-1.5 bg-black/50 rounded-full overflow-hidden border border-white/5">
                                   <div
@@ -709,15 +770,15 @@ export default function CoursesPage() {
                             {/* Key Specs: Number of Modules & Time Duration */}
                             <div className="grid grid-cols-2 gap-1.5 py-1.5 px-2 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 text-left">
                               <div className="space-y-0.5">
-                                <span className="text-[9px] uppercase tracking-wider text-zinc-400 font-mono block">Modules</span>
-                                <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-white">
+                                <span className="text-[9px] uppercase tracking-wider font-mono block" style={{ color: '#A1A1AA' }}>Modules</span>
+                                <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-white" style={{ color: '#FFFFFF' }}>
                                   <span>📚</span>
                                   <span>{course.totalModules} Modules</span>
                                 </div>
                               </div>
                               <div className="space-y-0.5 border-l border-white/10 pl-2">
-                                <span className="text-[9px] uppercase tracking-wider text-zinc-400 font-mono block">Duration</span>
-                                <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-amber-300">
+                                <span className="text-[9px] uppercase tracking-wider font-mono block" style={{ color: '#A1A1AA' }}>Duration</span>
+                                <div className="flex items-center gap-1 text-[11px] font-mono font-bold" style={{ color: '#FDE047' }}>
                                   <span>⏱️</span>
                                   <span>{course.duration}</span>
                                 </div>
@@ -969,6 +1030,41 @@ export default function CoursesPage() {
                     </p>
                   </div>
 
+                  {/* Literal Progress & Duration Bar */}
+                  <div
+                    className="p-3.5 rounded-2xl border space-y-2.5 transition-all shadow-xs"
+                    style={{
+                      background: isBright ? '#FAF4EE' : 'rgba(0, 0, 0, 0.4)',
+                      borderColor: isBright ? 'rgba(234, 88, 12, 0.18)' : 'rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span style={{ color: isBright ? '#44403C' : '#A1A1AA' }}>Course Progress</span>
+                      <span className="font-bold" style={{ color: isBright ? '#1C1917' : '#FFFFFF' }}>{activeCourse.progressPercent}%</span>
+                    </div>
+                    <div
+                      className="w-full h-2 rounded-full overflow-hidden border"
+                      style={{
+                        background: isBright ? '#EADDCF' : 'rgba(0, 0, 0, 0.6)',
+                        borderColor: isBright ? 'rgba(234, 88, 12, 0.1)' : 'rgba(255, 255, 255, 0.05)',
+                      }}
+                    >
+                      <div
+                        className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 rounded-full transition-all duration-500"
+                        style={{ width: `${activeCourse.progressPercent}%` }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] font-mono pt-0.5">
+                      <span className="flex items-center gap-1">
+                        <span>⏱️</span>
+                        <span className="font-bold" style={{ color: isBright ? '#C2410C' : '#FDE047' }}>{activeCourse.duration}</span>
+                      </span>
+                      <span style={{ color: isBright ? '#57534E' : '#D4D4D8' }}>
+                        {activeCourse.modules.filter((m) => m.completed).length}/{activeCourse.totalModules} modules completed
+                      </span>
+                    </div>
+                  </div>
+
                   {/* Interactive Action Pills Bar */}
                   <div className="flex items-center gap-2 sm:gap-3">
                     
@@ -976,17 +1072,26 @@ export default function CoursesPage() {
                     <button
                       type="button"
                       onClick={() => setSyllabusModalOpen(true)}
-                      className="flex items-center gap-2 px-4 py-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-xs font-mono font-bold transition-all hover:bg-black/50"
-                      style={{ color: textPrimary }}
+                      className="flex items-center gap-2 px-4 py-3 rounded-full border text-xs font-mono font-bold transition-all shadow-sm active:scale-95"
+                      style={{
+                        background: isBright ? '#FFFFFF' : 'rgba(0, 0, 0, 0.3)',
+                        borderColor: isBright ? '#FDBA74' : 'rgba(255, 255, 255, 0.1)',
+                        color: isBright ? '#1C1917' : textPrimary,
+                      }}
+                      onMouseEnter={(e) => {
+                        if (isBright) e.currentTarget.style.background = '#FFF0E5';
+                      }}
+                      onMouseLeave={(e) => {
+                        if (isBright) e.currentTarget.style.background = '#FFFFFF';
+                      }}
                     >
                       <span>📚</span>
                       <span>{activeCourse.totalModules} Modules</span>
                     </button>
 
-                    {/* Big Primary Pill Button */}
-                    <button
-                      type="button"
-                      onClick={() => setSyllabusModalOpen(true)}
+                    {/* Big Primary Pill Button: Opens interactive Roadmap page */}
+                    <Link
+                      href={`/dashboard/journeys/${activeCourse.id}`}
                       className="flex-1 py-3 px-5 rounded-full text-xs sm:text-sm font-bold shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 text-white hover:brightness-110"
                       style={{
                         background: 'linear-gradient(135deg, #FF6B35 0%, #E85D2C 100%)',
@@ -996,7 +1101,7 @@ export default function CoursesPage() {
                       <span>{activeCourse.xpPoints} XP</span>
                       <span>•</span>
                       <span>Continue Course →</span>
-                    </button>
+                    </Link>
 
                     {/* Bookmark Pill */}
                     <button
@@ -1097,11 +1202,21 @@ export default function CoursesPage() {
                           Quiz (≥70%)
                         </span>
                       )}
-                      {m.completed ? (
-                        <span className="text-emerald-500 font-bold">✓ Done</span>
-                      ) : (
-                        <span className="text-orange-500 font-semibold">Start</span>
-                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleModuleCompletion(activeCourse.id, m.id);
+                        }}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                          m.completed
+                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30'
+                            : 'bg-orange-500/15 text-orange-500 border border-orange-500/30 hover:bg-orange-500/25'
+                        }`}
+                        title={m.completed ? 'Click to mark incomplete' : 'Click to mark completed'}
+                      >
+                        {m.completed ? '✓ Completed' : 'Mark Done'}
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -1117,15 +1232,26 @@ export default function CoursesPage() {
               >
                 Close
               </button>
+              <Link
+                href={`/dashboard/journeys/${activeCourse.id}`}
+                className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#FF6B35] text-white shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-1.5"
+              >
+                <span>Enter Roadmap View →</span>
+              </Link>
               <button
                 type="button"
                 onClick={() => {
-                  alert(`Launching Module: ${activeCourse.modules[0].title}!`);
-                  setSyllabusModalOpen(false);
+                  const nextIncomplete = activeCourse.modules.find((m) => !m.completed);
+                  if (nextIncomplete) {
+                    toggleModuleCompletion(activeCourse.id, nextIncomplete.id);
+                    setToastMessage(`Completed module "${nextIncomplete.title}"! Progress updated.`);
+                  } else {
+                    setToastMessage(`All modules completed for ${activeCourse.title}! 🎉`);
+                  }
                 }}
-                className="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] text-white shadow-md hover:brightness-110"
+                className="px-6 py-2.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/15 text-white border border-white/20 transition-all active:scale-95"
               >
-                Resume Active Drill →
+                {activeCourse.modules.some((m) => !m.completed) ? 'Complete Next Drill →' : 'Course Completed 🏆'}
               </button>
             </div>
           </div>
@@ -1170,10 +1296,10 @@ export default function CoursesPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setToastMessage(`Enrolled in "${c.title}"! Added to your recent courses.`);
+                      enrollInCourse(c.id, c.title);
                       setEnrollModalOpen(false);
                     }}
-                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#FF6B35] text-white shadow-sm"
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#FF6B35] text-white shadow-sm hover:brightness-110 active:scale-95 transition-all"
                   >
                     Enroll Free
                   </button>

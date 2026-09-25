@@ -14,16 +14,30 @@ export async function GET(request: NextRequest) {
         // Ignore invalid session
       }
     }
-    const usersSnapshot = await adminDb.collection('users').orderBy('totalPoints', 'desc').get();
-    
-    // In case we don't have totalPoints index yet, let's just fetch all and sort
     let allUsers: any[] = [];
-    if (usersSnapshot.empty) {
-       const snapshot = await adminDb.collection('users').get();
-       allUsers = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
-       allUsers.sort((a: any, b: any) => (b.totalPoints || 0) - (a.totalPoints || 0));
-    } else {
-       allUsers = usersSnapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    try {
+      const usersSnapshot = await adminDb.collection('users').orderBy('totalPoints', 'desc').get();
+      if (!usersSnapshot.empty) {
+        allUsers = usersSnapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+      } else {
+        const snapshot = await adminDb.collection('users').get();
+        allUsers = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+        allUsers.sort((a: any, b: any) => (b.totalPoints || 0) - (a.totalPoints || 0));
+      }
+    } catch (dbErr) {
+      console.warn('Firestore query for leaderboard unavailable, using mock data:', dbErr);
+    }
+
+    // Fallback to mockLeaderboard if database has no users or failed
+    if (allUsers.length === 0) {
+      const { mockLeaderboard } = await import('@/lib/admin/data/mockLeaderboard');
+      allUsers = mockLeaderboard.map((m) => ({
+        id: m.id,
+        name: m.name,
+        totalPoints: m.points,
+        role: 'Professional Learner',
+        experienceLevel: 'intermediate',
+      }));
     }
 
     // Assign sequential ranks and badges

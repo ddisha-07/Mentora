@@ -31,6 +31,8 @@ function persistCourses(courses: any[]) {
   if (typeof window !== "undefined") {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(courses));
+      window.dispatchEvent(new CustomEvent("mentora_courses_updated", { detail: courses }));
+      window.dispatchEvent(new Event("storage"));
     } catch (err) {
       console.error("Failed to persist courses to localStorage:", err);
     }

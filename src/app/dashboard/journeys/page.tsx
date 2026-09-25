@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
+import { mockCourses } from '@/lib/admin/data/mockCourses';
+import * as courseService from '@/lib/admin/services/courseService';
+
 interface JourneyTrack {
   id: string;
   title: string;
@@ -23,98 +26,46 @@ interface JourneyTrack {
   gradient: string;
 }
 
-const initialJourneys: JourneyTrack[] = [
-  {
-    id: 'demo',
-    title: 'Full-Stack Cloud Architect',
-    category: 'architecture',
-    categoryLabel: 'Architecture',
-    targetRole: 'Lead Cloud Architect',
-    totalLevels: 10,
-    currentLevel: 4,
-    estimatedHours: 64,
-    completedHours: 39.5,
+function mapAdminCourseToTrack(c: any, index: number, isEnrolled: boolean = false): JourneyTrack {
+  const cat = (c.category || '').toLowerCase();
+  let category: JourneyTrack['category'] = 'ai';
+  if (cat.includes('web') || cat.includes('react') || cat.includes('frontend')) category = 'frontend';
+  else if (cat.includes('computer') || cat.includes('algorithm') || cat.includes('data structure') || cat.includes('backend')) category = 'backend';
+  else if (cat.includes('cloud') || cat.includes('devops')) category = 'devops';
+  else if (cat.includes('data')) category = 'data';
+  else if (cat.includes('system') || cat.includes('arch')) category = 'architecture';
+
+  const gradients = [
+    'from-orange-500 via-amber-500 to-yellow-500',
+    'from-blue-500 via-indigo-500 to-purple-600',
+    'from-emerald-500 via-teal-500 to-cyan-600',
+    'from-rose-500 via-pink-500 to-rose-600',
+  ];
+
+  return {
+    id: c.id,
+    title: c.title,
+    category,
+    categoryLabel: c.category || 'Professional Track',
+    targetRole: c.title.replace('Fundamentals', 'Engineer').replace('with React', 'Architect'),
+    totalLevels: 3,
+    currentLevel: isEnrolled || index === 0 ? 1 : 0,
+    estimatedHours: 35 + index * 10,
+    completedHours: index === 0 ? 14 : 0,
     rating: 4.95,
-    studentsCount: '1.8k',
-    status: 'active',
-    description:
-      'Master high-availability distributed systems, multi-region cloud resilience, and level-gated enterprise microservices.',
-    keySkills: ['Distributed Systems', 'AWS Solutions', 'Event-Driven Arch', 'Terraform', 'System Design'],
-    gradient: 'from-orange-500 via-amber-500 to-yellow-500',
-  },
-  {
-    id: 'backend-spec',
-    title: 'Senior Backend & Distributed Systems Specialist',
-    category: 'backend',
-    categoryLabel: 'Backend',
-    targetRole: 'Staff Backend Engineer',
-    totalLevels: 8,
-    currentLevel: 2,
-    estimatedHours: 48,
-    completedHours: 14,
-    rating: 4.9,
-    studentsCount: '2.4k',
-    status: 'active',
-    description:
-      'Go deep on high-throughput microservices, concurrency models, ACID vs BASE guarantees, and resilient database sharding.',
-    keySkills: ['Go / Rust', 'PostgreSQL', 'Kafka', 'gRPC', 'Distributed Locks'],
-    gradient: 'from-blue-500 via-indigo-500 to-purple-600',
-  },
-  {
-    id: 'ai-engineer',
-    title: 'AI Systems & LLM Application Engineer',
-    category: 'ai',
-    categoryLabel: 'AI & Data',
-    targetRole: 'Applied AI Engineer',
-    totalLevels: 6,
-    currentLevel: 0,
-    estimatedHours: 42,
-    completedHours: 0,
-    rating: 4.98,
-    studentsCount: '3.1k',
-    status: 'available',
-    description:
-      'Build end-to-end production RAG pipelines, fine-tuned agentic models, vector indexing at scale, and eval telemetry.',
-    keySkills: ['RAG Pipelines', 'LangChain', 'pgvector', 'Model Evals', 'Prompt Eng'],
-    gradient: 'from-emerald-500 via-teal-500 to-cyan-600',
-  },
-  {
-    id: 'devops-lead',
-    title: 'DevOps & Cloud-Native Platform Lead',
-    category: 'devops',
-    categoryLabel: 'DevOps & Cloud',
-    targetRole: 'Platform Engineering Lead',
-    totalLevels: 7,
-    currentLevel: 0,
-    estimatedHours: 38,
-    completedHours: 0,
-    rating: 4.88,
-    studentsCount: '1.2k',
-    status: 'available',
-    description:
-      'Orchestrate zero-downtime continuous deployment, GitOps with ArgoCD, OpenTelemetry observability, and Kubernetes clusters.',
-    keySkills: ['Kubernetes', 'ArgoCD', 'Prometheus', 'Helm', 'Zero-Trust IAM'],
-    gradient: 'from-rose-500 via-pink-500 to-rose-600',
-  },
-  {
-    id: 'frontend-architect',
-    title: 'Frontend Performance & Design Systems Architect',
-    category: 'frontend',
-    categoryLabel: 'Frontend',
-    targetRole: 'Staff Frontend Engineer',
-    totalLevels: 8,
-    currentLevel: 0,
-    estimatedHours: 36,
-    completedHours: 0,
-    rating: 4.92,
-    studentsCount: '1.9k',
-    status: 'available',
-    description:
-      'Scale enterprise design tokens, Web Vitals optimization, server-components rendering cycles, and fluid responsive layouts.',
-    keySkills: ['Next.js 15', 'Web Vitals', 'Design Tokens', 'Micro-Frontends', 'Tailwind'],
-    gradient: 'from-amber-500 via-orange-600 to-red-600',
-  },
-];
+    studentsCount: `${((c.enrolled || 1200) / 1000).toFixed(1)}k`,
+    status: isEnrolled || index === 0 ? 'active' : 'available',
+    description: c.description || 'Master real-world skills, architecture patterns, and verified milestone gates with Mentora.',
+    keySkills: Array.isArray(c.modules) && c.modules.length > 0
+      ? c.modules.slice(0, 5).map((m: any) => m.title?.split('&')?.[0]?.trim() || m.title)
+      : ['Core Foundations', 'Practical Mechanics', 'Scale & Architecture'],
+    gradient: gradients[index % gradients.length],
+  };
+}
+
+const initialJourneys: JourneyTrack[] = mockCourses
+  .filter((c: any) => c.status !== 'Archived')
+  .map((c: any, idx: number) => mapAdminCourseToTrack(c, idx, idx === 0));
 
 export default function JourneysPage() {
   const { isBright } = useTheme();
@@ -123,6 +74,33 @@ export default function JourneysPage() {
   const [journeys, setJourneys] = useState<JourneyTrack[]>(initialJourneys);
   const [enrolledNotice, setEnrolledNotice] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    let isMounted = true;
+    async function loadAdminTracks() {
+      try {
+        const stored = await courseService.getCourses();
+        if (!isMounted) return;
+        const validCourses = (stored || []).filter((c: any) => c.status !== 'Archived');
+        if (validCourses.length > 0) {
+          let enrolledMap: Record<string, boolean> = { 'crs_1': true };
+          try {
+            const raw = localStorage.getItem('mentora_enrolled_courses');
+            if (raw) enrolledMap = JSON.parse(raw);
+          } catch {}
+
+          const tracks = validCourses.map((c: any, idx: number) =>
+            mapAdminCourseToTrack(c, idx, Boolean(enrolledMap[c.id]))
+          );
+          setJourneys(tracks);
+        }
+      } catch (err) {
+        console.warn('Error loading admin journeys:', err);
+      }
+    }
+    loadAdminTracks();
+    return () => { isMounted = false; };
+  }, []);
+
   const bgPage = isBright ? '#FFF8F0' : '#111010';
   const cardBg = isBright ? '#FFFFFF' : '#1C1916';
   const cardBorder = isBright ? 'rgba(234,88,12,0.12)' : 'rgba(255,107,53,0.1)';
@@ -130,6 +108,15 @@ export default function JourneysPage() {
   const textMuted = isBright ? '#78716C' : 'rgba(255,248,240,0.55)';
 
   const handleEnroll = (id: string, title: string) => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('mentora_enrolled_courses');
+        const parsed = raw ? JSON.parse(raw) : {};
+        parsed[id] = true;
+        localStorage.setItem('mentora_enrolled_courses', JSON.stringify(parsed));
+      } catch {}
+    }
+
     setJourneys((prev) =>
       prev.map((j) => (j.id === id ? { ...j, status: 'active', currentLevel: 1 } : j))
     );
@@ -147,7 +134,7 @@ export default function JourneysPage() {
   });
 
   const activeJourneysCount = journeys.filter((j) => j.status === 'active').length;
-  const primaryJourney = journeys.find((j) => j.id === 'demo') || journeys[0];
+  const primaryJourney = journeys.find((j) => j.status === 'active') || journeys[0];
 
   return (
     <div
@@ -163,7 +150,7 @@ export default function JourneysPage() {
           {/* Notification Toast */}
           {enrolledNotice && (
             <div className="p-4 rounded-2xl bg-orange-950/90 border border-orange-500/70 text-orange-200 text-sm font-medium shadow-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-3">
-              <span className="flex items-center gap-2">✨ {enrolledNotice}</span>
+              <span className="flex items-center gap-2">{enrolledNotice}</span>
               <button
                 onClick={() => setEnrolledNotice(null)}
                 className="text-orange-400 hover:text-white font-bold ml-4"
@@ -176,9 +163,6 @@ export default function JourneysPage() {
           {/* Header Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span>🗺️ CAREER PATHWAYS</span>
-              </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Learning Journeys
               </h1>
@@ -189,10 +173,10 @@ export default function JourneysPage() {
 
             <div className="flex items-center gap-3">
               <Link
-                href="/dashboard/journeys/demo"
+                href="/dashboard/journeys/skill-gap"
                 className="px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all active:scale-95 flex items-center gap-2 bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] text-white hover:brightness-110 shadow-orange-500/20"
               >
-                <span>🚀 Resume Active Roadmap</span>
+                <span>Resume Active Roadmap</span>
               </Link>
             </div>
           </div>
@@ -200,19 +184,18 @@ export default function JourneysPage() {
           {/* Metrics Quick Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: 'Active Tracks', val: `${activeJourneysCount}`, sub: 'Personalized to role', icon: '🎯' },
-              { label: 'Total Hours Completed', val: '53.5h', sub: '+8.2h this month', icon: '⏳' },
-              { label: 'Verified Levels', val: '6 Levels', sub: 'Across 2 tracks', icon: '🛡️' },
-              { label: 'Next Milestone', val: 'Level 5 Gate', sub: 'Event Architecture', icon: '⚡' },
+              { label: 'Active Tracks', val: `${activeJourneysCount}`, sub: 'Personalized to role' },
+              { label: 'Total Hours Completed', val: '53.5h', sub: '+8.2h this month' },
+              { label: 'Verified Levels', val: '6 Levels', sub: 'Across 2 tracks' },
+              { label: 'Next Milestone', val: 'Level 5 Gate', sub: 'Event Architecture' },
             ].map((stat, i) => (
               <div
                 key={i}
                 className="p-4 rounded-2xl border transition-all"
                 style={{ background: cardBg, borderColor: cardBorder }}
               >
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2">
                   <span className="text-xs font-medium" style={{ color: textMuted }}>{stat.label}</span>
-                  <span className="text-base">{stat.icon}</span>
                 </div>
                 <div className="text-xl sm:text-2xl font-black" style={{ color: textPrimary }}>{stat.val}</div>
                 <div className="text-[11px] font-mono mt-0.5 text-orange-500 font-semibold">{stat.sub}</div>
@@ -289,7 +272,7 @@ export default function JourneysPage() {
               {/* Action Column */}
               <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
                 <Link
-                  href="/dashboard/journeys/demo"
+                  href={`/dashboard/journeys/${primaryJourney?.id || 'crs_1'}`}
                   className="px-6 py-3.5 rounded-2xl font-bold text-sm text-center shadow-xl transition-all active:scale-95 bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] text-white hover:brightness-110 shadow-orange-500/30"
                 >
                   Enter Roadmap Matrix →
@@ -297,8 +280,22 @@ export default function JourneysPage() {
                 <button
                   type="button"
                   onClick={() => alert('Diagnostic refreshed! Your curriculum has been tuned to your latest quiz scores.')}
-                  className="px-5 py-3 rounded-2xl text-xs font-semibold text-center border transition-all hover:bg-orange-500/5 active:scale-95"
-                  style={{ borderColor: cardBorder, color: textPrimary }}
+                  className="px-5 py-3 rounded-2xl text-xs font-bold text-center border transition-all active:scale-95 shadow-sm"
+                  style={{
+                    background: isBright ? '#FFFFFF' : 'transparent',
+                    borderColor: isBright ? '#FDBA74' : cardBorder,
+                    color: isBright ? '#1C1917' : textPrimary,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#EA580C';
+                    e.currentTarget.style.color = '#FFFFFF';
+                    e.currentTarget.style.borderColor = '#EA580C';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = isBright ? '#FFFFFF' : 'transparent';
+                    e.currentTarget.style.borderColor = isBright ? '#FDBA74' : cardBorder;
+                    e.currentTarget.style.color = isBright ? '#1C1917' : textPrimary;
+                  }}
                 >
                   Retake Diagnostic Evaluation
                 </button>
@@ -321,11 +318,11 @@ export default function JourneysPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveCategory(tab.id)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                       activeCategory === tab.id
                         ? 'bg-[#FF6B35] text-white shadow-md shadow-orange-500/20'
                         : isBright
-                        ? 'bg-white text-zinc-600 border border-[#EAE0D5] hover:border-orange-300'
+                        ? 'bg-white text-stone-700 border border-stone-200 hover:border-orange-400 hover:text-orange-600'
                         : 'bg-[#18130e] text-zinc-400 border border-orange-950/60 hover:border-orange-800'
                     }`}
                   >
@@ -348,9 +345,19 @@ export default function JourneysPage() {
                     color: textPrimary,
                   }}
                 />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-orange-500">
-                  🔍
-                </span>
+                <svg
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-orange-500/70 pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
               </div>
             </div>
 
@@ -368,7 +375,7 @@ export default function JourneysPage() {
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full font-bold bg-orange-500/10 text-orange-500 border border-orange-500/20">
+                        <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full font-bold bg-[#FFF0E5] text-[#C2410C] border border-[#FDBA74] dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20">
                           {journey.categoryLabel}
                         </span>
                         <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: textMuted }}>
@@ -395,11 +402,11 @@ export default function JourneysPage() {
                         {journey.keySkills.slice(0, 3).map((skill, i) => (
                           <span
                             key={i}
-                            className="text-[11px] px-2 py-0.5 rounded border"
+                            className="text-[11px] font-medium px-2.5 py-0.5 rounded-md border"
                             style={{
-                              background: isBright ? '#FAF4EE' : '#140c07',
-                              borderColor: cardBorder,
-                              color: textMuted,
+                              background: isBright ? '#F5EBE1' : '#140c07',
+                              borderColor: isBright ? '#E2D4C5' : cardBorder,
+                              color: isBright ? '#44403C' : textMuted,
                             }}
                           >
                             {skill}
@@ -419,7 +426,7 @@ export default function JourneysPage() {
 
                       {isActive ? (
                         <Link
-                          href="/dashboard/journeys/demo"
+                          href={`/dashboard/journeys/${journey.id}`}
                           className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#FF6B35] to-[#E85D2C] text-white shadow-md hover:brightness-110 active:scale-95 transition-all"
                         >
                           Continue →
@@ -428,8 +435,22 @@ export default function JourneysPage() {
                         <button
                           type="button"
                           onClick={() => handleEnroll(journey.id, journey.title)}
-                          className="px-4 py-2 rounded-xl text-xs font-semibold border transition-all hover:bg-orange-500 hover:text-white hover:border-orange-500 active:scale-95"
-                          style={{ borderColor: cardBorder, color: textPrimary }}
+                          className="px-4 py-2 rounded-xl text-xs font-bold border transition-all active:scale-95 shadow-sm"
+                          style={{
+                            background: isBright ? '#FFFFFF' : '#1C1916',
+                            borderColor: isBright ? '#FDBA74' : cardBorder,
+                            color: isBright ? '#C2410C' : textPrimary,
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#EA580C';
+                            e.currentTarget.style.color = '#FFFFFF';
+                            e.currentTarget.style.borderColor = '#EA580C';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = isBright ? '#FFFFFF' : '#1C1916';
+                            e.currentTarget.style.borderColor = isBright ? '#FDBA74' : cardBorder;
+                            e.currentTarget.style.color = isBright ? '#C2410C' : textPrimary;
+                          }}
                         >
                           Enroll Track +
                         </button>

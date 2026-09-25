@@ -154,10 +154,6 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
           {/* Header Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span className="w-2 h-2 rounded-full bg-orange-500 animate-ping" />
-                <span>KAI INTELLIGENCE v2.4 • CONTEXT-AWARE</span>
-              </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight flex items-center gap-3" style={{ color: textPrimary }}>
                 <span>Kai</span>
                 <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm">
@@ -197,7 +193,7 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
                 className="px-4 py-2 rounded-xl text-xs font-bold border transition-all hover:bg-orange-500/10 active:scale-95"
                 style={{ borderColor: cardBorder, color: textPrimary }}
               >
-                View Synced Passport 🛡️
+                View Synced Passport
               </Link>
             </div>
           </div>
@@ -205,10 +201,10 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
           {/* Mode Selector Chips */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { id: 'architect', label: 'Architecture & RFC', icon: '🏛️', desc: 'System design & distributed trade-offs' },
-              { id: 'interviewer', label: 'Staff Mock Loop', icon: '🎯', desc: 'Realistic tech loops with evaluation criteria' },
-              { id: 'drill', label: 'Diagnostic Drills', icon: '⚡', desc: 'Micro-assessments targeting 70% threshold' },
-              { id: 'debug', label: 'Code & Profiling', icon: '🔍', desc: 'Latency, memory leaks & compiler safety' },
+              { id: 'architect', label: 'Architecture & RFC', desc: 'System design & distributed trade-offs' },
+              { id: 'interviewer', label: 'Staff Mock Loop', desc: 'Realistic tech loops with evaluation criteria' },
+              { id: 'drill', label: 'Diagnostic Drills', desc: 'Micro-assessments targeting 70% threshold' },
+              { id: 'debug', label: 'Code & Profiling', desc: 'Latency, memory leaks & compiler safety' },
             ].map((mode) => (
               <button
                 key={mode.id}
@@ -224,8 +220,7 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
                   borderColor: activeMode === mode.id ? '#FF6B35' : cardBorder,
                 }}
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{mode.icon}</span>
+                <div>
                   <span className="text-xs font-bold" style={{ color: activeMode === mode.id ? '#FF6B35' : textPrimary }}>
                     {mode.label}
                   </span>
@@ -235,30 +230,6 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
                 </p>
               </button>
             ))}
-          </div>
-
-          {/* Context Ingestion Indicator */}
-          <div
-            className="p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
-            style={{
-              background: isBright ? '#FFF6EE' : 'rgba(255,107,53,0.06)',
-              borderColor: 'rgba(255,107,53,0.2)',
-            }}
-          >
-            <div className="flex items-center gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="font-semibold" style={{ color: textPrimary }}>
-                Learner Profile Synchronized:
-              </span>
-              <span className="font-mono text-orange-500 font-bold">
-                Alex Johnson • Senior Cloud Architect (Lvl 7)
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px]" style={{ color: textMuted }}>
-              <span>Active Track: <strong>Full-Stack Cloud Architect</strong></span>
-              <span>•</span>
-              <span>5 Verified Skills Loaded</span>
-            </div>
           </div>
 
           {/* Chat Feed */}
@@ -273,8 +244,8 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
                   className={`flex gap-3.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {msg.sender === 'kai' && (
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-md">
-                      ✨
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-xs font-black text-white shrink-0 shadow-md">
+                      K
                     </div>
                   )}
 
@@ -351,9 +322,7 @@ export async function handleIdempotentEvent(event: WebhookEvent) {
 
               {isSynthesizing && (
                 <div className="flex gap-3 items-center text-xs text-orange-500 font-mono py-2">
-                  <div className="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-500 flex items-center justify-center font-bold text-xs animate-spin">
-                    ✨
-                  </div>
+                  <div className="w-5 h-5 rounded-full border-2 border-orange-500 border-t-transparent animate-spin shrink-0" />
                   <span>Kai is evaluating architecture patterns & formulating telemetry response...</span>
                 </div>
               )}

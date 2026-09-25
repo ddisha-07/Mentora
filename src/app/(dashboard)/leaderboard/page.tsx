@@ -380,9 +380,6 @@ export default function LeaderboardPage() {
           {/* Navigation & Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span>🏆 GLOBAL STANDINGS</span>
-              </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Learner Leaderboard
               </h1>
@@ -396,8 +393,22 @@ export default function LeaderboardPage() {
               <button
                 onClick={fetchLeaderboard}
                 disabled={loading}
-                className="px-4 py-2.5 rounded-xl border text-xs font-semibold transition-all hover:bg-orange-500/10 flex items-center gap-2"
-                style={{ borderColor: cardBorder, color: textPrimary }}
+                className="px-4 py-2.5 rounded-xl border text-xs font-bold transition-all active:scale-95 flex items-center gap-2 shadow-sm"
+                style={{
+                  background: isBright ? '#FFFFFF' : 'transparent',
+                  borderColor: isBright ? '#FDBA74' : cardBorder,
+                  color: isBright ? '#1C1917' : textPrimary,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#EA580C';
+                  e.currentTarget.style.color = '#FFFFFF';
+                  e.currentTarget.style.borderColor = '#EA580C';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = isBright ? '#FFFFFF' : 'transparent';
+                  e.currentTarget.style.borderColor = isBright ? '#FDBA74' : cardBorder;
+                  e.currentTarget.style.color = isBright ? '#1C1917' : textPrimary;
+                }}
               >
                 <span className={loading ? 'animate-spin' : ''}>🔄</span> Refresh
               </button>
@@ -606,36 +617,36 @@ export default function LeaderboardPage() {
             <div className="flex items-center gap-2 self-start sm:self-auto">
               <button
                 onClick={() => setRoleFilter('all')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   roleFilter === 'all'
                     ? 'bg-[#FF6B35] text-white shadow-md shadow-orange-500/20'
                     : isBright
-                    ? 'bg-white text-zinc-600 border border-[#EAE0D5]'
-                    : 'bg-[#18130e] text-zinc-400 border border-orange-950/60'
+                    ? 'bg-white text-stone-700 border border-stone-200 hover:border-orange-400 hover:text-orange-600'
+                    : 'bg-[#18130e] text-zinc-400 border border-orange-950/60 hover:border-orange-800'
                 }`}
               >
                 All Learners
               </button>
               <button
                 onClick={() => setRoleFilter('engineer')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   roleFilter === 'engineer'
                     ? 'bg-[#FF6B35] text-white shadow-md shadow-orange-500/20'
                     : isBright
-                    ? 'bg-white text-zinc-600 border border-[#EAE0D5]'
-                    : 'bg-[#18130e] text-zinc-400 border border-orange-950/60'
+                    ? 'bg-white text-stone-700 border border-stone-200 hover:border-orange-400 hover:text-orange-600'
+                    : 'bg-[#18130e] text-zinc-400 border border-orange-950/60 hover:border-orange-800'
                 }`}
               >
                 Engineering
               </button>
               <button
                 onClick={() => setRoleFilter('product')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   roleFilter === 'product'
                     ? 'bg-[#FF6B35] text-white shadow-md shadow-orange-500/20'
                     : isBright
-                    ? 'bg-white text-zinc-600 border border-[#EAE0D5]'
-                    : 'bg-[#18130e] text-zinc-400 border border-orange-950/60'
+                    ? 'bg-white text-stone-700 border border-stone-200 hover:border-orange-400 hover:text-orange-600'
+                    : 'bg-[#18130e] text-zinc-400 border border-orange-950/60 hover:border-orange-800'
                 }`}
               >
                 Product & Leads

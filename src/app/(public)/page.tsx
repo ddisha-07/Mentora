@@ -312,7 +312,7 @@ export default function HomePage() {
             </Link>
 
             <Link
-              href="/journeys/demo"
+              href="/journeys/crs_1"
               className={`w-full sm:w-auto px-7 py-4 text-sm font-semibold rounded-2xl shadow-xs transition-all flex items-center justify-center gap-2 font-mono ${
                 isBright
                   ? 'bg-white hover:bg-[#FDF8F3] text-[#1C1917] hover:text-[#EA580C] border border-[#E0D1C3] hover:border-orange-400'

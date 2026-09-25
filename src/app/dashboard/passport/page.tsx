@@ -117,7 +117,7 @@ export default function SkillPassportPage() {
           {/* Toast Notification */}
           {toastMessage && (
             <div className="p-4 rounded-2xl bg-orange-950/90 border border-orange-500/70 text-orange-200 text-sm font-medium shadow-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-3">
-              <span className="flex items-center gap-2">🛡️ {toastMessage}</span>
+              <span className="flex items-center gap-2">{toastMessage}</span>
               <button
                 onClick={() => setToastMessage(null)}
                 className="text-orange-400 hover:text-white font-bold ml-4"
@@ -130,9 +130,6 @@ export default function SkillPassportPage() {
           {/* Header Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span>🛡️ VERIFIABLE CREDENTIALS</span>
-              </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Mentora Skill Passport
               </h1>
@@ -145,8 +142,22 @@ export default function SkillPassportPage() {
               <button
                 type="button"
                 onClick={copyVerificationLink}
-                className="px-4 py-2.5 rounded-xl font-bold text-xs border transition-all hover:bg-orange-500/10 active:scale-95 flex items-center gap-2"
-                style={{ borderColor: cardBorder, color: textPrimary }}
+                className="px-4 py-2.5 rounded-xl font-bold text-xs border transition-all active:scale-95 flex items-center gap-2 shadow-sm"
+                style={{
+                  background: isBright ? '#FFFFFF' : 'transparent',
+                  borderColor: isBright ? '#FDBA74' : cardBorder,
+                  color: isBright ? '#1C1917' : textPrimary,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#EA580C';
+                  e.currentTarget.style.color = '#FFFFFF';
+                  e.currentTarget.style.borderColor = '#EA580C';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = isBright ? '#FFFFFF' : 'transparent';
+                  e.currentTarget.style.borderColor = isBright ? '#FDBA74' : cardBorder;
+                  e.currentTarget.style.color = isBright ? '#1C1917' : textPrimary;
+                }}
               >
                 <span>🔗 Copy Public Link</span>
               </button>
@@ -162,6 +173,7 @@ export default function SkillPassportPage() {
 
           {/* Cryptographic Passport ID Hero Card */}
           <div
+            data-dark-card="true"
             className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border shadow-2xl transition-all"
             style={{
               background: isBright
@@ -177,63 +189,68 @@ export default function SkillPassportPage() {
             <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
               <div className="space-y-4 max-w-2xl">
                 <div className="flex items-center gap-2.5 flex-wrap">
-                  <span className="text-[11px] font-mono font-bold tracking-widest px-3 py-1 rounded-full bg-orange-500/25 text-orange-300 border border-orange-500/40">
+                  <span className="text-[11px] font-mono font-bold tracking-widest px-3 py-1 rounded-full bg-orange-500/25 border border-orange-500/40" style={{ color: '#FDBA74' }}>
                     PASSPORT ID: {passportId}
                   </span>
-                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center gap-1" style={{ color: '#6EE7B7' }}>
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     CRYPTOGRAPHICALLY VALIDATED
                   </span>
                 </div>
 
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white" style={{ color: '#FFFFFF' }}>
                     Alex Johnson
                   </h2>
-                  <p className="text-xs sm:text-sm font-mono text-orange-400 mt-0.5">
+                  <p className="text-xs sm:text-sm font-mono mt-0.5" style={{ color: '#FB923C' }}>
                     Target Role: Senior Distributed Systems Architect • Level 7 Verified
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2 text-xs border-t border-orange-500/20">
                   <div>
-                    <span className="text-[10px] text-zinc-400 uppercase font-mono">Issued On</span>
-                    <p className="font-semibold text-zinc-200">Sept 1, 2026</p>
+                    <span className="text-[10px] uppercase font-mono block" style={{ color: '#A1A1AA' }}>Issued On</span>
+                    <p className="font-semibold text-white" style={{ color: '#FFFFFF' }}>Sept 1, 2026</p>
                   </div>
                   <div>
-                    <span className="text-[10px] text-zinc-400 uppercase font-mono">Valid Thru</span>
-                    <p className="font-semibold text-zinc-200">Sept 1, 2028</p>
+                    <span className="text-[10px] uppercase font-mono block" style={{ color: '#A1A1AA' }}>Valid Thru</span>
+                    <p className="font-semibold text-white" style={{ color: '#FFFFFF' }}>Sept 1, 2028</p>
                   </div>
                   <div>
-                    <span className="text-[10px] text-zinc-400 uppercase font-mono">Verified Skills</span>
-                    <p className="font-semibold text-orange-400 font-mono">5 Competencies</p>
+                    <span className="text-[10px] uppercase font-mono block" style={{ color: '#A1A1AA' }}>Verified Skills</span>
+                    <p className="font-semibold font-mono" style={{ color: '#FB923C' }}>5 Competencies</p>
                   </div>
                   <div>
-                    <span className="text-[10px] text-zinc-400 uppercase font-mono">Average Evaluation</span>
-                    <p className="font-semibold text-emerald-400 font-mono">87.4% (Passed)</p>
+                    <span className="text-[10px] uppercase font-mono block" style={{ color: '#A1A1AA' }}>Average Evaluation</span>
+                    <p className="font-semibold font-mono" style={{ color: '#4ADE80' }}>87.4% (Passed)</p>
                   </div>
                 </div>
 
-                <p className="text-[11px] font-mono text-zinc-400 truncate">
-                  SHA-256 Signature: <span className="text-zinc-300">0x7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069</span>
+                <p className="text-[11px] font-mono truncate" style={{ color: '#A1A1AA' }}>
+                  SHA-256 Signature: <span style={{ color: '#E4E4E7' }}>0x7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069</span>
                 </p>
               </div>
 
               {/* Holographic Badge Seal */}
-              <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-black/40 border border-orange-500/30 shrink-0 text-center space-y-2">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-400 flex items-center justify-center text-3xl shadow-xl shadow-orange-500/30">
-                  🛡️
+              <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-black/50 border border-orange-500/30 shrink-0 text-center space-y-2">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-400 flex items-center justify-center shadow-xl shadow-orange-500/30 text-white">
+                  <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
                 </div>
                 <div>
-                  <span className="text-xs font-black uppercase tracking-widest text-amber-300 block">
+                  <span className="text-xs font-black uppercase tracking-widest block" style={{ color: '#FDE047' }}>
                     SEAL OF MASTERY
                   </span>
-                  <span className="text-[10px] text-zinc-400 font-mono">Mentora Protocol v2.4</span>
+                  <span className="text-[10px] font-mono" style={{ color: '#D4D4D8' }}>Mentora Protocol v2.4</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShareModalOpen(true)}
-                  className="mt-2 text-xs text-orange-400 hover:text-orange-300 underline font-semibold"
+                  className="mt-2 text-xs underline font-semibold transition-colors"
+                  style={{ color: '#FB923C' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = '#FDBA74'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = '#FB923C'; }}
                 >
                   Verify Proof Matrix →
                 </button>
@@ -289,10 +306,24 @@ export default function SkillPassportPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedProof(skill)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all hover:bg-orange-500/10 active:scale-95"
-                      style={{ borderColor: cardBorder, color: textPrimary }}
+                      className="px-4 py-2 rounded-xl text-xs font-bold border transition-all active:scale-95 shadow-sm"
+                      style={{
+                        background: isBright ? '#FFFFFF' : '#1C1916',
+                        borderColor: isBright ? '#FDBA74' : cardBorder,
+                        color: isBright ? '#C2410C' : textPrimary,
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#EA580C';
+                        e.currentTarget.style.color = '#FFFFFF';
+                        e.currentTarget.style.borderColor = '#EA580C';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = isBright ? '#FFFFFF' : '#1C1916';
+                        e.currentTarget.style.borderColor = isBright ? '#FDBA74' : cardBorder;
+                        e.currentTarget.style.color = isBright ? '#C2410C' : textPrimary;
+                      }}
                     >
-                      Audit Proof 🔍
+                      Audit Proof
                     </button>
                   </div>
                 </div>
@@ -308,8 +339,8 @@ export default function SkillPassportPage() {
               className="p-6 rounded-3xl border space-y-4 shadow-sm"
               style={{ background: cardBg, borderColor: cardBorder }}
             >
-              <h3 className="text-base font-bold flex items-center gap-2" style={{ color: textPrimary }}>
-                <span>📊</span> Domain Proficiency Distribution
+              <h3 className="text-base font-bold" style={{ color: textPrimary }}>
+                Domain Proficiency Distribution
               </h3>
 
               <div className="space-y-3.5">
@@ -341,16 +372,16 @@ export default function SkillPassportPage() {
               className="p-6 rounded-3xl border space-y-4 shadow-sm"
               style={{ background: cardBg, borderColor: cardBorder }}
             >
-              <h3 className="text-base font-bold flex items-center gap-2" style={{ color: textPrimary }}>
-                <span>🎖️</span> Earned Credential Badges
+              <h3 className="text-base font-bold" style={{ color: textPrimary }}>
+                Earned Credential Badges
               </h3>
 
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { title: 'Architect Lvl 7', desc: 'Score > 85% in System Design', icon: '🏛️', date: 'Aug 2026' },
-                  { title: 'Evaluation Ace', desc: 'Zero failed quiz attempts', icon: '⚡', date: 'Jul 2026' },
-                  { title: 'Clean Code Guru', desc: 'TypeScript type mastery', icon: '💎', date: 'Jun 2026' },
-                  { title: '14-Day Streak', desc: 'Daily micro-drill completion', icon: '🔥', date: 'Aug 2026' },
+                  { title: 'Architect Lvl 7', desc: 'Score > 85% in System Design', date: 'Aug 2026' },
+                  { title: 'Evaluation Ace', desc: 'Zero failed quiz attempts', date: 'Jul 2026' },
+                  { title: 'Clean Code Guru', desc: 'TypeScript type mastery', date: 'Jun 2026' },
+                  { title: '14-Day Streak', desc: 'Daily micro-drill completion', date: 'Aug 2026' },
                 ].map((b, idx) => (
                   <div
                     key={idx}
@@ -360,7 +391,11 @@ export default function SkillPassportPage() {
                       borderColor: cardBorder,
                     }}
                   >
-                    <span className="text-2xl">{b.icon}</span>
+                    <div className="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0 border border-orange-500/20">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                      </svg>
+                    </div>
                     <div>
                       <h4 className="text-xs font-bold leading-tight" style={{ color: textPrimary }}>
                         {b.title}
@@ -454,8 +489,10 @@ export default function SkillPassportPage() {
             className="w-full max-w-md rounded-3xl border p-6 space-y-4 shadow-2xl relative text-center"
             style={{ background: cardBg, borderColor: cardBorder }}
           >
-            <div className="w-16 h-16 rounded-2xl bg-orange-500/15 text-orange-500 mx-auto flex items-center justify-center text-3xl">
-              📱
+            <div className="w-16 h-16 rounded-2xl bg-orange-500/15 text-orange-500 mx-auto flex items-center justify-center">
+              <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
             </div>
             <h3 className="text-lg font-bold" style={{ color: textPrimary }}>
               Share Verifiable Skill Passport

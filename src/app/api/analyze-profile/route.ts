@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
+import {
+  CAREER_ROLES_DATASET,
+  calculateSkillGap,
+  getRequiredSkillsForGoal,
+  extractSkillsFromCV,
+} from '@/lib/career/careerRolesDataset';
+import { recommendCoursesForSkillGap } from '@/lib/career/courseRecommendationMatcher';
 
 export const runtime = 'nodejs';
 
@@ -41,35 +48,38 @@ export interface CareerAnalysisResult {
   rawMarkdown?: string;
 }
 
-const SYSTEM_INSTRUCTION = `You are an expert AI Career Counselor and Course Recommendation Agent. 
+const SYSTEM_INSTRUCTION = `You are an expert AI Career Counselor and Course Recommendation Agent for Mentora.
 
-Your workflow operates strictly in these sequential phases:
-1. Parse the provided User LinkedIn text to extract "Top Possessed Skills".
-2. Parse the uploaded CV text/file to verify experience, tools, and deeper skill context.
-3. Identify the user's declared "Future Goal" (e.g., AI Engineer, Data Scientist).
-4. Evaluate prerequisites: Cross-reference current skills against industry prerequisites for their target future goal.
+TRAINING KNOWLEDGE GRAPH - 50 CAREER ROLES & REQUIRED SKILLSETS:
+${CAREER_ROLES_DATASET.slice(0, 30).map((r) => `${r.srNo}. ${r.futureGoal}: [${r.skillsNeeded.join(', ')}]`).join('\n')}
+... (and remaining dataset roles covering Engineering, AI, Cloud, Design, Security, and Professional domains).
+
+YOUR STRICT WORKFLOW:
+1. Examine the user's acquired skills (extracted from their CV/resume and confirmed by the user in the onboarding UI).
+2. Look up the user's declared "Future Goal" (e.g. Data Scientist, UI/UX Designer, Full Stack Developer, Machine Learning Engineer, Cloud Engineer, or custom goal).
+3. Determine the required skills for this goal from the 50-role dataset.
+4. Calculate the EXACT SKILL GAP: missingSkills = requiredSkills - possessedSkills.
+5. Recommend 3-4 targeted courses specifically tailored to bridge those missing skills. Where appropriate, prioritize Mentora's admin-verified courses:
+   - "Machine Learning Fundamentals & Neural Systems" (id: "crs_1") for ML, Python, Statistics, Deep Learning gaps.
+   - "Full-Stack Web Development with React" (id: "crs_2") for React, JavaScript, HTML/CSS, Node.js, Databases gaps.
+   - "Data Structures & Algorithms Mastery" (id: "crs_3") for Algorithms, Data Structures, Problem Solving, System Design gaps.
 
 DETERMINE DIFFICULTY TIER:
-- Beginner: Knows foundational concepts (e.g., "Basic idea of AI/ML").
-- Intermediate: Understands core architectures or basic implementations (e.g., "Basic idea of Agentic AI").
-- Advanced: Competent in fine-tuning, system architecture, or deployments.
-
-RECOMMENDATION RULES:
-- Suggest exactly 3-4 specific, actionable course topics or learning paths.
-- For an "AI intern with basic AI/ML and basic Agentic AI knowledge wanting an AI career", DO NOT suggest extreme beginner material like "Introduction to Python". Instead, skip to "Advanced Agentic Frameworks (LangChain/CrewAI production patterns)" or "Deep Learning & Neural Network Fundamentals" to bridge their gap to a full career.
-- Format outputs clearly with sections: [Current Profile Evaluation], [Prerequisite Gaps], and [Targeted Course Recommendations].
+- Beginner: Possesses foundational or entry-level skills.
+- Intermediate: Competent in core languages/frameworks; ready for production architectures.
+- Advanced: Has senior/lead exposure, deep systems engineering or architectural expertise.
 
 OUTPUT FORMAT:
-You MUST respond with a JSON object adhering to this structure:
+You MUST respond with a valid JSON object adhering to this structure:
 {
   "currentLevel": "Beginner" | "Intermediate" | "Advanced",
   "levelExplanation": "Short justification based on detected skills and experience",
   "fieldOfInterest": "...",
   "futureGoal": "...",
-  "possessedSkills": ["Skill A", "Skill B", "Skill C"],
-  "missingSkills": ["Missing Skill 1", "Missing Skill 2", "Missing Skill 3"],
+  "possessedSkills": ["Skill A", "Skill B"],
+  "missingSkills": ["Missing Skill 1", "Missing Skill 2"],
   "currentProfileEvaluation": {
-    "summary": "Detailed summary of current profile evaluation",
+    "summary": "Detailed evaluation of their current strengths and trajectory",
     "strengths": ["Strength 1", "Strength 2"],
     "experienceAssessment": "Assessment of tools, projects, and work history"
   },
@@ -82,16 +92,16 @@ You MUST respond with a JSON object adhering to this structure:
   ],
   "targetedCourseRecommendations": [
     {
-      "id": "course-1",
+      "id": "crs_1",
       "title": "Exact Course Name",
       "level": "Intermediate",
       "category": "Domain Category",
-      "duration": "6h 30m",
+      "duration": "6 Weeks",
       "reason": "Why this directly bridges the prerequisite gap",
-      "keyTopics": ["Topic 1", "Topic 2", "Topic 3"],
-      "actionableOutcome": "What they will be able to build or demonstrate",
-      "matchScore": 96,
-      "tag": "Recommended"
+      "keyTopics": ["Topic 1", "Topic 2"],
+      "actionableOutcome": "What they will build",
+      "matchScore": 95,
+      "tag": "Admin Verified Track"
     }
   ]
 }
@@ -126,29 +136,24 @@ function generateDynamicFallback(
   linkedinText: string,
   cvText: string,
   fieldOfInterest: string,
-  futureGoal: string
+  futureGoal: string,
+  selectedSkills?: string[]
 ): CareerAnalysisResult {
   const combined = `${linkedinText} ${cvText}`.toLowerCase();
   
-  // Detect possessed skills
-  const potentialSkills = [
-    'Python', 'JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js',
-    'PyTorch', 'TensorFlow', 'Machine Learning', 'Deep Learning', 'Agentic AI',
-    'LangChain', 'CrewAI', 'Docker', 'Kubernetes', 'SQL', 'PostgreSQL',
-    'FastAPI', 'REST APIs', 'Git', 'Prompt Engineering', 'Vector Databases'
-  ];
-  
-  const possessed: string[] = [];
-  for (const skill of potentialSkills) {
-    if (combined.includes(skill.toLowerCase())) {
-      possessed.push(skill);
-    }
-  }
-  if (possessed.length === 0) {
-    possessed.push('Python', 'Basic AI/ML', 'Problem Solving', 'Data Analysis');
+  // 1. Determine possessed skills: prioritize explicitly selected skills from CV/onboarding
+  let possessed: string[] = [];
+  if (Array.isArray(selectedSkills) && selectedSkills.length > 0) {
+    possessed = [...selectedSkills];
+  } else {
+    possessed = extractSkillsFromCV(`${linkedinText}\n${cvText}`);
   }
 
-  // Determine difficulty tier
+  if (possessed.length === 0) {
+    possessed = ['Python', 'Problem Solving', 'Data Analysis', 'Communication'];
+  }
+
+  // 2. Determine difficulty tier
   let level: 'Beginner' | 'Intermediate' | 'Advanced' = 'Intermediate';
   if (
     combined.includes('intern') ||
@@ -173,113 +178,39 @@ function generateDynamicFallback(
   const targetGoal = futureGoal || 'AI Engineer';
   const targetField = fieldOfInterest || 'Artificial Intelligence & Machine Learning';
 
-  // Specific course recommendations based on prompt rules:
-  // "Suggest exactly 3-4 specific, actionable course topics or learning paths.
-  // For an 'AI intern with basic AI/ML and basic Agentic AI knowledge wanting an AI career',
-  // DO NOT suggest extreme beginner material like 'Introduction to Python'. Instead, skip to
-  // 'Advanced Agentic Frameworks (LangChain/CrewAI production patterns)' or 'Deep Learning & Neural Network Fundamentals'"
-  const courses: CourseRecommendation[] = [
-    {
-      id: 'course-1',
-      title: 'Advanced Agentic Frameworks (LangChain & CrewAI Production Patterns)',
-      level: 'Intermediate',
-      category: 'Agentic AI & Orchestration',
-      duration: '8h 45m',
-      reason: 'Bridges the gap from basic agent concepts to autonomous multi-agent systems and tool calling in production.',
-      keyTopics: ['Multi-Agent State Graphs', 'CrewAI Hierarchical Processes', 'Tool Execution & Guardrails', 'Memory & Vector Storage'],
-      actionableOutcome: 'Build and deploy autonomous multi-agent workflows capable of self-correcting and executing real-world tasks.',
-      matchScore: 98,
-      tag: 'Highest Impact',
-      techLogo: '🤖',
-      bannerBg: 'linear-gradient(135deg, #ea580c 0%, #c2410c 45%, #9a3412 100%)',
-    },
-    {
-      id: 'course-2',
-      title: 'Deep Learning & Neural Network Architecture Fundamentals',
-      level: 'Intermediate',
-      category: 'Deep Learning & PyTorch',
-      duration: '10h 15m',
-      reason: 'Solidifies backpropagation, transformer attention mechanisms, and custom model architectures required for career AI roles.',
-      keyTopics: ['Attention Mechanisms & Transformers', 'PyTorch Custom Layers', 'Loss Functions & Optimization', 'Model Evaluation & Benchmarks'],
-      actionableOutcome: 'Implement transformer attention layers from scratch and fine-tune pretrained models on specialized domain datasets.',
-      matchScore: 94,
-      tag: 'Core Prerequisite',
-      techLogo: '🧠',
-      bannerBg: 'linear-gradient(135deg, #0284c7 0%, #0369a1 45%, #075985 100%)',
-    },
-    {
-      id: 'course-3',
-      title: 'Production RAG & Vector Database Architecture',
-      level: 'Intermediate',
-      category: 'Information Retrieval & Data',
-      duration: '7h 30m',
-      reason: 'Master scalable semantic search, hybrid retrieval, and enterprise contextual grounding to eliminate hallucinations.',
-      keyTopics: ['Hybrid Search (BM25 + Dense)', 'Reranking Algorithms', 'Chunking Strategies & Metadata Filtering', 'Evaluation with RAGAS'],
-      actionableOutcome: 'Deploy an enterprise RAG pipeline with sub-100ms latency and high retrieval precision.',
-      matchScore: 91,
-      tag: 'In High Demand',
-      techLogo: '⚡',
-      bannerBg: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 45%, #5b21b6 100%)',
-    },
-    {
-      id: 'course-4',
-      title: 'LLMOps: Model Serving, Fine-Tuning & Quantization',
-      level: 'Advanced',
-      category: 'Infrastructure & Deployment',
-      duration: '9h 00m',
-      reason: 'Essential for taking models from local prototypes to production-grade, cost-efficient APIs.',
-      keyTopics: ['vLLM & TensorRT-LLM Serving', 'LoRA & QLoRA Fine-Tuning', 'Quantization (AWQ/GGUF)', 'Latency & Token Throughput Monitoring'],
-      actionableOutcome: 'Package, quantize, and serve fine-tuned models on GPU clusters with automated monitoring.',
-      matchScore: 89,
-      tag: 'Career Accelerator',
-      techLogo: '🚀',
-      bannerBg: 'linear-gradient(135deg, #059669 0%, #047857 45%, #065f46 100%)',
-    },
-  ];
+  // 3. Grounded Skill Gap from the 50-Role Dataset
+  const gapResult = calculateSkillGap(possessed, targetGoal);
+  const missingSkills = gapResult.missingSkills.length > 0 
+    ? gapResult.missingSkills 
+    : ['System Design', 'Production Deployment', 'Performance Optimization'];
+
+  // 4. Targeted Course Recommendations to Bridge the Skill Gap
+  const courses: CourseRecommendation[] = recommendCoursesForSkillGap(missingSkills, targetGoal, level);
+
+  // 5. Prerequisite Gaps
+  const prerequisiteGaps: PrerequisiteGap[] = missingSkills.slice(0, 4).map((skill, idx) => ({
+    skill,
+    impact: `Essential requirement for ${targetGoal} industry roles and technical assessments.`,
+    urgency: idx === 0 ? 'High' : idx === 1 ? 'High' : idx === 2 ? 'Medium' : 'Foundational',
+  }));
 
   return {
     currentLevel: level,
-    levelExplanation: `Based on your profile, you have demonstrated a strong grasp of ${possessed.slice(0, 3).join(', ')}. Your baseline places you in the ${level} tier, ready to transition beyond basic syntax into production-grade systems.`,
+    levelExplanation: `Based on your CV and verified skills (${possessed.slice(0, 4).join(', ')}), your baseline is in the ${level} tier for ${targetGoal}.`,
     fieldOfInterest: targetField,
     futureGoal: targetGoal,
     possessedSkills: possessed,
-    missingSkills: [
-      'Production Agent Orchestration (CrewAI/LangGraph)',
-      'Transformer Architecture & Deep Learning Math',
-      'Advanced RAG Retrieval & Semantic Chunking',
-      'LLMOps & High-Throughput Model Serving (vLLM)',
-    ],
+    missingSkills,
     currentProfileEvaluation: {
-      summary: `Your background indicates practical exposure to modern software and AI foundations. To achieve your goal of becoming a ${targetGoal}, the primary leap is moving from consumer API calls to architectural depth and autonomous agent design.`,
+      summary: `Your profile demonstrates verified competency in ${possessed.slice(0, 3).join(', ')}. To achieve your target role as ${targetGoal}, the curriculum focuses on bridging your missing prerequisites: ${missingSkills.slice(0, 3).join(', ')}.`,
       strengths: [
-        `Hands-on familiarity with ${possessed.slice(0, 2).join(' and ')}`,
-        'Strong technical curiosity and active career trajectory',
-        'Demonstrated commitment to modern developer tooling',
+        `Hands-on proficiency in ${possessed.slice(0, 2).join(' and ')}`,
+        'Demonstrated capability in technical workflows and problem solving',
+        'Strong trajectory aligned with modern industry benchmarks',
       ],
-      experienceAssessment: `Verified experience confirms proficiency in core programming. Prerequisite gap analysis indicates readiness for higher-level architectural coursework rather than beginner fundamentals.`,
+      experienceAssessment: `Verified experience confirms proficiency in core fundamentals. Prerequisite gap analysis indicates targeted readiness to acquire ${missingSkills.slice(0, 2).join(' and ')}.`,
     },
-    prerequisiteGaps: [
-      {
-        skill: 'Multi-Agent Production Orchestration',
-        impact: 'Critical for developing autonomous workflows that exceed single-prompt limitations.',
-        urgency: 'High',
-      },
-      {
-        skill: 'Deep Learning & Transformer Internals',
-        impact: 'Required to troubleshoot model behaviors, understand embedding spaces, and perform fine-tuning.',
-        urgency: 'High',
-      },
-      {
-        skill: 'Enterprise Vector Retrieval & Hybrid Search',
-        impact: 'Differentiates demo RAG setups from reliable, low-hallucination production systems.',
-        urgency: 'Medium',
-      },
-      {
-        skill: 'Serving Optimization & Quantization',
-        impact: 'Key for cost efficiency and low latency in production deployments.',
-        urgency: 'Foundational',
-      },
-    ],
+    prerequisiteGaps,
     targetedCourseRecommendations: courses,
   };
 }
@@ -292,13 +223,21 @@ export async function POST(request: NextRequest) {
       cvText = '',
       fieldOfInterest = 'Artificial Intelligence & Machine Learning',
       futureGoal = 'AI Engineer',
+      selectedSkills = [],
+      possessedSkills = [],
     } = body;
+
+    const userSkills: string[] = (Array.isArray(selectedSkills) && selectedSkills.length > 0)
+      ? selectedSkills
+      : (Array.isArray(possessedSkills) && possessedSkills.length > 0)
+      ? possessedSkills
+      : extractSkillsFromCV(`${linkedinText}\n${cvText}`);
 
     const apiKey = process.env['GEMINI_API_KEY'];
 
     if (!apiKey) {
       console.warn('GEMINI_API_KEY not configured. Utilizing dynamic profile analysis engine.');
-      const fallbackResult = generateDynamicFallback(linkedinText, cvText, fieldOfInterest, futureGoal);
+      const fallbackResult = generateDynamicFallback(linkedinText, cvText, fieldOfInterest, futureGoal, userSkills);
       return NextResponse.json({
         success: true,
         source: 'dynamic-engine',
@@ -319,20 +258,23 @@ export async function POST(request: NextRequest) {
 
     const userInput = `
 User Profile Input for Analysis:
-- LinkedIn Profile Details:
-"""
-${linkedinText || 'Not provided'}
-"""
+- User Acquired Skills (Extracted from CV/Resume & Selected):
+${userSkills.length > 0 ? userSkills.join(', ') : 'None explicitly specified'}
+
+- Declared Future Goal: "${futureGoal}"
+- Field / Domain: "${fieldOfInterest}"
 
 - Uploaded CV / Resume Text:
 """
 ${cvText || 'Not provided'}
 """
 
-- Field of Interest: "${fieldOfInterest}"
-- Declared Future Goal: "${futureGoal}"
+- LinkedIn Profile Details:
+"""
+${linkedinText || 'Not provided'}
+"""
 
-Please execute your sequential evaluation workflow now and return the structured JSON result.
+Please execute your sequential evaluation workflow now. Calculate the exact skill gap between the user's acquired skills and the required skills for "${futureGoal}" using the 50-role dataset knowledge base, and return the structured JSON result.
 `;
 
     let responseText: string | null = null;
@@ -387,7 +329,7 @@ Please execute your sequential evaluation workflow now and return the structured
     }
 
     // Dynamic fallback if parsing was unsuccessful or API was unavailable
-    const fallbackResult = generateDynamicFallback(linkedinText, cvText, fieldOfInterest, futureGoal);
+    const fallbackResult = generateDynamicFallback(linkedinText, cvText, fieldOfInterest, futureGoal, userSkills);
     return NextResponse.json({
       success: true,
       source: 'dynamic-engine-fallback',

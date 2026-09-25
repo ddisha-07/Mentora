@@ -3,9 +3,15 @@
 import { useTheme } from '@/context/ThemeContext';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import DashboardRightPanel from '@/components/dashboard/DashboardRightPanel';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import type { CareerAnalysisResult, CourseRecommendation } from '@/app/api/analyze-profile/route';
+import * as courseService from '@/lib/admin/services/courseService';
+import { mockCourses } from '@/lib/admin/data/mockCourses';
+import { formatAdminCourseForDisplay, PredefinedCourse, getTechDetails } from '@/lib/courses/courseFormatter';
+import { calculateCourseLiteralProgress, calculateCourseDuration } from '@/lib/courses/progressEngine';
+import PredefinedCourseCard from '@/components/courses/PredefinedCourseCard';
+import CoursePreviewModal from '@/components/courses/CoursePreviewModal';
 
 // ─── Mock Data ─────────────────────────────────────────────────────────────────
 const statsCards = [
@@ -90,150 +96,42 @@ const tasks = [
   { id: 't5', task: 'Post in Community: Week 3 reflection', due: 'Fri', done: false, priority: 'low' },
 ];
 
-const recommendedCourses = [
-  {
-    id: 'rc1',
-    title: 'Advanced TypeScript Patterns & Metaprogramming',
-    level: 'Advanced',
-    duration: '8h 30m',
-    rating: 4.9,
-    students: '12.4k',
-    color: '#3B82F6',
-    tag: 'Beginner',
-    tagBg: '#0084FF',
-    author: 'Mentora Studio',
-    category: 'Development',
-    techLogo: 'TS',
-    bannerBg: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 45%, #2dd4bf 100%)',
-    bannerText: 'ADVANCED TYPESCRIPT PATTERNS',
-    illustrationType: 'typescript',
-  },
-  {
-    id: 'rc2',
-    title: 'Docker & Kubernetes Essentials Bootcamp',
-    level: 'Intermediate',
-    duration: '6h 15m',
-    rating: 4.8,
-    students: '9.2k',
-    color: '#10B981',
-    tag: 'Beginner',
-    tagBg: '#0084FF',
-    author: 'Mentora Studio',
-    category: 'DevOps',
-    techLogo: '🐳',
-    bannerBg: 'linear-gradient(135deg, #c2410c 0%, #ea580c 45%, #fb923c 100%)',
-    bannerText: 'DOCKER & KUBERNETES ESSENTIALS',
-    illustrationType: 'docker',
-  },
-  {
-    id: 'rc3',
-    title: 'GraphQL API Design & Schema Federation',
-    level: 'Intermediate',
-    duration: '5h 45m',
-    rating: 4.9,
-    students: '7.8k',
-    color: '#F59E0B',
-    tag: 'Beginner',
-    tagBg: '#0084FF',
-    author: 'Mentora Studio',
-    category: 'Backend',
-    techLogo: 'JS',
-    bannerBg: 'linear-gradient(135deg, #312e81 0%, #4338ca 45%, #6366f1 100%)',
-    bannerText: 'GRAPHQL API DESIGN COURSE',
-    illustrationType: 'graphql',
-  },
-  {
-    id: 'rc4',
-    title: 'Redis & High-Speed Caching Strategies',
-    level: 'Advanced',
-    duration: '4h 20m',
-    rating: 4.8,
-    students: '5.1k',
-    color: '#EF4444',
-    tag: 'Beginner',
-    tagBg: '#0084FF',
-    author: 'Mentora Studio',
-    category: 'Database',
-    techLogo: '📈',
-    bannerBg: 'linear-gradient(135deg, #a16207 0%, #ca8a04 45%, #fde047 100%)',
-    bannerText: 'REDIS & CACHING STRATEGIES',
-    illustrationType: 'redis',
-  },
-  {
-    id: 'rc5',
-    title: 'Microservices Architecture & Event Mesh',
-    level: 'Advanced',
-    duration: '10h 00m',
-    rating: 4.9,
-    students: '18.2k',
-    color: '#8B5CF6',
-    tag: 'Beginner',
-    tagBg: '#0084FF',
-    author: 'Mentora Studio',
-    category: 'System Architecture',
-    techLogo: '⚙️',
-    bannerBg: 'linear-gradient(135deg, #581c87 0%, #7e22ce 45%, #a855f7 100%)',
-    bannerText: 'MICROSERVICES ARCHITECTURE',
-    illustrationType: 'microservices',
-  },
-];
+const initialAdminCourses: PredefinedCourse[] = mockCourses
+  .filter((c: any) => c.status !== 'Archived')
+  .map((c: any, idx: number) => formatAdminCourseForDisplay(c, idx));
 
-const learningJourneys = [
+const recommendedCourses = initialAdminCourses;
+
+const JOURNEY_PALETTES = [
   {
-    id: 'j1',
-    name: 'Full-Stack Web Development',
-    subtitle: 'Follow these easy and simple steps',
-    modules: 24,
-    done: 9,
-    progress: 37,
-    status: 'active',
-    lastModule: 'Node.js & REST APIs',
     gradientLight: ['#0284C7', '#0369A1'],
     gradientDark: ['#0284C7', '#075985'],
-    textColor: '#FFFFFF',
-    borderColor: 'rgba(255,255,255,0.2)',
+    iconType: 'j1',
   },
   {
-    id: 'j2',
-    name: 'Cloud Architecture (AWS)',
-    subtitle: 'Master scalable cloud resilience',
-    modules: 18,
-    done: 4,
-    progress: 22,
-    status: 'active',
-    lastModule: 'EC2 & Load Balancing',
     gradientLight: ['#C084FC', '#9333EA'],
     gradientDark: ['#9333EA', '#7E22CE'],
-    textColor: '#FFFFFF',
-    borderColor: 'rgba(255,255,255,0.2)',
+    iconType: 'j2',
   },
   {
-    id: 'j3',
-    name: 'Data Structures & Algorithms',
-    subtitle: 'Optimize code & problem solving',
-    modules: 30,
-    done: 18,
-    progress: 60,
-    status: 'active',
-    lastModule: 'Dynamic Programming',
     gradientLight: ['#FBBF24', '#D97706'],
     gradientDark: ['#D97706', '#B45309'],
-    textColor: '#FFFFFF',
-    borderColor: 'rgba(255,255,255,0.2)',
+    iconType: 'j3',
   },
   {
-    id: 'j4',
-    name: 'DevOps & CI/CD Pipeline',
-    subtitle: 'Automate build & deploy workflows',
-    modules: 15,
-    done: 1,
-    progress: 7,
-    status: 'new',
-    lastModule: 'Introduction to DevOps',
     gradientLight: ['#F87171', '#DC2626'],
     gradientDark: ['#DC2626', '#991B1B'],
-    textColor: '#FFFFFF',
-    borderColor: 'rgba(255,255,255,0.2)',
+    iconType: 'j4',
+  },
+  {
+    gradientLight: ['#34D399', '#059669'],
+    gradientDark: ['#059669', '#047857'],
+    iconType: 'j1',
+  },
+  {
+    gradientLight: ['#FB923C', '#EA580C'],
+    gradientDark: ['#EA580C', '#C2410C'],
+    iconType: 'j2',
   },
 ];
 
@@ -457,8 +355,153 @@ export default function DashboardPage() {
   );
   const [journeysExpanded, setJourneysExpanded] = useState(true);
   const [careerAnalysis, setCareerAnalysis] = useState<CareerAnalysisResult | null>(null);
-  const [enrolledCourseIds, setEnrolledCourseIds] = useState<Record<string, boolean>>({});
+  const [enrolledCourseIds, setEnrolledCourseIds] = useState<Record<string, boolean>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('mentora_enrolled_courses');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            return parsed;
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load enrolled courses from localStorage:', err);
+      }
+    }
+    return {};
+  });
+  const [completedModulesMap, setCompletedModulesMap] = useState<Record<string, string[]>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('mentora_completed_modules');
+        if (raw) return JSON.parse(raw);
+      } catch {}
+    }
+    return {};
+  });
   const [activeGapTab, setActiveGapTab] = useState<'missing' | 'possessed'>('missing');
+
+  const [adminCourses, setAdminCourses] = useState<PredefinedCourse[]>(initialAdminCourses);
+  const [previewCourse, setPreviewCourse] = useState<PredefinedCourse | null>(null);
+  const [ongoingCourse, setOngoingCourse] = useState<{
+    courseId: string;
+    courseTitle: string;
+    category: string;
+    techLogo: string;
+    techIcon: string;
+    techGradient: string;
+    techTextColor: string;
+    currentModuleNumber: number;
+    totalModules: number;
+    currentModuleTitle: string;
+    moduleSubtitle: string;
+    currentSlide: number;
+    totalSlides: number;
+    progress: number;
+    remainingMins: number;
+    totalMins: number;
+    actionUrl: string;
+  } | null>(null);
+
+  const deriveOngoingCourse = (course: any) => {
+    const title = course.title || course.name || 'Web Development';
+    const category = course.category || course.subtitle || 'Software Engineering';
+    const tech = getTechDetails(title, category);
+    const rawModules = Array.isArray(course.modules) ? course.modules : [];
+    const totalModules = rawModules.length || course.modulesCount || (course.modules || 6) || 6;
+
+    // Literal progress: count actual completed modules from database / state
+    const completedIds =
+      completedModulesMap[course.id] ||
+      (course.id === 'crs_1' ? completedModulesMap['demo'] : undefined) ||
+      (course.id === 'demo' ? completedModulesMap['crs_1'] : undefined) ||
+      rawModules.filter((m: any) => m.completed).map((m: any) => m.id) ||
+      [];
+    const completedMods = completedIds.length;
+    const computedTotal = rawModules.length > 0 ? rawModules.length : (course.id === 'crs_1' || course.id === 'demo' ? 15 : (course.modulesCount || 6));
+    const progress = computedTotal > 0 ? Math.min(100, Math.round((completedMods / computedTotal) * 100)) : 0;
+    const currentModuleNumber = Math.min(computedTotal, Math.max(1, completedMods + 1));
+
+    let currentModuleTitle = `Tile ${currentModuleNumber}: Core Concepts & Architecture`;
+    let moduleSubtitle = 'Hands-on practice, visual masterclasses, and verified milestone gates';
+    let totalMins = 30;
+
+    if (rawModules[currentModuleNumber - 1]) {
+      const mod = rawModules[currentModuleNumber - 1];
+      currentModuleTitle = mod.title || currentModuleTitle;
+      moduleSubtitle = mod.subtitle || mod.tagline || mod.description || mod.content?.tagline || moduleSubtitle;
+      if (mod.duration) {
+        const parsed = parseInt(mod.duration, 10);
+        if (!isNaN(parsed) && parsed > 0) totalMins = parsed;
+      }
+    }
+
+    const moduleChunk = 100 / (computedTotal || 1);
+    const withinModuleProgress = (progress % moduleChunk) / moduleChunk;
+    const remainingMins = Math.max(5, Math.round(totalMins * (1 - withinModuleProgress)));
+    const currentSlide = Math.max(1, Math.round(withinModuleProgress * 8) || 1);
+
+    return {
+      courseId: course.id,
+      courseTitle: title,
+      category,
+      techLogo: tech.techLogo,
+      techIcon: tech.techIcon,
+      techGradient: tech.techGradient,
+      techTextColor: tech.techTextColor,
+      currentModuleNumber,
+      totalModules,
+      currentModuleTitle,
+      moduleSubtitle,
+      currentSlide,
+      totalSlides: 8,
+      progress,
+      remainingMins,
+      totalMins,
+      actionUrl: `/dashboard/journeys/${course.id}`,
+    };
+  };
+
+  const loadOngoingCourse = async () => {
+    try {
+      const res = await fetch('/api/courses/ongoing');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.hasOngoingCourse && data.ongoingCourse) {
+          setOngoingCourse(data.ongoingCourse);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Could not fetch ongoing course from API:', err);
+    }
+
+    // Fallback: check locally enrolled courses
+    try {
+      const raw = localStorage.getItem('mentora_enrolled_courses');
+      const enrolled = raw ? JSON.parse(raw) : {};
+      const enrolledKeys = Object.keys(enrolled).filter((k) => !!enrolled[k]);
+      if (enrolledKeys.length === 0) {
+        setOngoingCourse(null);
+        return;
+      }
+
+      const allAvailable = [
+        ...adminCourses,
+        ...(careerAnalysis?.targetedCourseRecommendations?.map((c: any, i: number) => formatAdminCourseForDisplay(c, i)) || []),
+      ];
+
+      const match = allAvailable.find((c) => enrolled[c.id]);
+      if (match) {
+        setOngoingCourse(deriveOngoingCourse(match));
+      } else {
+        setOngoingCourse(null);
+      }
+    } catch {
+      setOngoingCourse(null);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -469,14 +512,195 @@ export default function DashboardPage() {
     } catch (err) {
       console.error('Failed to load career analysis from localStorage:', err);
     }
+
+    let isMounted = true;
+    async function loadAdminCourses() {
+      try {
+        const stored = await courseService.getCourses();
+        if (!isMounted) return;
+        if (Array.isArray(stored) && stored.length > 0) {
+          const formatted = stored
+            .filter((c: any) => c.status !== 'Archived')
+            .map((c: any, idx: number) => formatAdminCourseForDisplay(c, idx));
+          setAdminCourses(formatted);
+        }
+      } catch (err) {
+        console.error('Failed to load courses from courseService:', err);
+      }
+    }
+
+    async function loadProgressFromDb() {
+      try {
+        const res = await fetch('/api/courses/progress');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.progressMap) {
+            const newCompleted: Record<string, string[]> = {};
+            const newEnrolled: Record<string, boolean> = {};
+            Object.entries(data.progressMap).forEach(([cId, pData]: [string, any]) => {
+              if (pData.completedModules && Array.isArray(pData.completedModules)) {
+                newCompleted[cId] = pData.completedModules;
+              }
+              if (pData.enrolled) {
+                newEnrolled[cId] = true;
+              }
+            });
+            if (Object.keys(newCompleted).length > 0) {
+              setCompletedModulesMap((prev) => ({ ...prev, ...newCompleted }));
+            }
+            if (Object.keys(newEnrolled).length > 0) {
+              setEnrolledCourseIds((prev) => ({ ...prev, ...newEnrolled }));
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to load courses progress from API in dashboard:', err);
+      }
+    }
+
+    loadAdminCourses();
+    loadProgressFromDb();
+    loadOngoingCourse();
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'mentora_admin_courses_v2') {
+        loadAdminCourses();
+      }
+      if (e.key === 'mentora_enrolled_courses') {
+        try {
+          const raw = localStorage.getItem('mentora_enrolled_courses');
+          if (raw) setEnrolledCourseIds(JSON.parse(raw));
+          else setEnrolledCourseIds({});
+        } catch {}
+        loadOngoingCourse();
+      }
+      if (e.key === 'mentora_completed_modules') {
+        try {
+          const raw = localStorage.getItem('mentora_completed_modules');
+          if (raw) setCompletedModulesMap(JSON.parse(raw));
+        } catch {}
+        loadOngoingCourse();
+      }
+    };
+    const handleCustomUpdate = () => {
+      loadAdminCourses();
+      loadOngoingCourse();
+    };
+    const handleCustomEnrolled = (e: any) => {
+      if (e?.detail) setEnrolledCourseIds(e.detail);
+      loadOngoingCourse();
+    };
+    const handleCustomProgress = (e: any) => {
+      if (e?.detail) setCompletedModulesMap(e.detail);
+      loadOngoingCourse();
+    };
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('mentora_courses_updated', handleCustomUpdate);
+    window.addEventListener('mentora_enrolled_updated', handleCustomEnrolled);
+    window.addEventListener('mentora_progress_updated', handleCustomProgress);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('mentora_courses_updated', handleCustomUpdate);
+      window.removeEventListener('mentora_enrolled_updated', handleCustomEnrolled);
+      window.removeEventListener('mentora_progress_updated', handleCustomProgress);
+    };
   }, []);
 
-  const toggleEnrollCourse = (id: string) => {
-    setEnrolledCourseIds((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+  const toggleEnrollCourse = async (id: string) => {
+    const isCurrentlyEnrolled = !!enrolledCourseIds[id];
+    const nextState = !isCurrentlyEnrolled;
+
+    setEnrolledCourseIds((prev) => {
+      const next = {
+        ...prev,
+        [id]: nextState,
+      };
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('mentora_enrolled_courses', JSON.stringify(next));
+          window.dispatchEvent(new CustomEvent('mentora_enrolled_updated', { detail: next }));
+        } catch (err) {
+          console.error('Failed to save enrolled courses to localStorage:', err);
+        }
+      }
+      return next;
+    });
+
+    // Sync with database and backend
+    try {
+      await fetch('/api/courses/enroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: id,
+          action: nextState ? 'enroll' : 'unenroll',
+        }),
+      });
+      loadOngoingCourse();
+    } catch (err) {
+      console.warn('Failed to sync enrollment with backend API:', err);
+    }
   };
+
+  const enrolledJourneys = useMemo(() => {
+    const list: Array<{
+      id: string;
+      name: string;
+      subtitle: string;
+      modules: number;
+      done: number;
+      progress: number;
+      status: string;
+      gradientLight: string[];
+      gradientDark: string[];
+      textColor: string;
+      borderColor: string;
+      iconType: string;
+    }> = [];
+
+    const allAvailable = [
+      ...adminCourses,
+      ...(careerAnalysis?.targetedCourseRecommendations?.map((c: any, i: number) => formatAdminCourseForDisplay(c, i)) || []),
+    ];
+
+    const effectiveEnrolledMap = Object.keys(enrolledCourseIds).some((k) => !!enrolledCourseIds[k])
+      ? enrolledCourseIds
+      : { 'crs_1': true };
+
+    const seen = new Set<string>();
+
+    allAvailable.forEach((c) => {
+      if (effectiveEnrolledMap[c.id] && !seen.has(c.id)) {
+        seen.add(c.id);
+        const palette = JOURNEY_PALETTES[list.length % JOURNEY_PALETTES.length];
+        const rawModules = Array.isArray(c.modules) ? c.modules : [];
+        const totalMods = rawModules.length || c.modulesCount || 4;
+        const completedIds = completedModulesMap[c.id] || rawModules.filter((m: any) => m.completed).map((m: any) => m.id);
+        const doneMods = completedIds.length;
+        const progress = totalMods > 0 ? Math.min(100, Math.round((doneMods / totalMods) * 100)) : 0;
+
+        list.push({
+          id: c.id,
+          name: c.title,
+          subtitle: c.category ? `${c.category} Track` : (c.reason || 'Active learning pathway'),
+          modules: totalMods,
+          done: doneMods,
+          progress,
+          status: 'active',
+          gradientLight: palette.gradientLight,
+          gradientDark: palette.gradientDark,
+          textColor: '#FFFFFF',
+          borderColor: 'rgba(255,255,255,0.2)',
+          iconType: palette.iconType,
+        });
+      }
+    });
+
+    return list;
+  }, [enrolledCourseIds, completedModulesMap, adminCourses, careerAnalysis]);
 
   const bgPage = isBright ? '#FFF8F0' : '#111010';
   const cardBg = isBright ? '#FFFFFF' : '#1C1916';
@@ -601,9 +825,6 @@ export default function DashboardPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4" style={{ borderColor: isBright ? 'rgba(234,88,12,0.15)' : 'rgba(255,107,53,0.15)' }}>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-[#EA580C]/15 text-[#EA580C] border border-[#EA580C]/30">
-                        ✦ GEMINI AI CAREER BLUEPRINT
-                      </span>
                       <span className="text-xs font-mono font-bold" style={{ color: textMuted }}>
                         Target Goal: <span style={{ color: textPrimary }} className="underline decoration-orange-500 font-extrabold">{careerAnalysis.futureGoal}</span>
                       </span>
@@ -668,21 +889,6 @@ export default function DashboardPage() {
                       Update Profile ↺
                     </Link>
                   </div>
-                </div>
-
-                {/* Level Justification & Evaluation Summary */}
-                <div
-                  className="p-4 rounded-2xl border text-xs leading-relaxed"
-                  style={{
-                    background: isBright ? 'rgba(255, 237, 213, 0.4)' : 'rgba(234, 88, 12, 0.06)',
-                    borderColor: isBright ? 'rgba(234, 88, 12, 0.2)' : 'rgba(255, 107, 53, 0.15)',
-                    color: textPrimary,
-                  }}
-                >
-                  <p className="font-semibold">
-                    <span className="text-orange-500 font-bold">Evaluation Summary: </span>
-                    {careerAnalysis.levelExplanation || careerAnalysis.currentProfileEvaluation?.summary}
-                  </p>
                 </div>
 
                 {/* Interactive Tabs for Missing Skills (Prerequisite Gaps) vs Possessed Skills */}
@@ -846,15 +1052,21 @@ export default function DashboardPage() {
                 {/* Sub-Metrics Columns with Underline Accents */}
                 <div className="grid grid-cols-3 gap-2 mb-4 text-left">
                   <div className="pb-1.5 border-b-2 border-amber-500/60">
-                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#78350F' : '#FDE68A' }}>4 <span className="text-xs font-semibold">courses</span></p>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#78350F' : '#FDE68A' }}>
+                      {enrolledJourneys.length} <span className="text-xs font-semibold">courses</span>
+                    </p>
                     <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">Active</p>
                   </div>
                   <div className="pb-1.5 border-b-2 border-amber-500/30">
-                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#92400E' : '#F59E0B' }}>2 <span className="text-xs font-semibold">due</span></p>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#92400E' : '#F59E0B' }}>
+                      {enrolledJourneys.length > 0 ? Math.min(enrolledJourneys.length, 2) : 0} <span className="text-xs font-semibold">due</span>
+                    </p>
                     <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">This Week</p>
                   </div>
                   <div className="pb-1.5 border-b-2 border-amber-500/60">
-                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#451A03' : '#FBBF24' }}>1 <span className="text-xs font-semibold">done</span></p>
+                    <p className="text-xl xl:text-2xl font-black" style={{ color: isBright ? '#451A03' : '#FBBF24' }}>
+                      {enrolledJourneys.length > 0 ? 1 : 0} <span className="text-xs font-semibold">done</span>
+                    </p>
                     <p className="text-[10px] uppercase font-bold tracking-wider opacity-70 mt-0.5">Completed</p>
                   </div>
                 </div>
@@ -1063,87 +1275,108 @@ export default function DashboardPage() {
           </section>
 
           {/* ── 3. Continue Learning ──────────────────────────────────────── */}
-          <section id="continue-learning">
-            <p style={sectionLabelStyle}>Continue Learning</p>
-            <div
-              className="rounded-2xl p-5 transition-all duration-200 hover:scale-[1.005] cursor-pointer"
-              style={{ background: cardBg, border: `1px solid ${cardBorder}`, boxShadow: cardShadow }}
-            >
-              <div className="flex gap-4 items-start">
-                {/* Thumbnail */}
-                <div
-                  className="w-24 h-20 rounded-xl flex-shrink-0 flex items-center justify-center relative overflow-hidden"
-                  style={{ background: 'linear-gradient(135deg, #1a2a3a, #0f1c2a)' }}
-                >
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-3xl mb-1">⚙️</div>
-                      <div className="text-xs font-bold text-blue-300">NODE.JS</div>
+          {ongoingCourse && (
+            <section id="continue-learning">
+              <p style={sectionLabelStyle}>Continue Learning</p>
+              <div
+                onClick={() => {
+                  window.location.href = ongoingCourse.actionUrl || `/dashboard/journeys/${ongoingCourse.courseId}`;
+                }}
+                className="rounded-2xl p-5 transition-all duration-200 hover:scale-[1.005] cursor-pointer"
+                style={{ background: cardBg, border: `1px solid ${cardBorder}`, boxShadow: cardShadow }}
+              >
+                <div className="flex gap-4 items-start">
+                  {/* Thumbnail */}
+                  <div
+                    className="w-24 h-20 rounded-xl flex-shrink-0 flex items-center justify-center relative overflow-hidden"
+                    style={{ background: ongoingCourse.techGradient || 'linear-gradient(135deg, #1a2a3a, #0f1c2a)' }}
+                  >
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-3xl mb-1">{ongoingCourse.techIcon || '⚙️'}</div>
+                        <div
+                          className="text-xs font-bold uppercase tracking-wider"
+                          style={{ color: ongoingCourse.techTextColor || '#93c5fd' }}
+                        >
+                          {ongoingCourse.techLogo || 'NODE.JS'}
+                        </div>
+                      </div>
+                    </div>
+                    {/* Play button overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: '#FF6B35' }}>
+                        <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5 ml-0.5">
+                          <polygon points="5 3 19 12 5 21 5 3" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
-                  {/* Play button overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: '#FF6B35' }}>
-                      <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5 ml-0.5">
-                        <polygon points="5 3 19 12 5 21 5 3" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <span
-                        className="text-xs font-medium px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(255,107,53,0.1)', color: '#FF6B35', border: '1px solid rgba(255,107,53,0.2)' }}
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span
+                          className="text-xs font-medium px-2 py-0.5 rounded-full"
+                          style={{ background: 'rgba(255,107,53,0.1)', color: '#FF6B35', border: '1px solid rgba(255,107,53,0.2)' }}
+                        >
+                          {ongoingCourse.category}
+                        </span>
+                        <h3 className="mt-1.5 text-base font-bold" style={{ color: textPrimary }}>
+                          Module {ongoingCourse.currentModuleNumber}: {ongoingCourse.currentModuleTitle}
+                        </h3>
+                        <p className="text-sm mt-0.5" style={{ color: textMuted }}>
+                          {ongoingCourse.moduleSubtitle}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Progress */}
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-xs" style={{ color: textMuted }}>Progress</span>
+                        <span className="text-xs font-bold" style={{ color: '#FF6B35' }}>{ongoingCourse.progress}%</span>
+                      </div>
+                      <ProgressBar value={ongoingCourse.progress} color="#FF6B35" height={6} />
+                      <div className="flex items-center justify-between mt-1.5">
+                        <span className="text-xs" style={{ color: textSub }}>
+                          {ongoingCourse.remainingMins} / {ongoingCourse.totalMins} mins remaining
+                        </span>
+                        <span className="text-xs" style={{ color: textSub }}>
+                          Module {ongoingCourse.currentModuleNumber} of {ongoingCourse.totalModules}
+                          {ongoingCourse.totalSlides > 1 && (
+                            <span className="ml-1 opacity-80">
+                              • Slide {ongoingCourse.currentSlide} of {ongoingCourse.totalSlides}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Resume button */}
+                    <div className="mt-3">
+                      <Link
+                        href={ongoingCourse.actionUrl || `/dashboard/journeys/${ongoingCourse.courseId}`}
+                        id="btn-resume-learning"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.03] hover:-translate-y-0.5"
+                        style={{
+                          background: 'linear-gradient(135deg, #FF6B35, #E85D2C)',
+                          color: '#fff',
+                          boxShadow: '0 4px 14px rgba(255,107,53,0.35)',
+                        }}
                       >
-                        Full-Stack Web Development
-                      </span>
-                      <h3 className="mt-1.5 text-base font-bold" style={{ color: textPrimary }}>
-                        Module 5: REST API Design Patterns & Best Practices
-                      </h3>
-                      <p className="text-sm mt-0.5" style={{ color: textMuted }}>
-                        Authentication, rate limiting, versioning strategies
-                      </p>
+                        <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5">
+                          <polygon points="5 3 19 12 5 21 5 3" />
+                        </svg>
+                        Resume Learning
+                      </Link>
                     </div>
-                  </div>
-
-                  {/* Progress */}
-                  <div className="mt-3">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs" style={{ color: textMuted }}>Progress</span>
-                      <span className="text-xs font-bold" style={{ color: '#FF6B35' }}>68%</span>
-                    </div>
-                    <ProgressBar value={68} color="#FF6B35" height={6} />
-                    <div className="flex items-center justify-between mt-1.5">
-                      <span className="text-xs" style={{ color: textSub }}>34 / 50 mins remaining</span>
-                      <span className="text-xs" style={{ color: textSub }}>Module 5 of 8</span>
-                    </div>
-                  </div>
-
-                  {/* Resume button */}
-                  <div className="mt-3">
-                    <button
-                      id="btn-resume-learning"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.03] hover:-translate-y-0.5"
-                      style={{
-                        background: 'linear-gradient(135deg, #FF6B35, #E85D2C)',
-                        color: '#fff',
-                        boxShadow: '0 4px 14px rgba(255,107,53,0.35)',
-                      }}
-                    >
-                      <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5">
-                        <polygon points="5 3 19 12 5 21 5 3" />
-                      </svg>
-                      Resume Learning
-                    </button>
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
 
 
@@ -1206,173 +1439,47 @@ export default function DashboardPage() {
             {/* Header Row */}
             <div className="relative z-10 flex items-center justify-between mb-4">
               <div>
-                <span className="text-[10px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/25 uppercase">
-                  {careerAnalysis ? '✦ TAILORED FOR YOUR GAPS' : '✦ FEATURED FOR YOU'}
-                </span>
                 <h2 className="text-xl font-black tracking-tight mt-1 mb-0" style={{ color: textPrimary }}>
-                  {careerAnalysis ? 'AI Targeted Course Recommendations' : 'Recommended For You'}
+                  {careerAnalysis ? 'AI Targeted Course Recommendations' : 'Curated Admin Courses'}
                 </h2>
               </div>
-              <a
-                href="#"
+              <Link
+                href="/dashboard/courses"
                 className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#FF6B35]/30 text-[#FF6B35] bg-[#FF6B35]/10 hover:bg-[#FF6B35] hover:text-white transition-all duration-200"
               >
-                See all →
-              </a>
+                See all ({adminCourses.length > 0 ? adminCourses.length : recommendedCourses.length}) →
+              </Link>
             </div>
 
             {/* Nested Cards Grid / Scroll */}
             <div className="relative z-10 flex gap-4 overflow-x-auto pb-2 pt-1" style={{ scrollbarWidth: 'none' }}>
               {(careerAnalysis?.targetedCourseRecommendations && careerAnalysis.targetedCourseRecommendations.length > 0
-                ? careerAnalysis.targetedCourseRecommendations
-                : recommendedCourses
-              ).map((course: any) => {
-                const isGemini = !!careerAnalysis?.targetedCourseRecommendations?.some((c) => c.id === course.id);
+                ? careerAnalysis.targetedCourseRecommendations.map((c: any, i: number) => formatAdminCourseForDisplay(c, i))
+                : (adminCourses.length > 0 ? adminCourses : recommendedCourses.map((c: any, i: number) => formatAdminCourseForDisplay(c, i)))
+              ).map((course: PredefinedCourse) => {
                 const isEnrolled = !!enrolledCourseIds[course.id];
 
                 return (
-                  <div
+                  <PredefinedCourseCard
                     key={course.id}
-                    id={`course-${course.id}`}
-                    className="flex-shrink-0 w-[270px] rounded-2xl flex flex-col transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 cursor-pointer overflow-hidden group"
-                    style={{
-                      background: cardBg,
-                      border: `1px solid ${cardBorder}`,
-                      boxShadow: cardShadow,
-                    }}
-                  >
-                    {/* Top Visual Banner */}
-                    <div
-                      style={{
-                        background:
-                          course.bannerBg ||
-                          (isGemini
-                            ? 'linear-gradient(135deg, #c2410c 0%, #ea580c 45%, #fb923c 100%)'
-                            : course.bannerBg),
-                      }}
-                    >
-                      {isGemini ? (
-                        <div className="relative w-full h-32 rounded-t-2xl overflow-hidden flex flex-col justify-between p-3 select-none">
-                          <div
-                            className="absolute inset-0 opacity-20 pointer-events-none"
-                            style={{
-                              backgroundImage: `
-                                linear-gradient(to right, rgba(255,255,255,0.25) 1px, transparent 1px),
-                                linear-gradient(to bottom, rgba(255,255,255,0.25) 1px, transparent 1px)
-                              `,
-                              backgroundSize: '16px 16px',
-                            }}
-                          />
-                          <div className="relative z-10 flex items-center justify-between w-full">
-                            <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-black/40 text-white backdrop-blur-sm border border-white/20 uppercase tracking-wider">
-                              {course.level || 'Intermediate'}
-                            </span>
-                            <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-white text-orange-600 shadow-md">
-                              {course.matchScore ? `${course.matchScore}% MATCH` : 'TOP PICK'}
-                            </span>
-                          </div>
-                          <div className="relative z-10 mt-auto">
-                            <span className="text-[10px] font-bold text-white/80 uppercase font-mono block truncate">
-                              {course.category}
-                            </span>
-                            <p className="text-[11px] font-black leading-tight tracking-wider text-white uppercase drop-shadow-md line-clamp-2">
-                              {course.title}
-                            </p>
-                          </div>
-                        </div>
-                      ) : (
-                        <CourseBannerGraphic
-                          type={course.illustrationType}
-                          bannerText={course.bannerText}
-                          techLogo={course.techLogo}
-                          tag={course.tag}
-                        />
-                      )}
-                    </div>
-
-                    {/* Bottom Card Body */}
-                    <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2.5">
-                      <div>
-                        {/* Course Title */}
-                        <h4
-                          className="text-xs font-bold leading-snug line-clamp-2 min-h-[34px] transition-colors group-hover:text-[#FF6B35]"
-                          style={{ color: textPrimary }}
-                        >
-                          {course.title}
-                        </h4>
-
-                        {/* Reason / Gap Bridged */}
-                        {course.reason && (
-                          <p className="text-[10px] mt-1.5 leading-relaxed font-mono line-clamp-2" style={{ color: textMuted }}>
-                            <span className="text-orange-500 font-bold">Why: </span>
-                            {course.reason}
-                          </p>
-                        )}
-
-                        {/* Key Topics */}
-                        {course.keyTopics && course.keyTopics.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {course.keyTopics.slice(0, 3).map((topic: string, tidx: number) => (
-                              <span
-                                key={tidx}
-                                className="text-[9px] font-mono px-1.5 py-0.5 rounded-md border"
-                                style={{
-                                  background: isBright ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.05)',
-                                  borderColor: isBright ? '#E5D7C8' : 'rgba(255,255,255,0.1)',
-                                  color: textMuted,
-                                }}
-                              >
-                                {topic}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Duration & Level metadata */}
-                        <div className="flex items-center justify-between mt-2.5 text-[10px] font-mono" style={{ color: textSub }}>
-                          <span>⏱ {course.duration || '6h 30m'}</span>
-                          <span>Level: {course.level || 'Intermediate'}</span>
-                        </div>
-                      </div>
-
-                      {/* Action Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleEnrollCourse(course.id);
-                        }}
-                        className={`w-full py-2 rounded-full text-xs font-bold transition-all duration-200 border flex items-center justify-center gap-1.5 shadow-sm cursor-pointer ${
-                          isEnrolled
-                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
-                            : 'hover:bg-[#FF6B35] hover:text-white hover:border-[#FF6B35]'
-                        }`}
-                        style={
-                          !isEnrolled
-                            ? {
-                                borderColor: isBright ? 'rgba(234,88,12,0.35)' : 'rgba(255,107,53,0.35)',
-                                color: '#FF6B35',
-                                background: isBright ? 'rgba(255,107,53,0.04)' : 'rgba(255,107,53,0.08)',
-                              }
-                            : undefined
-                        }
-                      >
-                        {isEnrolled ? (
-                          <>
-                            <span>✓</span>
-                            <span>Enrolled in Pathway</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>Start Learning</span>
-                            <span>→</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
+                    course={course}
+                    isEnrolled={isEnrolled}
+                    onEnrollToggle={toggleEnrollCourse}
+                    onViewSyllabus={(c) => setPreviewCourse(c)}
+                  />
                 );
               })}
             </div>
+
+            {/* Syllabus / Curriculum Preview Modal */}
+            <CoursePreviewModal
+              course={previewCourse}
+              isOpen={Boolean(previewCourse)}
+              onClose={() => setPreviewCourse(null)}
+              onEnroll={toggleEnrollCourse}
+              isEnrolled={previewCourse ? !!enrolledCourseIds[previewCourse.id] : false}
+              ctaMode="enroll"
+            />
           </section>
 
           {/* ── 6. My Learning Journeys (Outer Container Card matching theme) ── */}
@@ -1434,16 +1541,19 @@ export default function DashboardPage() {
             {/* Header Row */}
             <div className="relative z-10 flex items-center justify-between mb-4">
               <div>
-                <span className="text-[10px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] border border-[#FF6B35]/25 uppercase">
-                  ✦ ROADMAP & PATHWAYS
-                </span>
                 <h2 className="text-xl font-black tracking-tight mt-1 mb-0" style={{ color: textPrimary }}>
                   My Learning Journeys
                 </h2>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/25">
-                  4 Active Pathways
+                <span
+                  className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${
+                    enrolledJourneys.length > 0
+                      ? 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/25'
+                      : 'bg-amber-500/15 text-amber-500 border-amber-500/25'
+                  }`}
+                >
+                  {enrolledJourneys.length} Active {enrolledJourneys.length === 1 ? 'Pathway' : 'Pathways'}
                 </span>
                 <button
                   id="btn-toggle-journeys"
@@ -1473,79 +1583,125 @@ export default function DashboardPage() {
                 opacity: journeysExpanded ? 1 : 0,
               }}
             >
-              {/* Journey Cards Grid (2 per row) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                {learningJourneys.map((j) => (
-                  <div
-                    key={j.id}
-                    id={`journey-${j.id}`}
-                    className="rounded-3xl p-4.5 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 cursor-pointer shadow-lg group flex flex-col justify-between"
-                    style={{
-                      background: isBright
-                        ? `linear-gradient(135deg, ${j.gradientLight[0]}, ${j.gradientLight[1]})`
-                        : `linear-gradient(135deg, ${j.gradientDark[0]}, ${j.gradientDark[1]})`,
-                      color: j.textColor,
-                      border: `1px solid ${j.borderColor}`,
-                      boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-                    }}
-                  >
-                    {/* Top Row: Isometric Icon + Title/Subtitle + Right White Rounded Box */}
-                    <div className="flex items-start justify-between gap-3">
-                      {/* Left Isometric Icon */}
-                      <div className="w-11 h-11 relative flex-shrink-0 flex items-center justify-center">
-                        <JourneyIsometricIcon type={j.id} />
-                      </div>
-
-                      {/* Middle: Course Name & Subtitle */}
-                      <div className="flex-1 min-w-0 pr-1">
-                        <h3 className="text-sm font-black leading-tight tracking-tight text-white drop-shadow-sm group-hover:underline">
-                          {j.name}
-                        </h3>
-                        <p className="text-[11px] mt-1 font-medium text-white/80 line-clamp-1">
-                          {j.subtitle}
-                        </p>
-                      </div>
-
-                      {/* Right: Small White Box with Module Completed Count */}
-                      <div className="flex flex-col items-center flex-shrink-0">
-                        <div className="w-12 h-12 rounded-xl bg-white shadow-lg flex flex-col items-center justify-center text-slate-900 p-0.5">
-                          <span className="text-sm font-black leading-none text-[#0F172A]">
-                            {j.done}<span className="text-[9px] font-bold opacity-60">/{j.modules}</span>
-                          </span>
-                          <span className="text-[7.5px] font-black uppercase tracking-wider text-slate-500 mt-0.5">
-                            Modules
-                          </span>
-                        </div>
-                        <span className="text-[8px] font-extrabold mt-1 text-white/80 uppercase tracking-wider">
-                          {j.status === 'active' ? 'Enrolled' : 'New Track'}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Bottom Row: Graph Bar with percentage right beside + Enroll Link */}
-                    <div className="mt-4 pt-1 flex items-center justify-between gap-3">
-                      {/* Graph Bar + Percentage */}
-                      <div className="flex-1 flex items-center gap-2">
-                        <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-white/30 backdrop-blur-sm p-[1px]">
-                          <div
-                            className="h-full rounded-full transition-all duration-700 bg-white shadow-sm"
-                            style={{ width: `${j.progress}%` }}
-                          />
-                        </div>
-                        <span className="text-[11px] font-black text-white min-w-[28px]">
-                          {j.progress}%
-                        </span>
-                      </div>
-
-                      {/* Action Link */}
-                      <div className="flex items-center gap-1 text-[11px] font-extrabold text-white transition-transform group-hover:translate-x-1">
-                        <span>Continue</span>
-                        <span>→</span>
-                      </div>
-                    </div>
+              {enrolledJourneys.length === 0 ? (
+                /* Empty state when not enrolled yet */
+                <div
+                  id="empty-enrolled-journeys"
+                  className="py-12 px-6 rounded-3xl border text-center flex flex-col items-center justify-center transition-all duration-300 relative overflow-hidden"
+                  style={{
+                    background: isBright ? 'rgba(255, 255, 255, 0.75)' : 'rgba(255, 255, 255, 0.03)',
+                    borderColor: isBright ? 'rgba(234, 88, 12, 0.2)' : 'rgba(255, 107, 53, 0.18)',
+                    boxShadow: cardShadow,
+                  }}
+                >
+                  {/* Glowing Compass / Sparkle Icon */}
+                  <div className="w-14 h-14 rounded-2xl bg-[#FF6B35]/15 text-[#FF6B35] flex items-center justify-center mb-3 shadow-inner">
+                    <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+                    </svg>
                   </div>
-                ))}
-              </div>
+
+                  <p
+                    className="text-base sm:text-lg font-bold tracking-tight mb-2 max-w-lg leading-snug"
+                    style={{ color: textPrimary }}
+                  >
+                    &ldquo;Your next skill is waiting — explore a course and start learning.&rdquo;
+                  </p>
+                  <p className="text-xs max-w-md mb-4" style={{ color: textMuted }}>
+                    Browse our courses above, choose a pathway that matches your career goals, and click &ldquo;Start Learning&rdquo; to begin.
+                  </p>
+
+                  <a
+                    href="#recommended-courses"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const el = document.getElementById('recommended-courses');
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth' });
+                      } else {
+                        window.location.href = '/dashboard/courses';
+                      }
+                    }}
+                    className="px-5 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-md shadow-orange-500/20 transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>Explore Courses</span>
+                    <span>→</span>
+                  </a>
+                </div>
+              ) : (
+                /* Journey Cards Grid (2 per row) */
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                  {enrolledJourneys.map((j) => (
+                    <div
+                      key={j.id}
+                      id={`journey-${j.id}`}
+                      className="rounded-3xl p-4.5 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 cursor-pointer shadow-lg group flex flex-col justify-between"
+                      style={{
+                        background: isBright
+                          ? `linear-gradient(135deg, ${j.gradientLight[0]}, ${j.gradientLight[1]})`
+                          : `linear-gradient(135deg, ${j.gradientDark[0]}, ${j.gradientDark[1]})`,
+                        color: j.textColor,
+                        border: `1px solid ${j.borderColor}`,
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                      }}
+                    >
+                      {/* Top Row: Isometric Icon + Title/Subtitle + Right White Rounded Box */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="w-11 h-11 relative flex-shrink-0 flex items-center justify-center">
+                          <JourneyIsometricIcon type={j.iconType} />
+                        </div>
+
+                        <div className="flex-1 min-w-0 pr-1">
+                          <h3 className="text-sm font-black leading-tight tracking-tight text-white drop-shadow-sm group-hover:underline">
+                            {j.name}
+                          </h3>
+                          <p className="text-[11px] mt-1 font-medium text-white/80 line-clamp-1">
+                            {j.subtitle}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col items-center flex-shrink-0">
+                          <div className="w-12 h-12 rounded-xl bg-white shadow-lg flex flex-col items-center justify-center text-slate-900 p-0.5">
+                            <span className="text-sm font-black leading-none text-[#0F172A]">
+                              {j.done}<span className="text-[9px] font-bold opacity-60">/{j.modules}</span>
+                            </span>
+                            <span className="text-[7.5px] font-black uppercase tracking-wider text-slate-500 mt-0.5">
+                              Modules
+                            </span>
+                          </div>
+                          <span className="text-[8px] font-extrabold mt-1 text-white/80 uppercase tracking-wider">
+                            Enrolled
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Bottom Row: Graph Bar with percentage right beside + Enroll Link */}
+                      <div className="mt-4 pt-1 flex items-center justify-between gap-3">
+                        <div className="flex-1 flex items-center gap-2">
+                          <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-white/30 backdrop-blur-sm p-[1px]">
+                            <div
+                              className="h-full rounded-full transition-all duration-700 bg-white shadow-sm"
+                              style={{ width: `${j.progress}%` }}
+                            />
+                          </div>
+                          <span className="text-[11px] font-black text-white min-w-[28px]">
+                            {j.progress}%
+                          </span>
+                        </div>
+
+                        <Link
+                          href={`/dashboard/journeys/${j.id}`}
+                          className="flex items-center gap-1 text-[11px] font-extrabold text-white transition-transform group-hover:translate-x-1"
+                        >
+                          <span>Continue</span>
+                          <span>→</span>
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Bottom Footer Bar */}
               <div
@@ -1557,7 +1713,9 @@ export default function DashboardPage() {
                 }}
               >
                 <span className="text-xs font-medium" style={{ color: textMuted }}>
-                  ⚡ <strong style={{ color: textPrimary }}>4 active journeys</strong> · 32 total modules completed
+                  ⚡ <strong style={{ color: textPrimary }}>{enrolledJourneys.length} active {enrolledJourneys.length === 1 ? 'journey' : 'journeys'}</strong>
+                  {enrolledJourneys.length > 0 &&
+                    ` · ${enrolledJourneys.reduce((sum, j) => sum + (j.done || 0), 0)} total modules completed`}
                 </span>
                 <Link
                   href="/dashboard/journeys"

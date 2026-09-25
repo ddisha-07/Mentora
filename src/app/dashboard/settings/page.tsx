@@ -140,10 +140,6 @@ export default function SettingsPage() {
           {/* Header Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <Shield className="w-3.5 h-3.5" />
-                <span>ACCOUNT & PREFERENCES</span>
-              </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Settings & Profile
               </h1>

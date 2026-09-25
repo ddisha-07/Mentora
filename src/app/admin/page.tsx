@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Users, BookOpen, Trophy, MessagesSquare, ArrowUpRight, CalendarDays } from "lucide-react";
 import Topbar from "@/components/admin/layout/Topbar";
@@ -13,6 +14,49 @@ import { formatDate } from "@/lib/admin/utils";
 export default function OverviewPage() {
   const { users, courses, communities, leaderboard, events, loading } = useAdminData();
 
+  const [reports, setReports] = useState<any[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("mentora_admin_reports");
+        if (raw) return JSON.parse(raw);
+      } catch {}
+    }
+    return [];
+  });
+
+  const loadReports = async () => {
+    try {
+      const res = await fetch("/api/admin/reports");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.reports)) {
+          setReports(data.reports);
+          return;
+        }
+      }
+    } catch {}
+
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("mentora_admin_reports");
+        if (raw) setReports(JSON.parse(raw));
+      } catch {}
+    }
+  };
+
+  useEffect(() => {
+    loadReports();
+
+    const handleReportEvent = () => {
+      loadReports();
+    };
+
+    window.addEventListener("mentora_activity_reported", handleReportEvent);
+    return () => {
+      window.removeEventListener("mentora_activity_reported", handleReportEvent);
+    };
+  }, []);
+
   const publishedCourses = courses.filter((c: any) => c.status === "Published").length;
   const activeUsers = users.filter((u: any) => u.status === "Active").length;
   const upcoming = [...events].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()).slice(0, 4);
@@ -25,7 +69,7 @@ export default function OverviewPage() {
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard label="Total Users" value={loading ? "—" : users.length} icon={Users} delta={`${activeUsers} active`} tone="ember" />
         <StatCard label="Published Courses" value={loading ? "—" : publishedCourses} icon={BookOpen} delta={`${courses.length} total`} tone="blue" />
-        <StatCard label="Communities" value={loading ? "—" : communities.length} icon={MessagesSquare} delta="growing steadily" tone="purple" />
+        <StatCard label="Communities" value={loading ? "—" : communities.length} icon={MessagesSquare} tone="purple" />
         <StatCard label="Top Score" value={loading ? "—" : topFive[0]?.points?.toLocaleString() ?? 0} icon={Trophy} delta={topFive[0]?.name} tone="green" />
       </div>
 
@@ -117,6 +161,83 @@ export default function OverviewPage() {
           </div>
         </GlassCard>
       </div>
+
+      {/* ── LIVE LEARNER ACTIVITY & ROADMAP REPORTS ── */}
+      <div className="mt-6">
+        <GlassCard className="p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-ink-100">Live Learner Roadmap Activity Reports</h3>
+              <Badge tone="ember">Realtime</Badge>
+            </div>
+            <span className="text-xs text-ink-500 font-mono">
+              {reports.length} Activities Logged
+            </span>
+          </div>
+
+          <div className="divide-y divide-line-soft">
+            {reports.slice(0, 6).map((rep: any) => {
+              const actBadgeTone =
+                rep.activityType === 'quiz' ? 'purple' :
+                rep.activityType === 'video' ? 'blue' :
+                rep.activityType === 'flashcards' ? 'ember' :
+                rep.activityType === 'dialogue' ? 'green' : 'neutral';
+
+              const actIcon =
+                rep.activityType === 'quiz' ? '🎯' :
+                rep.activityType === 'video' ? '🎥' :
+                rep.activityType === 'flashcards' ? '🃏' :
+                rep.activityType === 'dialogue' ? '🤖' : '📖';
+
+              const timeStr = rep.completedAt
+                ? new Date(rep.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : 'Just now';
+
+              return (
+                <div key={rep.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-xl bg-ember-500/10 border border-ember-500/25 flex items-center justify-center text-lg shrink-0">
+                      {actIcon}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm font-medium text-ink-100 truncate">{rep.userName || 'Learner'}</p>
+                        <Badge tone={actBadgeTone as any}>
+                          {rep.activityType ? rep.activityType.toUpperCase() : 'ACTIVITY'}
+                        </Badge>
+                        {typeof rep.score === 'number' && (
+                          <span className="text-[11px] font-mono text-emerald-400 font-bold bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                            Score: {rep.score}%
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-ink-500 truncate mt-0.5">
+                        {rep.tileTitle || rep.title || 'Completed Tile'} • <span className="text-ink-400">{rep.courseTitle || 'Roadmap'}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                    <span className="text-xs font-mono font-bold text-ember-400 bg-ember-500/10 px-2.5 py-1 rounded-lg border border-ember-500/20">
+                      +{rep.xpReward || 50} XP
+                    </span>
+                    <span className="text-xs text-ink-500 font-mono">
+                      {timeStr}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+
+            {reports.length === 0 && (
+              <div className="py-8 text-center text-xs text-ink-500">
+                No activity reports logged yet. Once learners complete tiles on the roadmap, events will stream here live.
+              </div>
+            )}
+          </div>
+        </GlassCard>
+      </div>
     </div>
   );
 }
+

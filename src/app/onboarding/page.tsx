@@ -6,22 +6,23 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
 
-const FIELD_SUGGESTIONS = [
-  'Artificial Intelligence & Machine Learning',
-  'Agentic AI & LLM Systems',
-  'Full-Stack AI Development',
-  'Cloud Architecture & DevOps',
-  'Data Science & Advanced Analytics',
-  'Cybersecurity & AI Safety',
-];
+import {
+  CAREER_ROLES_DATASET,
+  ALL_DATASET_SKILLS,
+  extractSkillsFromCV,
+} from '@/lib/career/careerRolesDataset';
 
-const GOAL_SUGGESTIONS = [
-  'AI Engineer',
-  'Senior AI Systems Architect',
-  'Machine Learning Engineer',
-  'AI Product Lead',
-  'Full-Stack AI Developer',
+const POPULAR_GOALS = [
   'Data Scientist',
+  'UI/UX Designer',
+  'Full Stack Developer',
+  'Machine Learning Engineer',
+  'Cloud Engineer',
+  'Cybersecurity Analyst',
+  'Product Manager',
+  'DevOps Engineer',
+  'AI Research Scientist',
+  'Business Analyst',
 ];
 
 export default function OnboardingPage() {
@@ -32,14 +33,76 @@ export default function OnboardingPage() {
   const [linkedinText, setLinkedinText] = useState('');
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvText, setCvText] = useState('');
-  const [fieldOfInterest, setFieldOfInterest] = useState('Artificial Intelligence & Machine Learning');
-  const [futureGoal, setFutureGoal] = useState('AI Engineer');
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [skillSearchQuery, setSkillSearchQuery] = useState('');
+  const [futureGoal, setFutureGoal] = useState('Data Scientist');
+  const [isCustomGoal, setIsCustomGoal] = useState(false);
 
   // UI State
   const [isDragging, setIsDragging] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExtractingSkills, setIsExtractingSkills] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Skill extraction trigger
+  const runSkillExtraction = async (text: string) => {
+    if (!text.trim()) return;
+    setIsExtractingSkills(true);
+    // 1. Instant deterministic extraction from 50-role dataset
+    const deterministic = extractSkillsFromCV(text);
+    if (deterministic.length > 0) {
+      setSelectedSkills((prev) => Array.from(new Set([...prev, ...deterministic])));
+    }
+
+    // 2. Background AI extraction
+    try {
+      const res = await fetch('/api/career/extract-skills', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cvText: text, linkedinText }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.skills && Array.isArray(data.skills) && data.skills.length > 0) {
+          setSelectedSkills((prev) => Array.from(new Set([...prev, ...data.skills])));
+        }
+      }
+    } catch (err) {
+      console.warn('AI skill extraction notice:', err);
+    } finally {
+      setIsExtractingSkills(false);
+    }
+  };
+
+  // Skill add & remove handlers
+  const handleAddSkill = (skillName: string) => {
+    const trimmed = skillName.trim();
+    if (!trimmed) return;
+    const formatted = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+    if (!selectedSkills.some((s) => s.toLowerCase() === formatted.toLowerCase())) {
+      setSelectedSkills((prev) => [...prev, formatted]);
+    }
+    setSkillSearchQuery('');
+  };
+
+  const handleRemoveSkill = (skillToRemove: string) => {
+    setSelectedSkills((prev) => prev.filter((s) => s !== skillToRemove));
+  };
+
+  // Autocomplete suggestions filtered from dataset
+  const filteredSkillSuggestions = skillSearchQuery.trim()
+    ? ALL_DATASET_SKILLS.filter(
+        (s) =>
+          s.toLowerCase().includes(skillSearchQuery.trim().toLowerCase()) &&
+          !selectedSkills.some((sel) => sel.toLowerCase() === s.toLowerCase())
+      ).slice(0, 8)
+    : [];
+
+  const popularDatasetSkills = [
+    'Python', 'React', 'SQL', 'Machine Learning', 'Figma', 'Docker',
+    'AWS', 'Git', 'JavaScript', 'Node.js', 'Statistics', 'Cybersecurity'
+  ].filter((s) => !selectedSkills.some((sel) => sel.toLowerCase() === s.toLowerCase())).slice(0, 6);
 
   // File reading helper
   const handleFileChange = (file: File | null) => {
@@ -58,20 +121,23 @@ export default function OnboardingPage() {
     const reader = new FileReader();
     if (file.type === 'text/plain' || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
       reader.onload = (e) => {
-        setCvText((e.target?.result as string) || '');
+        const text = (e.target?.result as string) || '';
+        setCvText(text);
+        runSkillExtraction(text);
       };
       reader.readAsText(file);
     } else {
-      // For PDF / Docx or binary, read as text fallback or indicate file parsed
       reader.onload = (e) => {
         const rawContent = e.target?.result;
+        let cleaned = '';
         if (typeof rawContent === 'string') {
-          // Clean non-printable characters if raw read
-          const cleaned = rawContent.replace(/[^\x20-\x7E\t\r\n]/g, ' ').slice(0, 15000);
+          cleaned = rawContent.replace(/[^\x20-\x7E\t\r\n]/g, ' ').slice(0, 15000);
           setCvText(cleaned);
         } else {
-          setCvText(`[Uploaded Document: ${file.name} (${Math.round(file.size / 1024)} KB)]`);
+          cleaned = `[Uploaded Document: ${file.name} (${Math.round(file.size / 1024)} KB)]`;
+          setCvText(cleaned);
         }
+        runSkillExtraction(cleaned || file.name);
       };
       reader.readAsText(file);
     }
@@ -108,16 +174,16 @@ Experience:
 Skills:
 Python, PyTorch, LangChain, React, TypeScript, Git, Docker, REST APIs, Basic Machine Learning.`
     );
-    setCvText(
-      `Alex Morgan - Resume / CV Summary
+    const sampleCv = `Alex Morgan - Resume / CV Summary
 Education: B.S. Computer Science (2024)
 Projects:
 1. Multi-Agent Research Assistant: Built using LangChain and CrewAI concepts. Implemented web search and summarization.
 2. Image Classifier: Basic CNN built with PyTorch on CIFAR-10.
-Certifications: Deep Learning Specialization (in progress), Python for Data Science.`
-    );
-    setFieldOfInterest('Artificial Intelligence & Machine Learning');
-    setFutureGoal('AI Engineer');
+Certifications: Deep Learning Specialization (in progress), Python for Data Science.`;
+    setCvText(sampleCv);
+    setSelectedSkills(['Python', 'PyTorch', 'LangChain', 'React', 'TypeScript', 'Git', 'Docker', 'REST APIs', 'Machine Learning']);
+    setFutureGoal('Data Scientist');
+    setIsCustomGoal(false);
   };
 
   // Submit Handler
@@ -125,13 +191,18 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
     e.preventDefault();
     setErrorMessage(null);
 
-    if (!linkedinText.trim() && !cvFile && !cvText.trim()) {
-      setErrorMessage('Please provide either your LinkedIn profile details or upload a CV/resume to proceed.');
+    if (!linkedinText.trim() && !cvFile && !cvText.trim() && selectedSkills.length === 0) {
+      setErrorMessage('Please provide either your LinkedIn profile details, upload a CV/resume, or select your acquired skills.');
       return;
     }
 
-    if (!fieldOfInterest.trim() || !futureGoal.trim()) {
-      setErrorMessage('Please specify both your Field of Interest and Future Goal.');
+    if (!futureGoal.trim()) {
+      setErrorMessage('Please specify your Future Goal / target profession.');
+      return;
+    }
+
+    if (selectedSkills.length === 0) {
+      setErrorMessage('Please ensure at least one skill is selected from your CV or added via the search bar.');
       return;
     }
 
@@ -146,7 +217,9 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
         body: JSON.stringify({
           linkedinText: linkedinText.trim(),
           cvText: cvText.trim() || (cvFile ? `Uploaded CV: ${cvFile.name}` : ''),
-          fieldOfInterest: fieldOfInterest.trim(),
+          selectedSkills,
+          possessedSkills: selectedSkills,
+          fieldOfInterest: futureGoal.trim(),
           futureGoal: futureGoal.trim(),
         }),
       });
@@ -470,6 +543,7 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
                       e.stopPropagation();
                       setCvFile(null);
                       setCvText('');
+                      setSelectedSkills([]);
                     }}
                     className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-500/20 text-xs font-mono font-bold"
                   >
@@ -495,106 +569,292 @@ Certifications: Deep Learning Specialization (in progress), Python for Data Scie
             </div>
           </div>
 
-          {/* Section 3: Field of Interest & Future Goal Inputs */}
+          {/* Section 3: Skills Extracted from CV/Resume & Future Goal */}
           <div
-            className={`p-6 rounded-3xl border space-y-5 transition-colors ${
+            className={`p-6 rounded-3xl border space-y-6 transition-colors ${
               isBright
                 ? 'bg-white/80 border-[#E5D7C8] shadow-xs'
                 : 'bg-[#120b06]/80 border-orange-950/60 shadow-lg shadow-black/40'
             }`}
           >
-            {/* Field of Interest */}
-            <div className="space-y-2">
-              <label
-                htmlFor="field-interest-input"
-                className={`text-xs font-bold uppercase tracking-wider font-mono block ${
-                  isBright ? 'text-[#44403C]' : 'text-zinc-200'
+            {/* 1. Skills Selected from CV / Resume (Replacing old Field of Interest) */}
+            <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <label
+                      className={`text-xs font-bold uppercase tracking-wider font-mono block ${
+                        isBright ? 'text-[#44403C]' : 'text-zinc-200'
+                      }`}
+                    >
+                      Skills Extracted From CV / Resume
+                    </label>
+                    {isExtractingSkills && (
+                      <span className="text-[10px] font-mono font-bold text-orange-500 animate-pulse flex items-center gap-1">
+                        <span>⚡</span>
+                        <span>Extracting AI skills...</span>
+                      </span>
+                    )}
+                  </div>
+                  <p className={`text-[11px] mt-0.5 ${isBright ? 'text-stone-500' : 'text-zinc-400'}`}>
+                    AI-extracted capabilities from your document. Remove any inaccurate skills or add more via the search bar below.
+                  </p>
+                </div>
+                <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-orange-500/10 text-orange-500 border border-orange-500/20 shrink-0 self-start sm:self-auto">
+                  {selectedSkills.length} {selectedSkills.length === 1 ? 'Skill' : 'Skills'} Extracted
+                </span>
+              </div>
+
+              {/* Displayed Skill Chips with Delete Button */}
+              <div
+                className={`p-3.5 rounded-2xl border min-h-[58px] flex flex-wrap gap-2 items-center transition-all ${
+                  isBright
+                    ? 'bg-[#FAF4EE] border-[#E5D7C8]'
+                    : 'bg-[#0a0604] border-orange-950/70'
                 }`}
               >
-                Field of Interest
-              </label>
-              <input
-                id="field-interest-input"
-                type="text"
-                required
-                value={fieldOfInterest}
-                onChange={(e) => setFieldOfInterest(e.target.value)}
-                placeholder="e.g. Artificial Intelligence & Machine Learning"
-                className={`w-full px-4 py-3 rounded-xl border text-xs font-mono transition-all outline-none ${
-                  isBright
-                    ? 'bg-[#FAF4EE] border-[#E5D7C8] text-[#1C1917] placeholder-[#A8A29E] focus:border-orange-500 focus:bg-white focus:ring-1 focus:ring-orange-500/30'
-                    : 'bg-[#0a0604] border-orange-900/50 text-white placeholder-zinc-500 focus:border-orange-500 focus:bg-black focus:ring-1 focus:ring-orange-500/30'
-                }`}
-              />
+                {selectedSkills.length === 0 ? (
+                  <div className="flex items-center gap-2 py-1.5 px-1 text-xs font-mono">
+                    <span className="text-orange-500 text-sm">📄</span>
+                    <span className={isBright ? 'text-stone-500 font-medium' : 'text-zinc-400 font-medium'}>
+                      No skills extracted yet. Drag & drop or browse your CV/resume above, and Mentora AI will extract them automatically.
+                    </span>
+                  </div>
+                ) : (
+                  selectedSkills.map((skill) => (
+                    <span
+                      key={skill}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold border transition-all animate-in fade-in zoom-in-95 ${
+                        isBright
+                          ? 'bg-white border-orange-200 text-[#1C1917] shadow-xs hover:border-orange-400'
+                          : 'bg-[#18110b] border-orange-500/30 text-zinc-100 hover:border-orange-500/60'
+                      }`}
+                    >
+                      <span className="text-orange-500">✓</span>
+                      <span>{skill}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSkill(skill)}
+                        className="text-stone-400 hover:text-red-500 font-bold ml-1 text-xs transition-colors cursor-pointer"
+                        title={`Remove ${skill}`}
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
 
-              {/* Quick suggestion chips */}
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {FIELD_SUGGESTIONS.map((suggestion) => (
+              {/* Skill Search & Add Bar */}
+              <div className="space-y-2 pt-1">
+                <div className="relative flex gap-2">
+                  <div className="relative flex-1">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-orange-500">
+                      🔍
+                    </span>
+                    <input
+                      type="text"
+                      value={skillSearchQuery}
+                      onChange={(e) => setSkillSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (filteredSkillSuggestions.length > 0) {
+                            handleAddSkill(filteredSkillSuggestions[0]);
+                          } else if (skillSearchQuery.trim()) {
+                            handleAddSkill(skillSearchQuery);
+                          }
+                        }
+                      }}
+                      placeholder="Search or type a skill to add (e.g. Python, Docker, Figma, SQL)..."
+                      className={`w-full pl-9 pr-4 py-2.5 rounded-xl border text-xs font-mono transition-all outline-none ${
+                        isBright
+                          ? 'bg-white border-[#E5D7C8] text-[#1C1917] placeholder-[#A8A29E] focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30'
+                          : 'bg-[#0a0604] border-orange-900/50 text-white placeholder-zinc-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30'
+                      }`}
+                    />
+                  </div>
                   <button
-                    key={suggestion}
                     type="button"
-                    onClick={() => setFieldOfInterest(suggestion)}
-                    className={`text-[11px] px-2.5 py-1 rounded-lg border font-mono transition-all cursor-pointer ${
-                      fieldOfInterest === suggestion
-                        ? isBright
-                          ? 'bg-[#EA580C] text-white border-[#EA580C]'
-                          : 'bg-orange-600/30 text-white border-orange-400'
-                        : isBright
-                        ? 'bg-white border-[#E5D7C8] text-[#57534E] hover:border-orange-300 hover:text-black'
-                        : 'bg-[#140e09] border-orange-950/60 text-zinc-400 hover:border-orange-800 hover:text-white'
+                    onClick={() => {
+                      if (skillSearchQuery.trim()) {
+                        handleAddSkill(skillSearchQuery);
+                      }
+                    }}
+                    disabled={!skillSearchQuery.trim()}
+                    className={`px-4 py-2.5 rounded-xl text-xs font-mono font-bold transition-all disabled:opacity-40 cursor-pointer ${
+                      isBright
+                        ? 'bg-[#EA580C] text-white hover:bg-orange-700 shadow-xs'
+                        : 'bg-gradient-to-r from-orange-500 to-amber-500 text-black hover:brightness-110 shadow-xs'
                     }`}
                   >
-                    {suggestion}
+                    + Add Skill
                   </button>
-                ))}
+                </div>
+
+                {/* Autocomplete Dropdown List */}
+                {filteredSkillSuggestions.length > 0 && (
+                  <div
+                    className={`p-2 rounded-xl border shadow-xl flex flex-wrap gap-1.5 animate-in fade-in slide-in-from-top-2 ${
+                      isBright ? 'bg-white border-orange-200' : 'bg-[#140d07] border-orange-800/80'
+                    }`}
+                  >
+                    <span className="text-[10px] font-mono text-orange-500 font-bold w-full px-1">
+                      SUGGESTIONS FROM 50-ROLE DATASET:
+                    </span>
+                    {filteredSkillSuggestions.map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => handleAddSkill(suggestion)}
+                        className={`text-[11px] px-2.5 py-1 rounded-lg border font-mono transition-all cursor-pointer ${
+                          isBright
+                            ? 'bg-[#FFF8F0] border-orange-300 text-orange-900 hover:bg-orange-500 hover:text-white'
+                            : 'bg-[#1f140c] border-orange-600/40 text-orange-300 hover:bg-orange-600 hover:text-white'
+                        }`}
+                      >
+                        + {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Popular Dataset Skills Quick Add Chips */}
+                {popularDatasetSkills.length > 0 && (
+                  <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                    <span className={`text-[10px] font-mono ${isBright ? 'text-stone-400' : 'text-zinc-500'}`}>
+                      Popular skills:
+                    </span>
+                    {popularDatasetSkills.map((skill) => (
+                      <button
+                        key={skill}
+                        type="button"
+                        onClick={() => handleAddSkill(skill)}
+                        className={`text-[11px] px-2 py-0.5 rounded-lg border font-mono transition-all cursor-pointer ${
+                          isBright
+                            ? 'bg-white border-[#E5D7C8] text-[#57534E] hover:border-orange-400 hover:text-orange-600'
+                            : 'bg-[#140e09] border-orange-950/60 text-zinc-400 hover:border-orange-700 hover:text-orange-400'
+                        }`}
+                      >
+                        + {skill}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Future Goal */}
-            <div className="space-y-2">
-              <label
-                htmlFor="future-goal-input"
-                className={`text-xs font-bold uppercase tracking-wider font-mono block ${
-                  isBright ? 'text-[#44403C]' : 'text-zinc-200'
-                }`}
-              >
-                Declared Future Goal
-              </label>
-              <input
-                id="future-goal-input"
-                type="text"
-                required
-                value={futureGoal}
-                onChange={(e) => setFutureGoal(e.target.value)}
-                placeholder="e.g. AI Engineer, Data Scientist, Senior AI Systems Architect"
-                className={`w-full px-4 py-3 rounded-xl border text-xs font-mono transition-all outline-none ${
-                  isBright
-                    ? 'bg-[#FAF4EE] border-[#E5D7C8] text-[#1C1917] placeholder-[#A8A29E] focus:border-orange-500 focus:bg-white focus:ring-1 focus:ring-orange-500/30'
-                    : 'bg-[#0a0604] border-orange-900/50 text-white placeholder-zinc-500 focus:border-orange-500 focus:bg-black focus:ring-1 focus:ring-orange-500/30'
-                }`}
-              />
-
-              {/* Quick suggestion chips */}
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {GOAL_SUGGESTIONS.map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    type="button"
-                    onClick={() => setFutureGoal(suggestion)}
-                    className={`text-[11px] px-2.5 py-1 rounded-lg border font-mono transition-all cursor-pointer ${
-                      futureGoal === suggestion
-                        ? isBright
-                          ? 'bg-[#EA580C] text-white border-[#EA580C]'
-                          : 'bg-orange-600/30 text-white border-orange-400'
-                        : isBright
-                        ? 'bg-white border-[#E5D7C8] text-[#57534E] hover:border-orange-300 hover:text-black'
-                        : 'bg-[#140e09] border-orange-950/60 text-zinc-400 hover:border-orange-800 hover:text-white'
-                    }`}
-                  >
-                    {suggestion}
-                  </button>
-                ))}
+            {/* 2. Declared Future Goal (with Other button) */}
+            <div className="space-y-3 pt-3 border-t border-orange-500/10">
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="future-goal-input"
+                  className={`text-xs font-bold uppercase tracking-wider font-mono block ${
+                    isBright ? 'text-[#44403C]' : 'text-zinc-200'
+                  }`}
+                >
+                  Declared Future Goal / Target Profession
+                </label>
+                {futureGoal && (
+                  <span className="text-[11px] font-mono text-orange-500 font-semibold">
+                    Target: <span className="font-extrabold underline">{futureGoal}</span>
+                  </span>
+                )}
               </div>
+
+              {/* Goal suggestion chips from 50-role dataset + OTHER button */}
+              <div className="flex flex-wrap gap-1.5">
+                {POPULAR_GOALS.map((suggestion) => {
+                  const isSelected = !isCustomGoal && futureGoal === suggestion;
+                  return (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      onClick={() => {
+                        setFutureGoal(suggestion);
+                        setIsCustomGoal(false);
+                      }}
+                      className={`text-[11px] px-3 py-1.5 rounded-xl border font-mono font-medium transition-all cursor-pointer ${
+                        isSelected
+                          ? isBright
+                            ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-sm'
+                            : 'bg-orange-600/40 text-white border-orange-400 shadow-sm'
+                          : isBright
+                          ? 'bg-white border-[#E5D7C8] text-[#57534E] hover:border-orange-300 hover:text-black'
+                          : 'bg-[#140e09] border-orange-950/60 text-zinc-400 hover:border-orange-800 hover:text-white'
+                      }`}
+                    >
+                      {isSelected ? '🎯 ' : ''}{suggestion}
+                    </button>
+                  );
+                })}
+
+                {/* THE "OTHER" BUTTON REQUESTED BY USER */}
+                <button
+                  type="button"
+                  id="future-goal-other-btn"
+                  onClick={() => {
+                    setIsCustomGoal(true);
+                    if (POPULAR_GOALS.includes(futureGoal)) {
+                      setFutureGoal('');
+                    }
+                  }}
+                  className={`text-[11px] px-3.5 py-1.5 rounded-xl border font-mono font-bold transition-all cursor-pointer ${
+                    isCustomGoal
+                      ? isBright
+                        ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-orange-500 shadow-md'
+                        : 'bg-gradient-to-r from-orange-500 to-amber-500 text-black border-amber-400 shadow-md font-extrabold'
+                      : isBright
+                      ? 'bg-orange-500/10 border-orange-300 text-orange-700 hover:bg-orange-500 hover:text-white'
+                      : 'bg-orange-950/40 border-orange-500/40 text-orange-300 hover:border-orange-400 hover:text-white'
+                  }`}
+                >
+                  ✦ Other Profession / Goal
+                </button>
+              </div>
+
+              {/* Custom Goal Input Box when Other is selected or active */}
+              {isCustomGoal ? (
+                <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className="flex items-center justify-between text-[11px] font-mono text-orange-500 font-bold">
+                    <span>✏️ SPECIFY YOUR CUSTOM FUTURE PROFESSION:</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomGoal(false);
+                        setFutureGoal(POPULAR_GOALS[0]);
+                      }}
+                      className="text-stone-400 hover:text-orange-500 text-[10px] underline cursor-pointer"
+                    >
+                      Choose from popular roles instead
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <input
+                      id="future-goal-input"
+                      type="text"
+                      list="all-dataset-roles"
+                      required
+                      autoFocus
+                      value={futureGoal}
+                      onChange={(e) => setFutureGoal(e.target.value)}
+                      placeholder="Type your custom profession (e.g. Quantum Computing Engineer, AI Ethicist, Blockchain Developer)..."
+                      className={`w-full px-4 py-3 rounded-xl border text-xs font-mono transition-all outline-none ${
+                        isBright
+                          ? 'bg-[#FAF4EE] border-orange-400 text-[#1C1917] placeholder-[#A8A29E] focus:border-orange-600 focus:bg-white focus:ring-1 focus:ring-orange-500/30'
+                          : 'bg-[#0a0604] border-orange-500 text-white placeholder-zinc-500 focus:border-orange-400 focus:bg-black focus:ring-1 focus:ring-orange-500/30'
+                      }`}
+                    />
+                  </div>
+                </div>
+              ) : null}
+
+              {/* Datalist of all 50 roles for quick typing autocomplete */}
+              <datalist id="all-dataset-roles">
+                {CAREER_ROLES_DATASET.map((r) => (
+                  <option key={r.srNo} value={r.futureGoal} />
+                ))}
+              </datalist>
             </div>
           </div>
 

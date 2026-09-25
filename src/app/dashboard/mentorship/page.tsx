@@ -184,9 +184,6 @@ export default function MentorshipPage() {
           {/* Header Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/10 pb-6">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-orange-500/10 text-[#FF6B35] border border-orange-500/20">
-                <span>💬 INDUSTRY GUIDANCE & COACHING</span>
-              </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: textPrimary }}>
                 Mentorship Hub
               </h1>
@@ -197,9 +194,9 @@ export default function MentorshipPage() {
 
             <div className="flex items-center gap-3">
               <div className="px-4 py-2 rounded-xl border flex items-center gap-2" style={{ background: cardBg, borderColor: cardBorder }}>
-                <span className="text-sm">🪙</span>
+                <span className="text-xs font-mono font-bold text-orange-500">CREDITS:</span>
                 <span className="text-xs font-bold" style={{ color: textPrimary }}>
-                  2 Mentorship Credits Available
+                  2 Available
                 </span>
               </div>
             </div>
@@ -247,8 +244,22 @@ export default function MentorshipPage() {
                 <button
                   type="button"
                   onClick={() => alert('Preparation notes saved to session dashboard.')}
-                  className="px-5 py-2.5 rounded-xl text-xs font-semibold text-center border transition-all hover:bg-orange-500/5 active:scale-95"
-                  style={{ borderColor: cardBorder, color: textPrimary }}
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold text-center border transition-all active:scale-95 shadow-sm"
+                  style={{
+                    background: isBright ? '#FFFFFF' : 'transparent',
+                    borderColor: isBright ? '#FDBA74' : cardBorder,
+                    color: isBright ? '#1C1917' : textPrimary,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#EA580C';
+                    e.currentTarget.style.color = '#FFFFFF';
+                    e.currentTarget.style.borderColor = '#EA580C';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = isBright ? '#FFFFFF' : 'transparent';
+                    e.currentTarget.style.borderColor = isBright ? '#FDBA74' : cardBorder;
+                    e.currentTarget.style.color = isBright ? '#1C1917' : textPrimary;
+                  }}
                 >
                   Edit Discussion Agenda
                 </button>
@@ -259,22 +270,21 @@ export default function MentorshipPage() {
           {/* Navigation Tabs */}
           <div className="flex items-center gap-2 border-b pb-3" style={{ borderColor: cardBorder }}>
             {[
-              { id: 'mentors', label: '1-on-1 Mentors Directory', icon: '🧑‍💻' },
-              { id: 'ai', label: '24/7 AI Career Companion', icon: '🤖' },
-              { id: 'past', label: 'Past Session Notes (3)', icon: '📝' },
+              { id: 'mentors', label: '1-on-1 Mentors Directory' },
+              { id: 'ai', label: '24/7 AI Career Companion' },
+              { id: 'past', label: 'Past Session Notes (3)' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTab === tab.id
                     ? 'bg-[#FF6B35] text-white shadow-md shadow-orange-500/20'
                     : isBright
-                    ? 'bg-white text-zinc-600 border border-[#EAE0D5] hover:border-orange-300'
+                    ? 'bg-white text-stone-700 border border-stone-200 hover:border-orange-400 hover:text-orange-600'
                     : 'bg-[#18130e] text-zinc-400 border border-orange-950/60 hover:border-orange-800'
                 }`}
               >
-                <span>{tab.icon}</span>
                 <span>{tab.label}</span>
               </button>
             ))}
@@ -370,8 +380,10 @@ export default function MentorshipPage() {
             >
               <div className="flex items-center justify-between border-b pb-4" style={{ borderColor: cardBorder }}>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-orange-500/15 text-orange-500 flex items-center justify-center text-xl">
-                    🤖
+                  <div className="w-10 h-10 rounded-xl bg-orange-500/15 text-orange-500 flex items-center justify-center">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
                   </div>
                   <div>
                     <h3 className="font-bold text-base" style={{ color: textPrimary }}>

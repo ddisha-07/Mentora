@@ -42,6 +42,19 @@ export function XpProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setXpData(getStoredXpData());
+
+    const handleXpUpdate = (e: any) => {
+      if (e?.detail) setXpData(e.detail);
+      else setXpData(getStoredXpData());
+    };
+
+    window.addEventListener("mentora_xp_updated", handleXpUpdate);
+    window.addEventListener("storage", handleXpUpdate);
+
+    return () => {
+      window.removeEventListener("mentora_xp_updated", handleXpUpdate);
+      window.removeEventListener("storage", handleXpUpdate);
+    };
   }, []);
 
   const { level, currentLevelXp, nextLevelXp, progressPercent } = calculateLevel(xpData.totalXp);

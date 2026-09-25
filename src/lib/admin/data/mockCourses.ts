@@ -213,6 +213,367 @@ export const mockCourses = [
           { id: "les_3", title: "Building your first Perceptron", duration: "15 min" },
         ],
       },
+      {
+        id: "mod_3",
+        title: "Cost Functions & Gradient Descent",
+        tagline: "Rolling down the error mountain to find the optimal mathematical valley!",
+        content: {
+          title: "The Mechanics of Gradient Descent",
+          readTime: "2 min read",
+          tagline: "Like feeling your way down a foggy mountain slope with your feet!",
+          summary: "A cost function measures total prediction error across all data points. Gradient Descent calculates the slope (derivative) of that error and takes small steps downward until it reaches the global minimum.",
+          funAnalogy: "🏔️ Mountain Hiker: You are blindfolded on a foggy hill. To reach the lake at the bottom, you test the slope in each direction and take a step downward. The step size is your learning rate!",
+          keyTakeaways: [
+            "Learning rate controls step size: too large causes overshooting, too small takes forever.",
+            "Stochastic Gradient Descent (SGD) computes updates per batch for speed.",
+            "Convex loss surfaces guarantee a single global minimum."
+          ]
+        },
+        video: {
+          title: "Gradient Descent: Step-by-Step Visualized",
+          youtubeId: "sDv4f4s2SB8",
+          channel: "StatQuest with Josh Starmer",
+          duration: "23 min",
+          summary: "Clear step-by-step mathematical intuition of gradient calculations and step sizing."
+        },
+        flashcards: [
+          { id: "fc_3_1", question: "What happens if the learning rate is too large?", answer: "The model overshoots the minimum and the loss function diverges (explodes towards infinity).", tag: "Optimization" },
+          { id: "fc_3_2", question: "What is the difference between Batch GD and Mini-Batch GD?", answer: "Batch GD uses all data points for each step; Mini-Batch uses small random subsets (e.g. 32 or 64 samples) for faster training.", tag: "Optimization" }
+        ],
+        dialogue: {
+          mentorName: "Byte the AI Coach 🤖",
+          mentorAvatar: "🤖",
+          tagline: "Mastering optimization together.",
+          suggestedQuestions: ["Why do we use Adam optimizer instead of pure GD?", "Can gradient descent get stuck in local minima?"],
+          qaList: [
+            { question: "Can gradient descent get stuck in local minima?", answer: "In high dimensions, saddle points are much more common than true local minima! Momentum helps roll right through them." }
+          ]
+        },
+        passGate: {
+          type: "quiz",
+          quiz: {
+            title: "Gradient Descent Duel 🎯",
+            passingScore: 70,
+            questions: [
+              {
+                id: "q_gd_1",
+                question: "Which hyperparameter controls the step size in Gradient Descent?",
+                options: ["Learning Rate (alpha)", "Number of layers", "Dataset size", "Loss threshold"],
+                correctAnswer: 0,
+                funFact: "Spot on! The learning rate scales the gradient to ensure controlled steps down the error surface."
+              },
+              {
+                id: "q_gd_2",
+                question: "What does the slope of the cost function equal when you reach the minimum?",
+                options: ["Zero", "One", "Infinity", "-100"],
+                correctAnswer: 0,
+                funFact: "At the exact bottom of a curve, the tangent line is completely flat (derivative = 0)."
+              }
+            ]
+          }
+        },
+        lessons: [
+          { id: "les_gd1", title: "Learning Rates & Convergence", duration: "14 min" }
+        ]
+      },
+      {
+        id: "mod_4",
+        title: "Overfitting & Regularization",
+        tagline: "Preventing your model from memorizing answers instead of learning patterns!",
+        content: {
+          title: "Bias-Variance Tradeoff & Regularization",
+          readTime: "3 min read",
+          tagline: "How to avoid building a machine that only works on yesterday's data.",
+          summary: "Overfitting happens when a model learns noise and specific quirks in the training data rather than the underlying pattern. Regularization techniques (L1/L2 and Dropout) penalize complexity to force simpler, more robust models.",
+          funAnalogy: "📚 Cramming Student: An overfitted model is like a student who memorizes page 42 word-for-word, but fails when the test question rephrases the question!",
+          keyTakeaways: [
+            "High Bias = Underfitting (model is too simple, like a straight line through a curve).",
+            "High Variance = Overfitting (model is overly complex and wiggles through every outlier).",
+            "L1 (Lasso) drives uninformative weights to zero, while L2 (Ridge) shrinks weights smoothly."
+          ]
+        },
+        video: {
+          title: "Regularization Part 1: Ridge (L2) Regression",
+          youtubeId: "Q81RR3yKn30",
+          channel: "StatQuest with Josh Starmer",
+          duration: "16 min",
+          summary: "How adding a penalty to the loss function prevents runaway parameters."
+        },
+        flashcards: [
+          { id: "fc_reg_1", question: "What does L1 Regularization (Lasso) uniquely do?", answer: "It produces sparse models by shrinking weights of unhelpful features completely to zero.", tag: "Regularization" },
+          { id: "fc_reg_2", question: "Why do we always maintain a separate Test Set?", answer: "To assess unbiased generalization performance on data the model has never encountered before.", tag: "Validation" }
+        ],
+        dialogue: {
+          mentorName: "Byte the AI Coach 🤖",
+          mentorAvatar: "🤖",
+          tagline: "Ask me how to keep models generalizable.",
+          suggestedQuestions: ["When should I pick L1 over L2?", "How does Dropout work in neural networks?"],
+          qaList: [
+            { question: "How does Dropout work?", answer: "Dropout randomly deactivates a fraction of neurons during each training step, forcing the network to not rely on any single neuron!" }
+          ]
+        },
+        passGate: {
+          type: "quiz",
+          quiz: {
+            title: "Generalization Gate 🎯",
+            passingScore: 70,
+            questions: [
+              {
+                id: "q_ov_1",
+                question: "What is the primary symptom of an overfitted model?",
+                options: [
+                  "Near 100% accuracy on training data, but poor accuracy on validation/test data",
+                  "Training loss increases forever",
+                  "The model runs 10x slower",
+                  "GPU memory drops to zero"
+                ],
+                correctAnswer: 0,
+                funFact: "A huge divergence between training loss and validation loss is the classic fingerprint of overfitting."
+              }
+            ]
+          }
+        },
+        lessons: [
+          { id: "les_reg1", title: "L1 and L2 Penalties in Action", duration: "18 min" }
+        ]
+      },
+      {
+        id: "mod_5",
+        title: "Backpropagation & Deep Synapses",
+        tagline: "The chain rule engine powering modern multi-layer neural networks!",
+        content: {
+          title: "Backpropagation: Credit Assignment in AI",
+          readTime: "3 min read",
+          tagline: "Tracing the chain of blame all the way back to the input weights!",
+          summary: "Backpropagation uses the calculus chain rule to calculate how much each individual weight in every layer contributed to the overall error. It then nudges every weight in the correct direction.",
+          funAnalogy: "🏆 Orchestra Rehearsal: If the symphony makes a sour chord, the conductor listens carefully to single out which violin or flute was flat and instructs only that section to tune up!",
+          keyTakeaways: [
+            "The Chain Rule allows gradient propagation backward through dozens of composite functions.",
+            "Vanishing gradients happen when activations squeeze derivatives to near zero (mitigated by ReLU and ResNets).",
+            "Modern frameworks (PyTorch, TensorFlow) use automatic differentiation graphs."
+          ]
+        },
+        video: {
+          title: "Backpropagation Calculus Visualized",
+          youtubeId: "Ilg3gGewQ5U",
+          channel: "3Blue1Brown",
+          duration: "14 min",
+          summary: "The beautiful calculus behind multi-layer backpropagation made visually intuitive."
+        },
+        flashcards: [
+          { id: "fc_bp_1", question: "What is the Vanishing Gradient problem?", answer: "When gradients become exponentially small as they propagate backward through deep layers, halting learning in early layers.", tag: "Deep Learning" },
+          { id: "fc_bp_2", question: "Why did ReLU largely replace Sigmoid in hidden layers?", answer: "ReLU's derivative is 1 for positive values, avoiding the saturation and vanishing gradients that plague Sigmoid.", tag: "Deep Learning" }
+        ],
+        dialogue: {
+          mentorName: "Byte the AI Coach 🤖",
+          mentorAvatar: "🤖",
+          tagline: "Demystifying deep learning math.",
+          suggestedQuestions: ["Can you explain the chain rule simply?", "How do residual connections fix vanishing gradients?"],
+          qaList: [
+            { question: "Can you explain the chain rule simply?", answer: "If car speed changes 2x with pedal push, and fuel burn changes 3x with speed, then fuel burn changes 2 * 3 = 6x with pedal push! We multiply the partial derivatives along the path." }
+          ]
+        },
+        passGate: {
+          type: "quiz",
+          quiz: {
+            title: "Backpropagation Mastery Gate 🎯",
+            passingScore: 70,
+            questions: [
+              {
+                id: "q_bp_1",
+                question: "Which mathematical rule forms the mathematical foundation of backpropagation?",
+                options: ["The Chain Rule of Calculus", "Pythagorean Theorem", "Bayes Theorem", "Euclidean Distance"],
+                correctAnswer: 0,
+                funFact: "The chain rule allows us to differentiate composite functions layer-by-layer."
+              }
+            ]
+          }
+        },
+        lessons: [
+          { id: "les_bp1", title: "Chain Rule and Computation Graphs", duration: "20 min" }
+        ]
+      },
+      {
+        id: "mod_6",
+        title: "Convolutional Vision & Feature Maps",
+        tagline: "Teaching computers how to recognize shapes, textures, and objects in images!",
+        content: {
+          title: "Convolutional Neural Networks (CNNs)",
+          readTime: "3 min read",
+          tagline: "Sliding mathematical magnifying glasses across pixel matrices!",
+          summary: "Instead of treating every pixel independently, CNNs slide small spatial filters (kernels) over images to detect edges, curves, and textures regardless of where they appear in the frame (spatial invariance).",
+          funAnalogy: "🔍 Cookie Cutter: A 3x3 filter slides across the dough of pixels. Wherever it matches the shape of a vertical edge or a circle, it stamps a bright point on the feature map!",
+          keyTakeaways: [
+            "Convolutions preserve spatial relationships between neighboring pixels.",
+            "Max Pooling downsamples feature maps to reduce computation and prevent overfitting.",
+            "Deeper layers detect high-level semantic objects (faces, cars) by combining low-level edges."
+          ]
+        },
+        video: {
+          title: "How Convolutional Neural Networks Work",
+          youtubeId: "KuXjwB4LzSA",
+          channel: "Brandon Rohrer",
+          duration: "18 min",
+          summary: "Visual explanation of kernels, strides, padding, and pooling layers."
+        },
+        flashcards: [
+          { id: "fc_cnn_1", question: "What is the purpose of Max Pooling?", answer: "Reduces spatial dimensions (height & width) of feature maps while retaining the most prominent signals.", tag: "Computer Vision" },
+          { id: "fc_cnn_2", question: "What is Spatial Invariance in CNNs?", answer: "The ability to detect a feature (like a cat's ear) regardless of whether it appears in the top-left or bottom-right corner.", tag: "Computer Vision" }
+        ],
+        dialogue: {
+          mentorName: "Byte the AI Coach 🤖",
+          mentorAvatar: "🤖",
+          tagline: "Exploring computer vision frontiers.",
+          suggestedQuestions: ["Why are convolutions faster than dense layers on images?", "What is transfer learning?"],
+          qaList: [
+            { question: "What is transfer learning?", answer: "Taking a giant model trained on 14 million images (like ResNet) and fine-tuning just the top layer on your specific medical or security dataset!" }
+          ]
+        },
+        passGate: {
+          type: "quiz",
+          quiz: {
+            title: "Vision Architecture Gate 🎯",
+            passingScore: 70,
+            questions: [
+              {
+                id: "q_cnn_1",
+                question: "Why are CNNs vastly superior to standard fully-connected networks for image classification?",
+                options: [
+                  "They exploit local spatial correlation and dramatically reduce parameter counts via shared weights",
+                  "They don't use matrices",
+                  "They only work on black and white images",
+                  "They require zero training"
+                ],
+                correctAnswer: 0,
+                funFact: "Shared filter weights allow CNNs to process millions of pixels with a tiny fraction of the parameters."
+              }
+            ]
+          }
+        },
+        lessons: [
+          { id: "les_cnn1", title: "Kernels, Strides and Pooling", duration: "16 min" }
+        ]
+      },
+      {
+        id: "mod_7",
+        title: "Transformers & Attention Mechanism",
+        tagline: "The revolutionary architecture underpinning modern LLMs and generative AI!",
+        content: {
+          title: "Self-Attention: The Engine of Modern AI",
+          readTime: "4 min read",
+          tagline: "Every word in a sentence looks at every other word to understand context!",
+          summary: "Unlike older sequential RNNs that processed text left-to-right, Transformers process entire sequences simultaneously. The self-attention mechanism assigns dynamic weights (Query, Key, Value) between all tokens in a prompt.",
+          funAnalogy: "🍸 Cocktail Party: When someone shouts your name across a crowded room, you instantly pay attention to that speaker while tuning out the rest of the chatter. That is selective attention!",
+          keyTakeaways: [
+            "Query, Key, and Value vectors calculate similarity matrices between every token pair.",
+            "Multi-Head Attention allows the model to attend to different aspects (syntax, tone, factual reference) simultaneously.",
+            "Positional encodings provide sequence order without needing sequential recurrence."
+          ]
+        },
+        video: {
+          title: "Attention in Transformers, Visually Explained",
+          youtubeId: "i_LwzRVP7bg",
+          channel: "3Blue1Brown",
+          duration: "26 min",
+          summary: "Intuitive visual masterclass on attention matrices, queries, keys, and values."
+        },
+        flashcards: [
+          { id: "fc_tr_1", question: "What formula defines Scaled Dot-Product Attention?", answer: "Softmax((Q * K^T) / sqrt(d_k)) * V", tag: "Transformers" },
+          { id: "fc_tr_2", question: "Why do Transformers parallelize much better than LSTMs?", answer: "Because they do not process tokens sequentially step-by-step; all token embeddings are processed simultaneously via matrix multiplications.", tag: "Transformers" }
+        ],
+        dialogue: {
+          mentorName: "Byte the AI Coach 🤖",
+          mentorAvatar: "🤖",
+          tagline: "Ask me anything about LLM architectures.",
+          suggestedQuestions: ["Why is the square root of d_k division necessary?", "What is the difference between an encoder and decoder?"],
+          qaList: [
+            { question: "Why divide by sqrt(d_k)?", answer: "For large dimensions, dot products grow huge, which pushes the softmax function into regions with tiny gradients. Scaling preserves healthy gradient flow!" }
+          ]
+        },
+        passGate: {
+          type: "quiz",
+          quiz: {
+            title: "Transformer Attention Duel 🎯",
+            passingScore: 70,
+            questions: [
+              {
+                id: "q_tr_1",
+                question: "What enables Transformers to understand token order without using sequential recurrence?",
+                options: ["Positional Encodings", "Random initialization", "Alphabetic sorting", "Zero padding"],
+                correctAnswer: 0,
+                funFact: "Sinusoidal or learned positional encodings are added to token vectors so the network knows the word positions."
+              }
+            ]
+          }
+        },
+        lessons: [
+          { id: "les_tr1", title: "Self-Attention Matrices & Multi-Head Heads", duration: "25 min" }
+        ]
+      },
+      {
+        id: "mod_8",
+        title: "Model Evaluation & Production Gate",
+        tagline: "Measuring real-world performance, latency, and deploying with zero downtime!",
+        content: {
+          title: "Evaluating AI Models in Production",
+          readTime: "3 min read",
+          tagline: "Why 99% accuracy can still mean your model is a total disaster!",
+          summary: "On imbalanced datasets (e.g. cancer detection where 99.9% of scans are benign), a naive model that predicts 'healthy' for everyone has 99.9% accuracy, but is completely useless! We master Precision, Recall, F1-Score, and ROC-AUC.",
+          funAnalogy: "🚨 Smoke Alarm: A good smoke alarm has high recall (it MUST ring if there's smoke, even if it occasionally false-alarms when you burn toast). In medical diagnosis, high recall saves lives!",
+          keyTakeaways: [
+            "Precision = Of all predicted positives, how many were actually correct?",
+            "Recall = Of all actual positives, how many did the model successfully catch?",
+            "F1-Score is the harmonic mean balancing Precision and Recall.",
+            "Deploy with canary rollouts and monitor for data drift in production."
+          ]
+        },
+        video: {
+          title: "ROC and AUC, Clearly Explained!",
+          youtubeId: "4jRBRDbJemM",
+          channel: "StatQuest with Josh Starmer",
+          duration: "16 min",
+          summary: "Receiver Operating Characteristic curves and Area Under Curve explained simply."
+        },
+        flashcards: [
+          { id: "fc_ev_1", question: "When should you prioritize Recall over Precision?", answer: "When false negatives are catastrophic (e.g. disease screening or fraud detection).", tag: "Evaluation" },
+          { id: "fc_ev_2", question: "What is Concept Drift in production ML?", answer: "When statistical properties of real-world inputs change over time (e.g. consumer trends), degrading model performance.", tag: "MLOps" }
+        ],
+        dialogue: {
+          mentorName: "Byte the AI Coach 🤖",
+          mentorAvatar: "🤖",
+          tagline: "Your MLOps and production guide.",
+          suggestedQuestions: ["How do we detect data drift in production?", "What is an ROC curve?"],
+          qaList: [
+            { question: "What is an ROC curve?", answer: "It plots True Positive Rate vs False Positive Rate across all possible classification thresholds from 0.0 to 1.0!" }
+          ]
+        },
+        passGate: {
+          type: "quiz",
+          quiz: {
+            title: "Production Certification Gate 🏆",
+            passingScore: 70,
+            questions: [
+              {
+                id: "q_ev_1",
+                question: "In fraud detection where 99.9% of transactions are legitimate, which metric is the WORST choice to evaluate performance?",
+                options: ["Raw Accuracy", "Precision", "Recall", "F1-Score"],
+                correctAnswer: 0,
+                funFact: "A dummy model predicting 'never fraud' gets 99.9% accuracy while letting all criminals through!"
+              },
+              {
+                id: "q_ev_2",
+                question: "What metric is the harmonic mean of Precision and Recall?",
+                options: ["F1-Score", "Mean Squared Error", "Cross-Entropy", "R-squared"],
+                correctAnswer: 0,
+                funFact: "F1-Score penalizes extreme imbalances between precision and recall."
+              }
+            ]
+          }
+        },
+        lessons: [
+          { id: "les_ev1", title: "Confusion Matrices and Precision-Recall Curves", duration: "18 min" }
+        ]
+      },
     ],
     resources: {
       flashcards: [
@@ -288,7 +649,7 @@ export const mockCourses = [
     title: "Full-Stack Web Development with React",
     category: "Web Development",
     description: "Master modern web development from HTML/CSS basics to building full-stack React applications with state management and backend APIs.",
-    status: "Draft",
+    status: "Published",
     level: "Intermediate",
     duration: "10 Weeks",
     enrolled: 892,
@@ -297,7 +658,7 @@ export const mockCourses = [
     thumbnail: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&auto=format&fit=crop&q=80",
     modules: [
       {
-        id: "mod_3",
+        id: "mod_react_1",
         title: "Modern React & Component State",
         tagline: "Build dynamic, reactive user interfaces with zero headaches!",
         content: {
@@ -407,6 +768,167 @@ export const mockCourses = [
           { id: "les_4", title: "Component Design & Custom Hooks", duration: "20 min" },
         ],
       },
+      {
+        id: "mod_react_2",
+        title: "Custom Hooks, Lifecycles & Async State",
+        tagline: "Build maintainable full-stack apps with custom hooks and async REST data fetching!",
+        content: {
+          title: "Custom Hooks & Async State Synchronization",
+          readTime: "2 min read",
+          tagline: "Extract reusable logic cleanly across your entire frontend codebase!",
+          summary: "Custom hooks let you share stateful logic between components without sharing state itself. We combine useEffect, useMemo, and AbortController to fetch backend REST APIs cleanly without race conditions or memory leaks.",
+          funAnalogy: "🔌 Power Adapters: A custom hook is like a universal travel adapter. Any component can plug into it to get the exact data voltage it needs without knowing the internal electrical wiring!",
+          keyTakeaways: [
+            "Hooks must start with 'use' and follow the Rules of Hooks (never call inside loops or conditionals).",
+            "Always cleanup event listeners and abort pending network requests in useEffect returns.",
+            "Separate business logic into custom hooks to keep presentation components thin and testable."
+          ]
+        },
+        video: {
+          title: "React Custom Hooks & Async Data Fetching Masterclass",
+          youtubeId: "4pO-HcG2igk",
+          channel: "Web Dev Simplified",
+          duration: "25 min",
+          summary: "Learn how to build reusable custom hooks with proper cleanup, loading states, and error handling."
+        },
+        flashcards: [
+          { id: "fc_r2_1", question: "What is the primary benefit of a Custom React Hook?", answer: "It allows you to extract and reuse stateful logic (like fetching, form handling, or window resizing) across multiple components without duplicating code.", tag: "React Hooks" },
+          { id: "fc_r2_2", question: "Why must useEffect cleanup functions abort fetch requests?", answer: "To prevent race conditions where a slow outdated network response overrides a newer user query or triggers a memory leak warning.", tag: "Performance" },
+          { id: "fc_r2_3", question: "What is the difference between useMemo and useCallback?", answer: "useMemo caches the result of a calculation; useCallback caches the function definition itself to prevent unnecessary child re-renders.", tag: "Optimization" }
+        ],
+        dialogue: {
+          mentorName: "Pixel the React Guru ⚡",
+          mentorAvatar: "⚡",
+          tagline: "Mastering hooks and modern async patterns together.",
+          suggestedQuestions: [
+            "When is useCallback actually necessary?",
+            "How do I prevent stale closures in custom hooks?"
+          ],
+          qaList: [
+            { question: "When is useCallback actually necessary?", answer: "Only when passing a callback to a memoized child component (wrapped in React.memo) or when the callback is a dependency in another hook's array!" },
+            { question: "How do I prevent stale closures in custom hooks?", answer: "Always include every reactive variable inside your dependency array, or use functional state updates like setCount(prev => prev + 1)!" }
+          ]
+        },
+        passGate: {
+          type: "quiz",
+          quiz: {
+            title: "Hooks & Component Architecture Gate 🎯",
+            passingScore: 70,
+            questions: [
+              {
+                id: "q_r2_1",
+                question: "What is the consequence of placing useState inside an if-statement?",
+                options: [
+                  "React loses track of hook order between renders, causing state corruption and runtime crashes",
+                  "The component runs 10x faster",
+                  "CSS stylesheets will fail to compile",
+                  "The state variable becomes globally shared across all browser tabs"
+                ],
+                correctAnswer: 0,
+                funFact: "React relies on stable call order between renders to associate hook state with internal fiber nodes!"
+              },
+              {
+                id: "q_r2_2",
+                question: "Which hook should you use to cache a computationally expensive array filter operation?",
+                options: ["useMemo", "useCallback", "useRef", "useId"],
+                correctAnswer: 0,
+                funFact: "useMemo caches the calculated value and only recomputes when dependencies change."
+              }
+            ]
+          },
+          task: {
+            missionTitle: "Build a useDebounce Custom Hook 🛠️",
+            xpReward: 120,
+            estimatedTime: "15 mins",
+            dailyGoal: "Build a custom hook that delays updating a search value until the user stops typing.",
+            instructions: "Create a 12-line custom hook that sets a timeout and cleans it up when the input value changes.",
+            checklist: [
+              "Step 1: Declare state for debouncedValue initialized to input value",
+              "Step 2: Inside useEffect, create a setTimeout to update debouncedValue after delay ms",
+              "Step 3: Return a cleanup function clearTimeout(timer) to abort on fast keystrokes"
+            ],
+            dailyTip: "Debouncing prevents hundreds of API calls while a user is typing in a search bar!"
+          }
+        },
+        lessons: [
+          { id: "les_r2_1", title: "Building Custom Hooks", duration: "18 min" },
+          { id: "les_r2_2", title: "Race Conditions and AbortController", duration: "14 min" }
+        ]
+      },
+      {
+        id: "mod_react_3",
+        title: "Full-Stack Next.js 14, Server Actions & Production",
+        tagline: "Build enterprise full-stack web applications with Next.js App Router and server actions!",
+        content: {
+          title: "Full-Stack Architecture: Server Components & Actions",
+          readTime: "3 min read",
+          tagline: "Zero-bundle-size server components and type-safe server actions!",
+          summary: "Next.js App Router unifies client and server. Server Components render directly on the server with zero client bundle impact and direct database access. Server Actions allow seamless form mutations without writing dedicated API boilerplate.",
+          funAnalogy: "🍽️ Chef vs Waiter: A Server Component is like food prepped and plated in the kitchen before serving—customers receive ready meals without needing kitchen ovens at their table!",
+          keyTakeaways: [
+            "React Server Components (RSC) execute exclusively on the server with zero JavaScript sent to client.",
+            "Server Actions provide RPC-style type-safe database mutations directly from JSX forms.",
+            "Use 'use client' only when browser APIs, event listeners (onClick), or React state are required."
+          ]
+        },
+        video: {
+          title: "Next.js 14 App Router in 100 Seconds",
+          youtubeId: "wm5gMKuwSYk",
+          channel: "Fireship",
+          duration: "15 min",
+          summary: "Learn App Router, Server Components, Route Handlers, and deploying production Next.js apps."
+        },
+        flashcards: [
+          { id: "fc_r3_1", question: "What is the key advantage of React Server Components (RSC)?", answer: "They render on the server and send pure HTML and RSC payload to the browser with zero client-side JavaScript bundle overhead.", tag: "Next.js" },
+          { id: "fc_r3_2", question: "Where do Next.js Server Actions execute?", answer: "Strictly on the server, allowing direct database queries, secrets access, and secure authentication checks without exposing API keys.", tag: "Full-Stack" },
+          { id: "fc_r3_3", question: "What directive marks an interactive client boundary in Next.js App Router?", answer: "'use client' placed at the very top of the file before imports.", tag: "Architecture" }
+        ],
+        dialogue: {
+          mentorName: "Pixel the React Guru ⚡",
+          mentorAvatar: "⚡",
+          tagline: "Your guide to modern enterprise full-stack development.",
+          suggestedQuestions: [
+            "Why use Server Components over traditional client-side fetching?",
+            "How do Server Actions handle authentication?"
+          ],
+          qaList: [
+            { question: "Why use Server Components over traditional client-side fetching?", answer: "Server Components fetch data right next to the database with zero network waterfall latency, zero client JS bundle, and automatic streaming SSR!" },
+            { question: "How do Server Actions handle authentication?", answer: "Server Actions execute on the server with access to HTTP-only session cookies and headers, allowing seamless session verification via adminAuth!" }
+          ]
+        },
+        passGate: {
+          type: "quiz",
+          quiz: {
+            title: "Full-Stack Production Certification Gate 🏆",
+            passingScore: 70,
+            questions: [
+              {
+                id: "q_r3_1",
+                question: "Which of the following is TRUE about React Server Components in Next.js?",
+                options: [
+                  "They do not increase the client JavaScript bundle size",
+                  "They can use useState and useEffect hooks",
+                  "They run in the browser after hydration",
+                  "They cannot access backend databases or file systems"
+                ],
+                correctAnswer: 0,
+                funFact: "Server components run on the server and stream lightweight UI representations with zero bundle cost!"
+              },
+              {
+                id: "q_r3_2",
+                question: "What directive must be added to a file that needs to use onClick event handlers or browser state?",
+                options: ["'use client'", "'use server'", "'use strict'", "'use interactive'"],
+                correctAnswer: 0,
+                funFact: "'use client' marks the boundary where React hydrates interactive client code."
+              }
+            ]
+          }
+        },
+        lessons: [
+          { id: "les_r3_1", title: "App Router and Server Components", duration: "25 min" },
+          { id: "les_r3_2", title: "Server Actions and Form Handling", duration: "20 min" }
+        ]
+      }
     ],
     resources: {
       flashcards: [
@@ -574,6 +1096,167 @@ export const mockCourses = [
           { id: "les_5", title: "Divide & Conquer, Dynamic Programming", duration: "25 min" },
         ],
       },
+      {
+        id: "mod_dsa_2",
+        title: "Trees, Graphs & Traversal Paradigms",
+        tagline: "Navigate interconnected data with Breadth-First and Depth-First Search!",
+        content: {
+          title: "Graph Traversal: Navigating the Connected Universe",
+          readTime: "2 min read",
+          tagline: "From social networks to Google Maps: graphs run modern tech!",
+          summary: "Trees and graphs represent relationships. BFS explores layer-by-layer using a queue, guaranteeing the shortest path in unweighted graphs. DFS plunges deep using recursion or a stack, ideal for cycle detection and topological sorting.",
+          funAnalogy: "🌊 Ripple vs Spelunker: BFS is like a pebble dropped in water creating outward expanding ripple rings. DFS is like a cave explorer following a single winding cavern until hitting a dead end before backtracking!",
+          keyTakeaways: [
+            "BFS uses a Queue (FIFO) and discovers the shortest path in unweighted graphs.",
+            "DFS uses a Stack / Recursion (LIFO) and is perfect for cycle detection and backtracking.",
+            "Always maintain a visited Set to prevent infinite loops in cyclic graphs."
+          ]
+        },
+        video: {
+          title: "Graph Algorithms for Technical Interviews",
+          youtubeId: "7fujbpJ0LB4",
+          channel: "freeCodeCamp.org",
+          duration: "35 min",
+          summary: "Learn BFS, DFS, adjacency lists, and connected components with visual whiteboard walkthroughs."
+        },
+        flashcards: [
+          { id: "fc_d2_1", question: "Why does BFS guarantee the shortest path in unweighted graphs?", answer: "Because it explores all vertices at distance k before exploring any vertex at distance k+1.", tag: "Graphs" },
+          { id: "fc_d2_2", question: "What is the time complexity of BFS/DFS on an adjacency list?", answer: "O(V + E) where V is the number of vertices and E is the number of edges.", tag: "Complexity" },
+          { id: "fc_d2_3", question: "How do you detect a cycle in a directed graph using DFS?", answer: "Track vertices in the current recursion call stack (or 3-color state: unvisited, visiting, visited). If you hit a 'visiting' node, a cycle exists!", tag: "Advanced" }
+        ],
+        dialogue: {
+          mentorName: "Algo, The Puzzle Master 🧩",
+          mentorAvatar: "🧩",
+          tagline: "Mastering graph traversals together.",
+          suggestedQuestions: [
+            "When should I use BFS vs DFS?",
+            "How do I represent graphs in memory?"
+          ],
+          qaList: [
+            { question: "When should I use BFS vs DFS?", answer: "Use BFS when searching for the shortest path or nearest neighbor. Use DFS for game trees, topological sorting, maze solutions, and exhaustive puzzle searches!" },
+            { question: "How do I represent graphs in memory?", answer: "Adjacency lists (Map<Node, List<Node>>) are best for sparse graphs O(V+E). Adjacency matrices are only preferred for ultra-dense graphs where edge checks must be O(1)!" }
+          ]
+        },
+        passGate: {
+          type: "quiz",
+          quiz: {
+            title: "Graph & Tree Traversal Gate 🎯",
+            passingScore: 70,
+            questions: [
+              {
+                id: "q_d2_1",
+                question: "Which data structure is fundamentally required to implement Breadth-First Search iteratively?",
+                options: ["Queue (FIFO)", "Stack (LIFO)", "Binary Heap", "Hash Set"],
+                correctAnswer: 0,
+                funFact: "Queue FIFO ordering ensures nodes are visited strictly in order of their distance from the source!"
+              },
+              {
+                id: "q_d2_2",
+                question: "What catastrophic failure occurs if you run BFS/DFS on a graph with cycles without a visited set?",
+                options: [
+                  "Infinite loop and Out-of-Memory / Call Stack Overflow crash",
+                  "Graph becomes automatically sorted",
+                  "All edge weights become zero",
+                  "The compiler deletes the source file"
+                ],
+                correctAnswer: 0,
+                funFact: "Without a visited set, cycles cause traversals to bounce back and forth between vertices forever!"
+              }
+            ]
+          },
+          task: {
+            missionTitle: "Implement Breadth-First Search on a Tree 🛠️",
+            xpReward: 120,
+            estimatedTime: "15 mins",
+            dailyGoal: "Implement level-order traversal on a binary tree using a queue.",
+            instructions: "Write a clean 10-line BFS function that pushes root to queue and processes node children level by level.",
+            checklist: [
+              "Step 1: If root is null, return empty array",
+              "Step 2: Initialize queue with root: `const queue = [root]`",
+              "Step 3: While queue is not empty, shift current node, record value, and push left/right children"
+            ],
+            dailyTip: "BFS level-order traversal is the foundation of network routing and social distance calculations!"
+          }
+        },
+        lessons: [
+          { id: "les_d2_1", title: "Trees, Heaps and Balanced BSTs", duration: "20 min" },
+          { id: "les_d2_2", title: "BFS and DFS Traversal Patterns", duration: "22 min" }
+        ]
+      },
+      {
+        id: "mod_dsa_3",
+        title: "Dynamic Programming, Memoization & Production Gates",
+        tagline: "Eliminate exponential O(2^N) runtimes and solve hard interview benchmarks!",
+        content: {
+          title: "Dynamic Programming: Breaking Hard Problems into Subproblems",
+          readTime: "3 min read",
+          tagline: "Remembering past answers so you never repeat work!",
+          summary: "Dynamic Programming applies to problems with Overlapping Subproblems and Optimal Substructure. We explore Top-Down Memoization (caching recursion) and Bottom-Up Tabulation (iterative arrays), reducing exponential runtimes to linear O(N) or polynomial bounds.",
+          funAnalogy: "📝 Math Shortcut: If someone asks what 1+1+1+1+1 is, you count 5. If they add another '+ 1', you don't start from zero—you remember 5, add 1, and shout 6!",
+          keyTakeaways: [
+            "Overlapping Subproblems: Recursion calls the same state multiple times.",
+            "Memoization: Store results in a hash table or array during recursion.",
+            "Tabulation: Iteratively fill a DP table from base cases up to the target answer."
+          ]
+        },
+        video: {
+          title: "Dynamic Programming - Learn to Solve Algorithmic Problems",
+          youtubeId: "oBt53YbR9Kk",
+          channel: "freeCodeCamp.org",
+          duration: "40 min",
+          summary: "Comprehensive guide to memoization and tabulation patterns with visual recurrence relations."
+        },
+        flashcards: [
+          { id: "fc_d3_1", question: "What two properties must a problem have for Dynamic Programming to apply?", answer: "1. Optimal Substructure (optimal solution contains optimal solutions to subproblems) and 2. Overlapping Subproblems (subproblems recur repeatedly).", tag: "DP" },
+          { id: "fc_d3_2", question: "What is the difference between Memoization and Tabulation?", answer: "Memoization is Top-Down with recursion and caching; Tabulation is Bottom-Up starting from base cases with iterative loops.", tag: "DP Paradigms" },
+          { id: "fc_d3_3", question: "How does DP reduce the Fibonacci calculation from O(2^N) to O(N)?", answer: "By computing each Fibonacci number once and reusing the previous two values instead of branching exponentially.", tag: "Complexity" }
+        ],
+        dialogue: {
+          mentorName: "Algo, The Puzzle Master 🧩",
+          mentorAvatar: "🧩",
+          tagline: "Your guide to mastering dynamic programming and competitive problem solving.",
+          suggestedQuestions: [
+            "How do I recognize a DP problem in an interview?",
+            "When can I optimize DP space to O(1)?"
+          ],
+          qaList: [
+            { question: "How do I recognize a DP problem in an interview?", answer: "Look for keywords like 'Find maximum/minimum cost', 'Count total number of ways', or decisions where choices at step k depend on optimal choices made at step k-1!" },
+            { question: "When can I optimize DP space to O(1)?", answer: "Whenever your current state only depends on the previous 1 or 2 rows (like Fibonacci or House Robber), you only need two scalar variables instead of a full N-element array!" }
+          ]
+        },
+        passGate: {
+          type: "quiz",
+          quiz: {
+            title: "Production Algorithmic Certification Gate 🏆",
+            passingScore: 70,
+            questions: [
+              {
+                id: "q_d3_1",
+                question: "What is the time complexity of naive recursive Fibonacci without memoization?",
+                options: ["O(2^N) exponential time", "O(N) linear time", "O(log N) logarithmic time", "O(1) constant time"],
+                correctAnswer: 0,
+                funFact: "Naive Fibonacci branches into two calls at every depth, creating an exponential call tree of 2^N operations!"
+              },
+              {
+                id: "q_d3_2",
+                question: "In the 0/1 Knapsack problem, why does the greedy approach fail while Dynamic Programming succeeds?",
+                options: [
+                  "Greedy choices cannot undo decisions when weight limits leave unusable empty space; DP evaluates all combinations optimally",
+                  "Greedy algorithms cannot sort items",
+                  "Dynamic programming is only for sorting numbers",
+                  "Computers cannot calculate fractions"
+                ],
+                correctAnswer: 0,
+                funFact: "0/1 Knapsack requires global optimality over discrete subsets, which DP solves via overlapping subproblems!"
+              }
+            ]
+          }
+        },
+        lessons: [
+          { id: "les_d3_1", title: "Memoization vs Tabulation Strategies", duration: "25 min" },
+          { id: "les_d3_2", title: "Knapsack, Subsequences and Space Optimization", duration: "25 min" }
+        ]
+      }
     ],
     resources: {
       flashcards: [

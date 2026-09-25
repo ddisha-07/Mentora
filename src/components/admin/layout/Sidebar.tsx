@@ -69,7 +69,17 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
                 priority
                 className="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105 drop-shadow-[0_2px_10px_rgba(255,107,53,0.35)]"
               />
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/30">
+              <span
+                className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider px-2.5 py-0.5 rounded-full text-white border border-white/30 transition-all duration-200 group-hover:scale-105 group-hover:brightness-110 select-none"
+                style={{
+                  background: "linear-gradient(135deg, #FF5722 0%, #FF6B35 50%, #FFA000 100%)",
+                  color: "#FFFFFF",
+                  boxShadow: isBright
+                    ? "0 2px 10px rgba(234, 88, 12, 0.45), 0 0 14px rgba(255, 107, 53, 0.3)"
+                    : "0 2px 14px rgba(255, 107, 53, 0.55), 0 0 18px rgba(255, 107, 53, 0.35)",
+                }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse shrink-0" />
                 Admin
               </span>
             </Link>
